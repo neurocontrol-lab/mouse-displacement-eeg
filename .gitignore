@@ -7,3 +7,6 @@ S2CleanTrials.mat
 
 # Temporary files
 /tmp/
+
+# Generated full-participant analysis outputs
+/output/pipeline_v2_3_all/

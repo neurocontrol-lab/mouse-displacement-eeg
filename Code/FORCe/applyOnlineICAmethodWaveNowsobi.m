@@ -1,4 +1,4 @@
-function [ICs mixMat wavePacks] = applyOnlineICAmethodWaveNowsobi( EEGdata, level )
+function [ICs mixMat wavePacks] = applyOnlineICAmethodWaveNowsobi( EEGdata )
     %
     % applyOnlineICAmethodWave
     %
@@ -49,9 +49,8 @@ function [ICs mixMat wavePacks] = applyOnlineICAmethodWaveNowsobi( EEGdata, leve
 %     end
     
     
-    % Update by Satyam: explicit depth and vector cell arrays; default remains two levels.
-    if nargin < 2, level = 2; end
-    validateattributes(level,{'numeric'},{'scalar','integer','positive'});
+    % Update by Satyam: restore source's fixed depth; retain vector cell allocation.
+    level = 2;
     wavePacket = cell(1,size(EEGdata,1));
     wavePacks = cell(1,size(EEGdata,1));
     waveData = cell(1,2^level);

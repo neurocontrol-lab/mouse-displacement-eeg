@@ -22,7 +22,7 @@ for w=1:size(epoch,1)/windowSamples
     else
         try
             % Suppress the library's verbose console output.
-            evalc('[y, details]=FORCe(x,cfg.fs,chanlocs,0,cfg.forceLevel);');
+            evalc('[y, details]=FORCe(x,cfg.fs,chanlocs,0);');
             status=string(details.status);
             if ~isequal(size(y),size(x)) || ~isreal(y) || any(~isfinite(y),'all')
                 status="invalid_output";

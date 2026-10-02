@@ -8,7 +8,7 @@ The analysis begins at the participant level. A difference between condition ave
 
 The repository contains recordings for 25 available participants. EEG and mouse-task logs are organized by participant and by `pre`, `post`, and `retest` sessions. The pipeline selects task runs and excludes training and stimulation recordings. It uses 500 Hz EEG from eight channels: P3, PO3, PO7, CP5, CP1, Cz, FCz, and FC1.
 
-Trial labels are derived by matching EEG event markers with mouse logs. Label 1 denotes a non-displaced target; label 2 denotes a displaced target. Incomplete or conflicting event sequences are retained in the metadata with an invalid-trial reason rather than assigned a condition. The current FORCe analysis is a pilot on `spe30` and `mle01`, covering all 29 of their task runs that contain valid trials. It is not yet a 25-participant result.
+Trial labels are derived by matching EEG event markers with mouse logs. Label 1 denotes a non-displaced target; label 2 denotes a displaced target. Incomplete or conflicting event sequences are retained in the metadata with an invalid-trial reason rather than assigned a condition. The current FORCe baseline has processed all 25 participants: 357 eligible task recordings, with 30,895 retained trials. All 75 sessions and 25 participant overviews are described in the [individual visual review](output/pipeline_v2_3_all/VISUAL_REVIEW.md). The original two-participant pilot is retained separately.
 
 ## Analysis
 
@@ -17,7 +17,7 @@ The MATLAB pipeline has four stages:
 1. **Parse events:** align EEG markers and mouse logs and save trial-level metadata.
 2. **Preprocess epochs:** high-pass the continuous EEG at 1 Hz, extract movement-locked [-1, 1) second epochs, apply FORCe artifact cleaning, low-pass at 20 Hz, baseline over [-0.2, 0) seconds, and reject epochs exceeding 100 µV. Invalid or rejected epoch arrays remain NaN, with their reasons preserved.
 3. **Plot participant responses:** generate displaced and non-displaced averages, their difference, and exploratory trial-level significance results for each participant and session.
-4. **Estimate group averages:** calculate participant-weighted group summaries when an appropriate set of participants has been processed. The current configuration would include only the two pilot participants.
+4. **Estimate group averages:** calculate participant-weighted group summaries when an appropriate set of participants has been processed. This stage was not run for the participant-first visual review.
 
 The default FORCe setting uses two wavelet decomposition levels and cleans each two-second epoch in one window. The supplied MATLAB implementation has documented coding corrections; scientific questions about some thresholds and spectral criteria remain unresolved. Processing choices and pilot comparisons are described in the [pipeline documentation](Code/README_pipeline.md) and [FORCe fix notes](Code/FORCe/PATCHES.md).
 
@@ -50,7 +50,12 @@ All versions retain their own processed outputs. Stage 1 event parsing is shared
 
 The concise [analysis changelog](CHANGELOG.md) records the methodological changes and links to their detailed reports.
 
-## Reproducing the current pilot
+On 2 October 2026, the spike-statistic denominator change and configurable
+decomposition depth were reverted; depth is now fixed at two. See the
+[reversion notes](Code/FORCe/PATCHES.md). Existing v2.3 outputs describe the
+earlier implementation and have not been regenerated with these reversions.
+
+## Reproducing the current participant analysis
 
 The project uses MATLAB with Wavelet Toolbox, Signal Processing Toolbox, and Statistics and Machine Learning Toolbox. The supplied MEX binaries target Windows x64. From the repository root:
 
@@ -58,9 +63,11 @@ The project uses MATLAB with Wavelet Toolbox, Signal Processing Toolbox, and Sta
 addpath('Code')
 stage02_preprocess_epochs
 stage03_plot_errp
+addpath('Code/helpers')
+plot_participant_overviews
 ```
 
-Stage 2 reuses the parsed event manifest and runs stage 1 if that manifest is absent. It recomputes the selected runs in the configured output folder. To regenerate the comparison figures after stages 2 and 3:
+Stage 2 reuses the parsed event manifest and runs stage 1 if that manifest is absent. It recomputes the selected runs in the configured output folder. Set `cfg.pilot=true` for the original spe30/mle01 scope. To regenerate the pilot comparison figures after stages 2 and 3:
 
 ```matlab
 addpath('Code/helpers')

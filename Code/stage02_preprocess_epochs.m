@@ -4,7 +4,7 @@
 % FORCe, low-pass, baseline and reject. The before setting retains the earlier
 % bandpass-first pipeline. Preserve all trial rows and rejection reasons.
 % Outputs: final trials x time x channels epochs and trial rejection reasons.
-% Rejected rows remain NaN. Default v2 includes all eligible spe30/mle01 runs;
+% Rejected rows remain NaN. Default v2 includes all eligible participant runs;
 % existing v1 outputs remain read-only. Rerunning recomputes v2 outputs.
 
 % Stage 2a: setup
@@ -31,7 +31,10 @@ for subject=string(cfg.subjects)
         selected(rows(1:min(numel(rows),cfg.maxRunsPerSubjectSession)))=true;
     end
 end
-manifest=manifest(selected,:); assert(~isempty(manifest),'No eligible pilot runs');
+manifest=manifest(selected,:);
+% Resolve parsed files in the current project after a folder move.
+manifest.parsedPath=string(fullfile(cfg.parsedOutput,manifest.run+".mat"));
+assert(~isempty(manifest),'No eligible runs');
 writetable(manifest,fullfile(cfg.output,'selected_manifest.csv'));
 assert(ismember(cfg.filterPlacement,{'before','split'}),'Unknown filter placement');
 if strcmp(cfg.filterPlacement,'split')
@@ -48,6 +51,8 @@ for f=1:height(manifest)
     runStarted=tic;
     p=load(manifest.parsedPath(f)); trials=p.trials; info=p.info;
     destination=fullfile(out,manifest.run(f)+".mat");
+    % Raw paths in saved metadata may refer to the previous project folder.
+    info.rawPath=fullfile(cfg.root,'data',char(manifest.subject(f)),char(manifest.run(f)+".easy"));
     raw=readmatrix(info.rawPath,'FileType','text'); eeg=raw(:,1:8)/1000;
     % Stage 2c: filter valid segments and guard gaps
     bad=raw(:,12)==255 | any(~isfinite(eeg),2);

@@ -1,5 +1,6 @@
-function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc, level )
-    % Update by Satyam: optional diagnostics output; one-output calls remain valid.
+function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc )
+    % Update by Satyam: optional cleaning diagnostics; fixed source depth of two.
+    % Existing four-input, one-output calls remain valid.
     %
     % FORCe -- changed name for confilct with another toolbox 
     %
@@ -28,7 +29,6 @@ function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc, level )
     % Output:
     %
     %   cleanEEG    - cleaned EEG with the same dimensions as EEGdata.
-    %   level       - optional wavelet-packet depth; default 2.
     %
     % Author: Ian Daly, 2013
     %
@@ -65,8 +65,8 @@ function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc, level )
     % Update by Satyam: initialize diagnostics without changing cleaning decisions.
     diagnostics = struct('status','ok','removedChannels',[], ...
         'removedICs',[],'allICsRemoved',false);
-    % Update by Satyam: explicit depth; unsupported accelerometer mode fails clearly.
-    if nargin < 5, level = 2; end
+    % Update by Satyam: restore fixed depth; unsupported accelerometer mode fails clearly.
+    level = 2;
     assert(useAcc == 0,'FORCe:UnsupportedAccelerometer','Accelerometer mode is unsupported');
     N = size( EEGdata,1 );
     M = size( EEGdata,2 );
@@ -121,7 +121,7 @@ function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc, level )
     chData = estimateRemovedChs( EEGdata,remCh,chanLocs );
     
     % Estimate wavelet coefficients and ICs via Smlet wavelets and SOBI.
-    [ICs mixMat wavePacks] = applyOnlineICAmethodWaveNowsobi( chData, level );
+    [ICs mixMat wavePacks] = applyOnlineICAmethodWaveNowsobi( chData );
     wavePacksOut = wavePacks;
     tNodes = get( wavePacks{1},'tN' );
     
@@ -248,9 +248,10 @@ function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc, level )
                      % Calculate coefficients of variation for each spike zone.
                      coefVar = zeros(1,length(spikePos));
                      for i = 1:length( spikePos ),
-                         % Update by Satyam: use the current IC and the same channel-mean trace in both terms.
+                         % Update by Satyam: retain current-IC indexing, restore the source's
+                         % single-channel denominator pending scientific clarification.
                          zone = abs(mean(projIC{iNo}(:,spikePos(i)-1:spikePos(i)+1),1));
-                         coefVar(i) = std(zone) / mean(zone);
+                         coefVar(i) = std(zone) / mean(abs(mean(projIC{iNo}(iNo,spikePos(i)-1:spikePos(i)+1))));
                          assert(isfinite(coefVar(i)),'FORCe:InvalidFeature','Undefined IC spike statistic');
                      end
                      % Apply soft thresholding to any spike zone for which the

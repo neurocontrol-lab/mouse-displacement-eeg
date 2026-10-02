@@ -27,14 +27,14 @@ cfg.output = fullfile(cfg.root,'output',['pipeline_' cfg.version]);
 cfg.baselineOutput = fullfile(cfg.root,'output','pipeline_v1');
 cfg.parsedOutput = fullfile(cfg.baselineOutput,'parsed'); % shared event metadata for v1/v2
 cfg.cleaningMethod = 'none';
-cfg.forceLevel = 2; % explicit default; deeper decomposition is not yet validated
 cfg.forceWindowSeconds = 2; % compare one full epoch with the previous 1 s windows
 cfg.comparisonOutput = cfg.baselineOutput;
 cfg.comparisonLabel = 'v1';
 cfg.analysisLabel = cfg.version;
 cfg.maxRunsPerSubjectSession = Inf;
+cfg.pilot = false; % true selects the original two-participant pilot
 if strcmp(cfg.version,'v2')
-    cfg.subjects = {'spe30','mle01'};
+    if cfg.pilot, cfg.subjects = {'spe30','mle01'}; end
     cfg.cleaningMethod = 'FORCe';
     cfg.analysisLabel = sprintf('FORCe %g s',cfg.forceWindowSeconds);
     if cfg.forceWindowSeconds==2
@@ -49,6 +49,7 @@ if strcmp(cfg.version,'v2')
         cfg.comparisonLabel = 'Previous FORCe';
         cfg.analysisLabel = 'FORCe coding fixes (v2.3)';
     end
+    if ~cfg.pilot, cfg.output = [cfg.output '_all']; end
 end
 cfg.forceRoot = fullfile(cfg.root,'Code','FORCe');
 cfg.alpha = 0.05;

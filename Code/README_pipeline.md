@@ -1,14 +1,23 @@
 # MATLAB EEG pipeline
 
-## Current configuration: FORCe v2.3 pilot
+## Current configuration: FORCe v2.3 participant analysis
 
-`config()` selects `output/pipeline_v2_3` and all eligible runs for spe30 and
-mle01 across pre, post and retest sessions. `config('v1')` exposes the historical
+Source revision on 2 October 2026: restored the source's single-channel
+spike-statistic denominator while retaining current-IC indexing, and removed
+configurable decomposition depth in favor of fixed depth two. See
+[reversion notes](FORCe/PATCHES.md). Existing v2.3 outputs precede these
+reversions and were not regenerated; the configured output folder still
+contains historical results. Do not rerun stage 2 into that folder for a
+comparison of this revision; select a separate output folder first.
+
+`config()` selects `output/pipeline_v2_3_all` and all eligible runs for the
+25 available participants across pre, post and retest sessions. The original
+two-participant pilot is retained in `output/pipeline_v2_3`. `config('v1')` exposes the historical
 settings for reference. Stage 2 refuses to write to the v1 root.
 Original recordings, legacy labels and existing `output/pipeline_v1`
-products are retained. Both participants have now been processed across all
-eligible task recordings: 29 of 36 recordings, with seven excluded because
-no trials passed event validation. The current experiment uses continuous 1 Hz high-pass filtering, two-second
+products are retained. All 25 participants have been processed across 357 of
+380 task recordings; 23 contain no event-validated trials. The original pilot
+covered 29 of 36 recordings for spe30 and mle01. The current experiment uses continuous 1 Hz high-pass filtering, two-second
 FORCe cleaning, then per-epoch 20 Hz low-pass filtering. Earlier outputs remain
 in `pipeline_v2` (one-second windows) and `pipeline_v2_1` (two-second windows,
 bandpass before cleaning), with the previous split-filter run in
@@ -177,7 +186,7 @@ also includes legacy toolboxes and can introduce conflicting function names.
 
 ## Minor update: FORCe coding fixes (v2.3)
 
-The current configuration uses `output/pipeline_v2_3`, retaining the previous
+The two-participant pilot uses `output/pipeline_v2_3`, retaining the previous
 split-filter pilot in `output/pipeline_v2_2` as the comparison.
 Both use spe30 and mle01, all eligible runs, two-second windows, two wavelet
 levels and the same filters/baseline. Stage 1 still reuses the v1 manifest.
@@ -197,3 +206,18 @@ common-trial condition-average correlation 0.99898.
 | `pipeline_v2_1` | Two-second FORCe windows |
 | `pipeline_v2_2` | High-pass -> FORCe -> low-pass |
 | `pipeline_v2_3` | FORCe coding corrections and refactors |
+
+## Full participant analysis
+
+`cfg.pilot=false` selects all 25 available participants and saves the v2.3
+baseline in `output/pipeline_v2_3_all`. Set it to `true` to restore the
+original two-participant scope and output folder. Stage 2 resolves saved
+parsed and raw recording paths from the current project root. The existing
+stage-1 manifest is reused; historical parsed files are preserved.
+
+Run stages 2 and 3, then `plot_participant_overviews` from `helpers/` for
+Cz/FCz views across pre, post and retest. These plots support exploratory
+response inspection; they do not establish classifier performance.
+
+[Completed individual visual review](../output/pipeline_v2_3_all/VISUAL_REVIEW.md):
+30,895 retained trials, 75 session plots and 25 Cz/FCz participant overviews.
