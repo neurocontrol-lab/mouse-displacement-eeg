@@ -1,0 +1,3 @@
+subject,session,run,trial,label,row,condition,channel,channelIndex,boundary,jumpUV,normalisedJump,percentile,excess95,scaleUV
+spe30,retest,20180719120700_spe30_retest_run4_EEG,73,1,73,2,Cz,6,0.5,3.91160180797117,0.141507155396201,100,2.65190121452301,27.6424312044096
+mle01,retest,20181113090152_mle01_retest_run1_EEG,37,1,37,2,Cz,6,0.5,15.6063687439685,0.551906155096142,100,10.0303227112248,28.2772145225484

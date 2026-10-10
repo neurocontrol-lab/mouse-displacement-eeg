@@ -1,0 +1,12 @@
+# Intermediate pilot data and rendering/build products
+/processed/
+/qa/
+/tmp/
+*.log
+*.aux
+*.out
+/compile_stdout.txt
+/residual_envelope.mat
+/boundary_trials.csv
+/residual_trials.csv
+/FORCe_boundary_research_note.pdf
