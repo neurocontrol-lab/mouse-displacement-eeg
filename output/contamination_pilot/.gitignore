@@ -1,0 +1,16 @@
+# Intermediate analysis and LaTeX build files
+*.mat
+*.aux
+*.log
+*.out
+*.pdf
+finish_review.m
+
+# PDF rendering and layout checks
+qa-*.png
+contact_*.png
+finalqa-*.png
+finalreview-*.png
+layoutqa-*.png
+revisedqa-*.png
+revised_contact_*.png
