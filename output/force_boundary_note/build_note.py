@@ -174,5 +174,7 @@ text+=r"""\bottomrule\end{longtable}\normalsize
 \bibitem{widmann} Widmann A, Schr\"oger E. Filter Effects and Filter Artifacts in the Analysis of Electrophysiological Data. \emph{Frontiers in Psychology}. 2012;3:233. \href{https://doi.org/10.3389/fpsyg.2012.00233}{doi:10.3389/fpsyg.2012.00233}.
 \end{thebibliography}\end{document}
 """
-(root/"FORCe_boundary_research_note.tex").write_text(text,encoding="utf-8")
+# The reviewed LaTeX source is authoritative; preserve manual manuscript revisions.
+if not (root/"FORCe_boundary_research_note.tex").exists():
+ (root/"FORCe_boundary_research_note.tex").write_text(text,encoding="utf-8")
 print("LaTeX research note source written")

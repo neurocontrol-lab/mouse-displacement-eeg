@@ -7,7 +7,7 @@ loc=load(fullfile(code,'resources','chanlocs8.mat'));loc=loc.chanlocs8;
 M=readtable(fullfile(cfg.parsedOutput,'manifest.csv'),'TextType','string');M=M(ismember(M.subject,string(cfg.subjects)) & M.validTrials>0,:);M=sortrows(M,{'subject','session','recordingDate','runNumber','run'});writetable(M,fullfile(out,'selected_manifest.csv'));
 [bh,ah]=butter(4,1/250,'high');[bl,al]=butter(4,20/250,'low');[bb,ab]=butter(4,[1 20]/250);
 time=(-750:749)/500;crop=time>=-1 & time<1;tc=time(crop);base=tc>=-.2 & tc<0;
-names={'BP_control','BP_FORCe','Split_FORCe','Split_control'};processed=fullfile(out,'processed');if ~isfolder(processed),mkdir(processed);end
+names={'BP_control','BP_FORCe','Split_control','Split_FORCe'};processed=fullfile(out,'processed');if ~isfolder(processed),mkdir(processed);end
 for f=1:height(M)
  destination=fullfile(processed,M.run(f)+'.mat');if isfile(destination),fprintf('Already saved %s\n',M.run(f));continue;end
  p=load(fullfile(cfg.parsedOutput,M.run(f)+'.mat'));trials=p.trials;raw=readmatrix(fullfile(root,'data',M.subject(f),M.run(f)+'.easy'),'FileType','text');eeg=raw(:,1:8)/1000;
@@ -24,9 +24,9 @@ for f=1:height(M)
  ix=trials.movementSample(k)+(-750:749);if min(ix)<1 || max(ix)>size(raw,1),reason(k,:)="out_of_bounds";continue;end
  if any(quality(ix)),reason(k,:)="gap_or_filter_guard";continue;end
  eligible(k)=true;H=hp(ix,:);B=bp(ix,:);L=hpLp(ix,:);rejoined=[H(1:500,:);H(501:1000,:);H(1001:1500,:)];assert(isequal(rejoined,H));
- Y=cell(1,4);Y{1}=B;Y{4}=filtfilt(bl,al,rejoined);[Y{2},s2]=clean3(B,cfg,loc);[S,s3]=clean3(H,cfg,loc);reason(k,:)=["ok",s2,s3,"ok"];
+ Y=cell(1,4);Y{1}=B;Y{3}=filtfilt(bl,al,rejoined);[Y{2},s2]=clean3(B,cfg,loc);[S,s3]=clean3(H,cfg,loc);reason(k,:)=["ok",s2,"ok",s3];
  if s2=="ok",preBP(k,:,:)=Y{2};end
- if s3=="ok",preSplit(k,:,:)=S;Y{3}=filtfilt(bl,al,S);end
+ if s3=="ok",preSplit(k,:,:)=S;Y{4}=filtfilt(bl,al,S);end
  continuousSplit(k,:,:)=L(crop,:)-mean(L(crop & time>=-.2 & time<0,:),1);
  for v=1:4
  if isempty(Y{v}),continue;end

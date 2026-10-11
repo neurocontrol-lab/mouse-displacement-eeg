@@ -1,13 +1,13 @@
 root='C:/Users/satya/OneDrive/Documents/[S. Perdikis] ErrPo EEG of Mouse Movements/ErrpAnalysis';
 out=fullfile(root,'output','force_boundary_note');M=readtable(fullfile(out,'selected_manifest.csv'),'TextType','string');
 figdir=fullfile(out,'figures');if ~isfolder(figdir),mkdir(figdir);end
-labels=["BP control","BP FORCe","Split FORCe","Split control","Split before LP"];
+labels=["BP control","BP FORCe","Split control","Split FORCe","Split before LP"];
 chanNames=["Cz","FCz","All-eight maximum"];bounds=[-.5 0 .5];P=table();R=table();Ret=table();C=table();E=table();
 PC=cell(150000,15);pr=0;RC=cell(100000,13);rr=0;
 pool=cell(2,3,4);counts=zeros(2,3,2);subjects=["mle01","spe30"];sessions=["pre","post","retest"];
 for f=1:height(M)
  a=load(fullfile(out,'processed',M.run(f)+'.mat'));t=a.tc;common=all(a.accepted,2);ix=find(common);
- Ret=[Ret;table(M.subject(f),M.session(f),M.run(f),height(a.trials),sum(a.eligible),sum(a.accepted(:,1)),sum(a.accepted(:,2)),sum(a.accepted(:,3)),sum(a.accepted(:,4)),sum(common),'VariableNames',{'subject','session','run','trialRows','eligible','BP_control','BP_FORCe','Split_FORCe','Split_control','matchedAll'})];
+ Ret=[Ret;table(M.subject(f),M.session(f),M.run(f),height(a.trials),sum(a.eligible),sum(a.accepted(:,1)),sum(a.accepted(:,2)),sum(a.accepted(:,3)),sum(a.accepted(:,4)),sum(common),'VariableNames',{'subject','session','run','trialRows','eligible','BP_control','BP_FORCe','Split_control','Split_FORCe','matchedAll'})];
  ordinary=true(999,1);dt=t(2:end)';for boundary=bounds,ordinary=ordinary & abs(dt-boundary)>.05;end
  s=find(subjects==M.subject(f));ss=find(sessions==M.session(f));
  for k=ix'
@@ -23,8 +23,8 @@ for f=1:height(M)
    end
   end
   % Common-trial signal-change residuals, after identical crop and baseline.
-  xr=squeeze(a.X(k,:,:,4));continuous=squeeze(a.continuousSplit(k,:,:));
-  residuals={xr-continuous,squeeze(a.X(k,:,:,3))-xr,squeeze(a.X(k,:,:,2))-ref};
+  xr=squeeze(a.X(k,:,:,3));continuous=squeeze(a.continuousSplit(k,:,:));
+  residuals={xr-continuous,squeeze(a.X(k,:,:,4))-xr,squeeze(a.X(k,:,:,2))-ref};
   windows={true(size(t)),t>=-1 & t<-.8 | t>=.8,t>=.2 & t<.9,abs(t+.5)<=.05,abs(t-.5)<=.05};winNames=["Full","Edges","Response","Join_minus","Join_plus"];
   for test=1:3
    for ch=[6 7]
@@ -68,7 +68,7 @@ for subject=["Pooled",subjects]
  end
 end
 writetable(B,fullfile(out,'boundary_summary.csv'));
-D=table();pairs=[2 1;3 4;2 3];
+D=table();pairs=[2 1;4 3;2 4];
 for subject=["Pooled",subjects]
 for channel=["Cz","FCz"]
 for boundary=[-.5 .5]
@@ -91,7 +91,7 @@ RS=table();for subject=["Pooled",subjects]
  end;end;end
 end;writetable(RS,fullfile(out,'residual_summary.csv'));
 set(groot,'defaultAxesFontSize',14,'defaultTextFontSize',14);
-colors=[.25 .25 .25;.85 .2 .2;.1 .3 .8;.1 .6 .3;.5 .3 .7];
+colors=[.25 .25 .25;.85 .2 .2;.1 .6 .3;.1 .3 .8;.5 .3 .7];
 fig=figure('Visible','off','Position',[10 10 1200 780]);tiledlayout(2,2);
 for c=1:2
  for bi=[1 3]
@@ -120,8 +120,8 @@ for j=1:2
 a=load(fullfile(out,'processed',selected.run(j)+'.mat'));k=selected.row(j);
 for ch=[6 7]
 ref=squeeze(a.X(k,:,ch,1));scale=quantile(ref,.95)-quantile(ref,.05);
-old=squeeze(a.X(k,:,ch,2))-ref;proposed=squeeze(a.X(k,:,ch,3))-squeeze(a.X(k,:,ch,4));
-nexttile;plot(a.tc,100*old/scale,'Color',colors(2,:),'LineWidth',1.3);hold on;plot(a.tc,100*proposed/scale,'Color',colors(3,:),'LineWidth',1.3);
+old=squeeze(a.X(k,:,ch,2))-ref;proposed=squeeze(a.X(k,:,ch,4))-squeeze(a.X(k,:,ch,3));
+nexttile;plot(a.tc,100*old/scale,'Color',colors(2,:),'LineWidth',1.3);hold on;plot(a.tc,100*proposed/scale,'Color',colors(4,:),'LineWidth',1.3);
 xline(-.5,'k:','HandleVisibility','off');xline(.5,'k:','HandleVisibility','off');grid on;xlabel('Time (s)');ylabel('Residual / reference range (%)');title(exNames(j)+" / "+string(a.cfg.channels{ch}));legend('BP FORCe minus BP control','Split FORCe minus split control','Location','best');
 end
 end
@@ -131,13 +131,13 @@ exportgraphics(fig,fullfile(figdir,'actual_cleaning_residuals.png'),'Resolution'
 Q=[];for f=1:height(M)
  a=load(fullfile(out,'processed',M.run(f)+'.mat'));ok=all(a.accepted,2);
  for k=find(ok)'
- ref=squeeze(a.X(k,:,:,1));sc=quantile(ref,.95)-quantile(ref,.05);e=squeeze(a.X(k,:,:,4))-squeeze(a.continuousSplit(k,:,:));Q=cat(3,Q,e(:,[6 7])./sc([6 7]));
+ ref=squeeze(a.X(k,:,:,1));sc=quantile(ref,.95)-quantile(ref,.05);e=squeeze(a.X(k,:,:,3))-squeeze(a.continuousSplit(k,:,:));Q=cat(3,Q,e(:,[6 7])./sc([6 7]));
  end
 end
 [bl,al]=butter(4,20/250,'low');tf=(-750:749)'/500;full=(-10000:9999)'/500;synthetic=table();
 fig=figure('Visible','off','Position',[10 10 1200 850]);tiledlayout(2,2);
 for ch=1:2
- nexttile;hold on;plot(t,100*median(abs(Q(:,ch,:)),3),'b','LineWidth',1.5);plot(t,100*quantile(abs(Q(:,ch,:)),.95,3),'r');xline(-1,'k:');xline(1,'k:');title(sprintf('%s / epoch versus continuous LP',chanNames(ch)));xlabel('Time (s)');ylabel('Absolute residual / reference range (%)');legend('Median across trials','95th percentile across trials');grid on;
+ nexttile;hold on;plot(t,100*median(abs(Q(:,ch,:)),3),'b','LineWidth',1.5);plot(t,100*quantile(abs(Q(:,ch,:)),.95,3),'r');xline(-1,'k:');xline(1,'k:');title(char(chanNames(ch)));xlabel('Time (s)');ylabel('Absolute residual / reference range (%)');legend('Median across trials','95th percentile across trials');grid on;
 end
 for boundary=[-.5 .5]
  nexttile;hold on;
