@@ -1,5 +1,5 @@
 % DEC_03: Graz-style feature comparison.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#dec_03.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));

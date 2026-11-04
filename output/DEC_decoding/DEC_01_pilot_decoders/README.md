@@ -84,7 +84,6 @@ Below are unweighted descriptive means across the six participant/session result
 - `analysis_settings.json` and `requirements.txt`: model settings, checks and package versions.
 - `figures/classification_scores.png`: all session scores; `heldout_run_variability.png`: individual folds; `class_specific_scores.png`: class-specific recalls. Vector PDF copies are also saved for reuse in a later research note.
 
-From the repository root, run the export with MATLAB, then run the two Python scripts in the recorded environment. The local `.venv`, exported MAT data and temporary files are ignored. Existing pipeline outputs and earlier research notes are preserved.
 
 Method references: [scikit-learn LDA](https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html), [leave-one-group-out](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.LeaveOneGroupOut.html).
 
@@ -98,4 +97,6 @@ The [Graz-style decision-tree comparison](decision_tree/README.md) applies the s
 The [expanded LDA comparison](channel_sets/README.md) uses Central, Centroparietal, Posterior and Full channel sets, with the same three temporal representations, four processing conditions and held-out runs. Run the extended `export_central_features.m`, then `analyse_channel_sets.py`. Original Central results are reused; the other three channel groups are fitted with the same shared LDA settings.
 
 
-[Current workflow and scripts](../../../Code/analyses/DEC_decoding/DEC_01_pilot_decoders/README.md)
+[Current workflow and scripts](../../../Code/analyses/DEC_decoding/README.md#dec_01)
+
+[Methods, settings and execution order](../../../Code/analyses/DEC_decoding/README.md#dec_01)

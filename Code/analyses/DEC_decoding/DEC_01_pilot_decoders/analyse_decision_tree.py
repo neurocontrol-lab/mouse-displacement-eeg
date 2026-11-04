@@ -472,9 +472,7 @@ def summarise(sessions, folds):
         "",
         "## Reproduction and files",
         "",
-        "Run `.venv/Scripts/python.exe "
-        "Code/analyses/DEC_decoding/DEC_01_pilot_decoders/analyse_decision_tree.py` from the repository root. "
-        "It uses the existing feature export, metadata, saved LDA predictions and environment.",
+        "[Methods, settings and execution order](../../../../Code/analyses/DEC_decoding/README.md#dec_01).",
         "",
         "- `session_metrics.csv`: both decoders, overall/class-wise accuracy, BA, AUC and run means/SDs.",
         "- `fold_metrics.csv`: identical held-out-run comparisons and tree training complexity.",

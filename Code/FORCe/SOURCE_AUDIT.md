@@ -3,7 +3,7 @@
 Reviewed 2 October 2026. Scope: pause downstream feature/classifier work and
 assess how to retain the supplied implementation while using two-second EEG
 epochs. No production source, configuration or saved analysis was changed.
-The current `pipeline_v2_3_all` includes the two pilot participants as well as
+The current `PRE_06` includes the two pilot participants as well as
 the other available participants.
 
 ## Main finding
@@ -72,7 +72,7 @@ about a boundary artifact, but does not validate physiological recovery.
 
 ## Recommended architecture and decision
 
-1. Preserve `pipeline_v2_3_all` as the historical locally corrected result.
+1. Preserve `PRE_06` as the historical locally corrected result.
    Do not relabel it as an untouched-source result or overwrite it.
 2. Retain an immutable copy of the supplied library with a SHA-256 manifest,
    license/author notices and provenance. Isolate its MATLAB path from the

@@ -16,7 +16,7 @@ function [cleanEEG, diagnostics] = FORCe( EEGdata, Fs, chanLocs, useAcc )
     % Inputs:
     %
     %   EEGdata     - M x N matrix of M channels by N samples. Note, the
-    %           window length is supplied by the caller (pipeline: 2 s).
+    %           window length is supplied by the caller; see experiment settings.
     %   accSigs     - Signals from the accelerometer (currently not fully
     %           tests; the acceleromter didn't work when attempting to
     %           acquire test signals).

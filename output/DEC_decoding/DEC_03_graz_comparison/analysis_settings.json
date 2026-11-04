@@ -13,7 +13,7 @@
     "random_state": 20261027
   },
   "selection": "Training-fold squared Pearson correlation; top 100, stable ties, constant features scored zero",
-  "legacy_reference": "Code/legacy/utilities/rsquared.m",
+  "legacy_reference": "Code/reference/rsquared.m",
   "pearson_check_max_error": 8.326672684688674e-16,
   "raw_epoch_interval": "[-1,+1) s, 1000 samples/channel, 8000 candidates",
   "raw_response_interval": "[0.2,0.9) s, 350 samples/channel, 2800 candidates",

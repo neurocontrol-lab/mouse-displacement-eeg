@@ -1,5 +1,5 @@
 % PRE_09: Retention and matched ERP comparison.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#pre_09.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));

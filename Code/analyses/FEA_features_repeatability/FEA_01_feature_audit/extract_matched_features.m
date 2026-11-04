@@ -1,5 +1,5 @@
 % FEA_01: Feature audit and repeatability.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#fea_01.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
@@ -81,14 +81,14 @@ for s=1:2
             n2=N(s,ss,2);
             mu1=sums(:,:,1,c,s,ss)/n1;
             mu2=sums(:,:,2,c,s,ss)/n2;
-            v1=max((squares(:,:,1,c,s,ss)-n1*mu1.^2)/(n1-1),0);
-            v2=max((squares(:,:,2,c,s,ss)-n2*mu2.^2)/(n2-1),0);
-            pooled=sqrt(((n1-1)*v1+(n2-1)*v2)/(n1+n2-2));
+            varianceND=max((squares(:,:,1,c,s,ss)-n1*mu1.^2)/(n1-1),0);
+            varianceD=max((squares(:,:,2,c,s,ss)-n2*mu2.^2)/(n2-1),0);
+            pooled=sqrt(((n1-1)*varianceND+(n2-1)*varianceD)/(n1+n2-2));
             assert(all(pooled>1e-12,'all'));
             for ch=1:8
                 for ix=601:950
                     nr=nr+1;
-                    rows(nr,:)={subjects(s),sessions(ss),c,channels(ch),t(ix),n1,n2,mu1(ix,ch),mu2(ix,ch),sqrt(v1(ix,ch)),sqrt(v2(ix,ch)),mu2(ix,ch)-mu1(ix,ch),(mu2(ix,ch)-mu1(ix,ch))/pooled(ix,ch),pooled(ix,ch)};
+                    rows(nr,:)={subjects(s),sessions(ss),c,channels(ch),t(ix),n1,n2,mu1(ix,ch),mu2(ix,ch),sqrt(varianceND(ix,ch)),sqrt(varianceD(ix,ch)),mu2(ix,ch)-mu1(ix,ch),(mu2(ix,ch)-mu1(ix,ch))/pooled(ix,ch),pooled(ix,ch)};
                 end;
             end
         end;

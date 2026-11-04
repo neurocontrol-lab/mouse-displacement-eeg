@@ -1,5 +1,5 @@
 % FEA_01: Feature audit and repeatability.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#fea_01.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
@@ -29,9 +29,9 @@ for s=1:2
             n2=A.N(s,ss,2);
             m1=A.sums(:,:,1,c,s,ss)/n1;
             m2=A.sums(:,:,2,c,s,ss)/n2;
-            v1=max((A.squares(:,:,1,c,s,ss)-n1*m1.^2)/(n1-1),0);
-            v2=max((A.squares(:,:,2,c,s,ss)-n2*m2.^2)/(n2-1),0);
-            sp=sqrt(((n1-1)*v1+(n2-1)*v2)/(n1+n2-2));
+            varianceND=max((A.squares(:,:,1,c,s,ss)-n1*m1.^2)/(n1-1),0);
+            varianceD=max((A.squares(:,:,2,c,s,ss)-n2*m2.^2)/(n2-1),0);
+            sp=sqrt(((n1-1)*varianceND+(n2-1)*varianceD)/(n1+n2-2));
             Dtime{s,ss,c}=(m2(mask,:)-m1(mask,:))./sp(mask,:);
             sel=A.I.subject==A.subjects(s)&A.I.session==A.sessions(ss);
             labels=A.I.label(sel);

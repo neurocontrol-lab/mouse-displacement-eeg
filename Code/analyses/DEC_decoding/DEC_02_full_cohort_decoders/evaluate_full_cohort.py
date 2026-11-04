@@ -277,7 +277,7 @@ def main():
         python=sys.version,
         participants=subjects,
         pilots=["mle01", "spe30"],
-        preprocessing="Saved v1 fourth-order continuous 1-20 Hz Butterworth, zero phase; no FORCe; "
+        preprocessing="Saved PRE_01 fourth-order continuous 1-20 Hz Butterworth, zero phase; no FORCe; "
         "baseline [-0.2,0); final two-second peak absolute amplitude <=100 microvolts; "
         "raw gap/finite/edge checks over [-1.5,1.5) with two-second guards",
         feature_interval="[0.2,0.9) s",

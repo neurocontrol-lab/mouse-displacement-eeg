@@ -18,9 +18,10 @@ Key outputs:
 - `repeatability_half_counts.csv`: equal per-class trial count in each independent half.
 - `figures/`: original means/bin means, per-feature maps, repeatability comparisons and cancellation examples.
 
-Reproduction: run `extract_matched_features.m`, `analyse_feature_audit.py`, `plot_feature_audit.m`, `check_repeatability.m`, `summarise_repeatability.py`, `plot_repeatability.m`, then `build_feature_report.py`. Compile the generated TeX twice. FORCe is not rerun. The raw intermediate MAT data and compiler/rendering products are ignored. The PDF is saved in the main output/pdf directory.
 
 These are development-pilot diagnostics, not held-out classification, artifact identification or population significance tests. High shape correlation is not amplitude equivalence; pooled halves mix runs and can agree even when individual runs do not. Run comparisons use fewer averaging trials, so reduced run agreement cannot be attributed solely to drift. Channel averaging occurs only in the overview plots; all classifier features retain individual electrodes.
 
 
-[Current workflow and scripts](../../../Code/analyses/FEA_features_repeatability/FEA_01_feature_audit/README.md)
+[Current workflow and scripts](../../../Code/analyses/FEA_features_repeatability/README.md#fea_01)
+
+[Methods, settings and execution order](../../../Code/analyses/FEA_features_repeatability/README.md#fea_01)

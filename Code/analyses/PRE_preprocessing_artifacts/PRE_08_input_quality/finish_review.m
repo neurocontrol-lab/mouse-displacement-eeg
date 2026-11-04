@@ -1,5 +1,5 @@
 % PRE_08: Input-quality screen.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#pre_08.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));

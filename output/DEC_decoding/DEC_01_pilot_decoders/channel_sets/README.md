@@ -52,7 +52,7 @@ At 100 ms, Full has the highest descriptive mean balanced accuracy. Full is high
 
 ## Reproduction and outputs
 
-Run the extended `export_central_features.m` once in MATLAB, then run `output/DEC_decoding/DEC_01_pilot_decoders/.venv/Scripts/python.exe output/DEC_decoding/DEC_01_pilot_decoders/analyse_channel_sets.py` from the repository root. The original Central and decision-tree results are preserved.
+Run the extended `export_central_features.m` once in MATLAB, then run `output/DEC_decoding/DEC_01_pilot_decoders/python output/DEC_decoding/DEC_01_pilot_decoders/analyse_channel_sets.py` from the repository root. The original Central and decision-tree results are preserved.
 
 - `session_metrics.csv`: all 288 results, including class recalls and confusion counts.
 - `fold_metrics.csv`: all 1,392 identical-run comparison rows.
@@ -62,3 +62,5 @@ Run the extended `export_central_features.m` once in MATLAB, then run `output/DE
 - `analysis_settings.json`: exact groups, inherited model settings and trial-selection protocol.
 - `primary_channel_comparison.png`: all primary-condition scores.
 - `all_conditions_100ms.png`: all processing conditions at 100 ms.
+
+[Methods, settings and execution order](../../../../Code/analyses/DEC_decoding/README.md#dec_01)

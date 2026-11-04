@@ -58,7 +58,7 @@ The later waveform shapes are broadly similar, but amplitude differences remain.
 - [Example onset comparison: spe30 pre](comparison/spe30_pre_onset.png).
 - [Example full waveform comparison: mle01 retest](comparison/mle01_retest_common.png).
 
-Two-second results are solid; one-second results are dashed. All 29 processed MAT files and six participant/session plots are saved under this output directory. The original `pipeline_v1` and `pipeline_v2` results were not overwritten.
+Two-second results are solid; one-second results are dashed. All 29 processed MAT files and six participant/session plots are saved under this output directory. The original `PRE_01` and `PRE_02` results were not overwritten.
 
 ## Suggested methods wording
 

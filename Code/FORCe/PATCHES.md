@@ -57,7 +57,7 @@ The optional adapter check covers one real epoch and invalid-input handling.
 ## Reversions — 2 October 2026
 
 - **Spike-statistic denominator:** reverted the channel-mean denominator
-  introduced in v2.3 to the source's single-channel expression:
+  introduced in PRE_05 to the source's single-channel expression:
   `mean(abs(mean(projIC{iNo}(iNo,spikePos(i)-1:spikePos(i)+1))))`.
   The numerator remains the standard deviation of the absolute channel-mean
   trace. The current-IC indexing correction (`projIC{iNo}`) and finite-feature
@@ -70,7 +70,7 @@ The optional adapter check covers one real epoch and invalid-input handling.
   again calls the four-input API. Vector cell allocation and explicit
   approximation-node identification remain.
 
-Historical v2.3 and `pipeline_v2_3_all` outputs were not regenerated. Their
+Historical PRE_05 and `PRE_06` outputs were not regenerated. Their
 saved configurations and comparisons describe the implementation before
 these reversions. The denominator reversion can change cleaning decisions;
 those historical results must not be presented as validation of this revision.

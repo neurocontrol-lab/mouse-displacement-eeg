@@ -1,8 +1,8 @@
-# Individual participant visual review: FORCe v2.3
+# Individual participant visual review: FORCe PRE_05
 
-Processed all 25 available participants using the unchanged v2.3 baseline: continuous 1 Hz high-pass, movement-locked [-1, 1) s epochs, two-level FORCe in one two-second window, 20 Hz low-pass, [-0.2, 0) s baseline correction and 100 microvolt rejection.
+Processed all 25 available participants using the unchanged PRE_05 baseline: continuous 1 Hz high-pass, movement-locked [-1, 1) s epochs, two-level FORCe in one two-second window, 20 Hz low-pass, [-0.2, 0) s baseline correction and 100 microvolt rejection.
 
-All 357 eligible task recordings were processed from 380 recordings in the existing stage-1 manifest. The remaining 23 recordings contain no event-validated trials; see [excluded runs](excluded_runs.csv). No run-count cap was used. Sessions with fewer than five eligible runs reflect event eligibility or available recordings. Historical outputs, including the two-participant v2.3 pilot, are preserved.
+All 357 eligible task recordings were processed from 380 recordings in the existing stage-1 manifest. The remaining 23 recordings contain no event-validated trials; see [excluded runs](excluded_runs.csv). No run-count cap was used. Sessions with fewer than five eligible runs reflect event eligibility or available recordings. Historical outputs, including the two-participant PRE_05 pilot, are preserved.
 
 Retained **30,895 / 35,659 trial rows (86.6%)**: **20,546 non-displaced and 10,349 displaced**. This denominator covers selected recordings; it excludes entire recordings without event-validated trials. Saved 75 eight-channel session plots with condition means, differences and exploratory significance marks, and 25 Cz/FCz overviews across sessions.
 

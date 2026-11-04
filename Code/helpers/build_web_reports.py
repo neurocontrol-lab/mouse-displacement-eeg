@@ -128,7 +128,7 @@ D.tables.forEach((t,i)=>byId('table').add(new Option(t.title,i)));byId('table').
 function drawWaveforms(){if(!D.waves)return;const subject=byId('waveSubject').value,session=byId('waveSession').value,condition=byId('condition').value;const waveNames=['Correct_ND','Error_D','Error_minus_Correct'];const colors=['#1468b3','#ce3838','#222'];let counts=null;byId('waves').replaceChildren();D.channels.forEach(channel=>{const panel=document.createElement('div');panel.className='chart';const title=document.createElement('b');title.textContent=channel+' (µV)';const canvas=document.createElement('canvas');canvas.width=1000;canvas.height=450;canvas.setAttribute('aria-label',`${subject} ${session} ${channel} condition ${condition}`);panel.append(title,canvas);byId('waves').append(panel);const ctx=canvas.getContext('2d'),left=85,right=975,top=20,bottom=385;let extent=1;for(const ss of ['pre','post','retest'])for(const cc of ['1','2','3','4'])for(const wave of waveNames){const d=D.waves[[subject,ss,channel,cc,wave].join('|')];if(d)for(const v of d.values)extent=Math.max(extent,Math.abs(v));}extent*=1.08;const px=t=>left+(t+1)/2*(right-left),py=v=>bottom-(v+extent)/(2*extent)*(bottom-top);ctx.font='22px system-ui';ctx.strokeStyle='#d4dce6';for(const t of [-1,-.5,0,.5,1]){ctx.beginPath();ctx.moveTo(px(t),top);ctx.lineTo(px(t),bottom);ctx.stroke();ctx.fillStyle='#53657a';ctx.fillText(t.toFixed(1),px(t)-15,bottom+30);}ctx.fillText('Time from movement (s)',340,440);for(const v of [-extent,0,extent]){ctx.fillText(v.toFixed(1),5,py(v)+7);}ctx.strokeStyle='#8897a8';ctx.beginPath();ctx.moveTo(left,py(0));ctx.lineTo(right,py(0));ctx.stroke();function trace(cc,dashed){waveNames.forEach((wave,i)=>{const d=D.waves[[subject,session,channel,cc,wave].join('|')];if(!d)return;counts=d;ctx.strokeStyle=colors[i];ctx.lineWidth=dashed?2:3;ctx.setLineDash(dashed?[9,7]:[]);ctx.beginPath();d.values.forEach((v,j)=>{const x=px(-1+j*.002),y=py(v);if(j===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();});}if(byId('overlay').checked&&condition!=='1')trace('1',true);trace(condition,false);});byId('counts').textContent=counts?`${subject} / ${session}: Correct n=${counts.nND}; Error n=${counts.nD}. Matched trials across all four conditions. Blue: Correct; red: Error; black: Error − Correct. Dashed overlay: condition 1.`:'';}
 if(D.waves){byId('waveSection').hidden=false;option(byId('waveSubject'),['mle01','spe30'],false);option(byId('waveSession'),['pre','post','retest'],false);['waveSubject','waveSession','condition','overlay'].forEach(id=>byId(id).onchange=drawWaveforms);drawWaveforms();}
 ['subject','session'].forEach(id=>byId(id).onchange=()=>{renderTable();renderGallery();});renderTable();renderGallery();
-if(location.hostname==='htmlpreview.github.io'){const base='https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/'+D.category+'/report/index.html';document.querySelectorAll('a[href]').forEach(a=>{const u=new URL(a.getAttribute('href'),base);a.href=u.pathname.endsWith('/index.html')?'https://htmlpreview.github.io/?'+u.href:u.href;});}
+if(location.hostname==='htmlpreview.github.io'){const base='https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/'+D.category+'/report/index.html';document.querySelectorAll('a[href]').forEach(a=>{const u=new URL(a.getAttribute('href'),base);a.href=u.pathname.endsWith('/index.html')?'https://htmlpreview.github.io/?'+u.href:(u.pathname.endsWith('/')?u.href.replace('/blob/main/','/tree/main/'):u.href);});}
 """
 
 
@@ -168,10 +168,9 @@ def build(category, spec):
     for eid, e in EXPERIMENTS.items():
         if category not in e["result"]:
             continue
-        source = Path(e["code"]) / "README.md"
-        local = "../../../" + source.as_posix()
+        local = "../../../" + e["workflow"]
         experiments.append(
-            f'<li><b>{eid}</b> · <a href="{local}">workflow and scripts</a> · <a href="../{Path(e["result"]).name}/README.md">results</a></li>'
+            f'<li><b>{eid}</b> · <a href="{local}">workflow and scripts</a> · <a href="../{Path(e["result"]).name}/">results</a></li>'
         )
     related = " · ".join(
         f'<a href="../../{c}/report/index.html">{v["title"]}</a>'

@@ -63,7 +63,7 @@ The unpruned trees had depths 9–14, with training accuracy 1.000–1.000. Thes
 
 ## Reproduction and files
 
-Run `output/DEC_decoding/DEC_01_pilot_decoders/.venv/Scripts/python.exe output/DEC_decoding/DEC_01_pilot_decoders/analyse_decision_tree.py` from the repository root. It uses the existing feature export, metadata, saved LDA predictions and environment.
+
 
 - `session_metrics.csv`: both decoders, overall/class-wise accuracy, BA, AUC and run means/SDs.
 - `fold_metrics.csv`: identical held-out-run comparisons and tree training complexity.
@@ -73,3 +73,5 @@ Run `output/DEC_decoding/DEC_01_pilot_decoders/.venv/Scripts/python.exe output/D
 - `decoder_comparison.png`: session-wise comparison figure.
 
 Sources: [Graz paper](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf), [sklearn DecisionTreeClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html).
+
+[Methods, settings and execution order](../../../../Code/analyses/DEC_decoding/README.md#dec_01)

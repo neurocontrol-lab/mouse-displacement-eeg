@@ -547,7 +547,7 @@ def summarise(sessions, folds):
         "## Reproduction and outputs",
         "",
         "Run the extended `export_central_features.m` once in MATLAB, then run "
-        "`.venv/Scripts/python.exe "
+        "`python "
         "Code/analyses/DEC_decoding/DEC_01_pilot_decoders/analyse_channel_sets.py` from the repository root. "
         "The original Central and decision-tree results are preserved.",
         "",

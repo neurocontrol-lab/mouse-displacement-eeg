@@ -1,9 +1,9 @@
 % DEC_02: Full-cohort decoders.
-% Workflow, execution order and interpretation: README.md in this folder.
+% Workflow, execution order and interpretation: ../README.md#dec_02.
 % Inputs/outputs resolve through the permanent experiment registry.
 % Resolve the repository before reading cached experiment inputs.
 addpath(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
-% Full-cohort no-FORCe features using the saved v1 epochs.
+% Full-cohort no-FORCe features using the saved PRE_01 epochs.
 % Reuse filtering/baselining, check raw quality across [-1.5,1.5), then
 % retain every no-FORCe-accepted trial. No FORCe acceptance restriction.
 root = project_root();
@@ -100,7 +100,7 @@ for f = 1:height(M)
             nr=nr+1;
             F(nr,:) = reshape(mean(reshape(z(601:950,:),50,7,8),1),1,56);
         end
-        % Verify cached v1 signals and acceptance against the saved pilot control.
+        % Verify cached PRE_01 signals and acceptance against the saved pilot control.
         if cohort=="pilot"
             b = load(fullfile(root,'output','PRE_preprocessing_artifacts','PRE_07_boundary_analysis','processed',M.run(f)+'.mat'), ...
             'X','accepted','trials');

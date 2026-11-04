@@ -417,12 +417,7 @@ def build_readme(cohort, participant, paired, statuses, retention):
         "- `figures/validation_participant_scores.png`: participant-wise BA and AUC.",
         "- `figures/validation_session_scores.png`: separate session results for all models.",
         "",
-        "Run `prepare_features.m` in MATLAB, then "
-        "`.venv/Scripts/python.exe "
-        "Code/analyses/DEC_decoding/DEC_02_full_cohort_decoders/evaluate_full_cohort.py` from the repository root. "
-        "The existing classification-pilot environment and recorded package versions "
-        "are reused. Per-recording preparation files and numeric MAT exports are ignored; "
-        "earlier pipeline and pilot outputs remain unchanged.",
+        "[Methods, settings and execution order](../../../Code/analyses/DEC_decoding/README.md#dec_02).",
         "",
         "Reference: [Graz paper](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf).",
         "",

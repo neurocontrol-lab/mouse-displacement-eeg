@@ -1,58 +1,72 @@
 {
   "DEC_01": {
     "result": "output/DEC_decoding/DEC_01_pilot_decoders",
-    "code": "Code/analyses/DEC_decoding/DEC_01_pilot_decoders"
+    "code": "Code/analyses/DEC_decoding/DEC_01_pilot_decoders",
+    "workflow": "Code/analyses/DEC_decoding/README.md#dec_01"
   },
   "DEC_02": {
     "result": "output/DEC_decoding/DEC_02_full_cohort_decoders",
-    "code": "Code/analyses/DEC_decoding/DEC_02_full_cohort_decoders"
+    "code": "Code/analyses/DEC_decoding/DEC_02_full_cohort_decoders",
+    "workflow": "Code/analyses/DEC_decoding/README.md#dec_02"
   },
   "DEC_03": {
     "result": "output/DEC_decoding/DEC_03_graz_comparison",
-    "code": "Code/analyses/DEC_decoding/DEC_03_graz_comparison"
+    "code": "Code/analyses/DEC_decoding/DEC_03_graz_comparison",
+    "workflow": "Code/analyses/DEC_decoding/README.md#dec_03"
   },
   "FEA_01": {
     "result": "output/FEA_features_repeatability/FEA_01_feature_audit",
-    "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit"
+    "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit",
+    "workflow": "Code/analyses/FEA_features_repeatability/README.md#fea_01"
   },
   "PRE_01": {
     "result": "output/PRE_preprocessing_artifacts/PRE_01_no_force_reference",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_01_no_force_reference"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_01"
   },
   "PRE_02": {
     "result": "output/PRE_preprocessing_artifacts/PRE_02_force_1s_windows",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_02_force_1s_windows"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_02"
   },
   "PRE_03": {
     "result": "output/PRE_preprocessing_artifacts/PRE_03_force_2s_windows",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_03_force_2s_windows"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_03"
   },
   "PRE_04": {
     "result": "output/PRE_preprocessing_artifacts/PRE_04_split_filtering",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_04_split_filtering"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_04"
   },
   "PRE_05": {
     "result": "output/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_05"
   },
   "PRE_06": {
     "result": "output/PRE_preprocessing_artifacts/PRE_06_force_full_cohort",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_06_force_full_cohort"
+    "code": "Code/preprocessing",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_06"
   },
   "PRE_07": {
     "result": "output/PRE_preprocessing_artifacts/PRE_07_boundary_analysis",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_07_boundary_analysis"
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_07_boundary_analysis",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_07"
   },
   "PRE_08": {
     "result": "output/PRE_preprocessing_artifacts/PRE_08_input_quality",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_08_input_quality"
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_08_input_quality",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_08"
   },
   "PRE_09": {
     "result": "output/PRE_preprocessing_artifacts/PRE_09_retention_and_erp",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_09_retention_and_erp"
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_09_retention_and_erp",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_09"
   },
   "PRE_10": {
     "result": "output/PRE_preprocessing_artifacts/PRE_10_onset_diagnostics",
-    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_10_onset_diagnostics"
+    "code": "Code/analyses/PRE_preprocessing_artifacts",
+    "workflow": "Code/analyses/PRE_preprocessing_artifacts/README.md#pre_10"
   }
 }

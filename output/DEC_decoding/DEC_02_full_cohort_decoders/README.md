@@ -16,7 +16,7 @@ LDA uses training-fold StandardScaler, solver="lsqr", shrinkage="auto" and equal
 
 ## Preprocessing and data inclusion
 
-Filtering and final two-second epoch values are reused from saved pipeline_v1: continuous fourth-order 1–20 Hz Butterworth filtering with filtfilt, movement alignment, baseline correction over [−0.2,0) s, and rejection above 100 microvolts absolute amplitude across the complete two-second epoch and all eight channels. No FORCe or other reconstructive artifact removal is used. The exporter checks the stored settings.
+Filtering and final two-second epoch values are reused from saved PRE_01: continuous fourth-order 1–20 Hz Butterworth filtering with filtfilt, movement alignment, baseline correction over [−0.2,0) s, and rejection above 100 microvolts absolute amplitude across the complete two-second epoch and all eight channels. No FORCe or other reconstructive artifact removal is used. The exporter checks the stored settings.
 
 Raw loss codes, timestamp gaps and nonfinite EEG are checked over the complete [−1.5,1.5) s interval, with the same two-second valid-segment edge guards as the recent pilot. No labels or exclusions are revised after seeing classification results. All trials passing this no-FORCe pipeline are included; acceptance by any FORCe condition is irrelevant. The full signal and acceptance checks against the saved pilot controls are in `pilot_cache_verification.csv`.
 
@@ -75,7 +75,6 @@ These pilot models are refitted on all accepted no-FORCe trials. Their scores ca
 - `figures/validation_participant_scores.png`: participant-wise BA and AUC.
 - `figures/validation_session_scores.png`: separate session results for all models.
 
-Run `prepare_features.m` in MATLAB, then `output/DEC_decoding/DEC_01_pilot_decoders/.venv/Scripts/python.exe output/DEC_decoding/DEC_02_full_cohort_decoders/analyse_classification.py` from the repository root. The existing classification-pilot environment and recorded package versions are reused. Per-recording preparation files and numeric MAT exports are ignored; earlier pipeline and pilot outputs remain unchanged.
 
 Reference: [Graz paper](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf).
 
@@ -88,4 +87,6 @@ The [matched decision-tree feature comparison](../DEC_03_graz_comparison/README.
 The consolidated [D/ND classification research note](../report/D_ND_classification_research_note.pdf) covers the matched pilot, fixed full-dataset evaluation and Graz-style tree feature comparison. Its editable LaTeX project is in `../classification_note/`.
 
 
-[Current workflow and scripts](../../../Code/analyses/DEC_decoding/DEC_02_full_cohort_decoders/README.md)
+[Current workflow and scripts](../../../Code/analyses/DEC_decoding/README.md#dec_02)
+
+[Methods, settings and execution order](../../../Code/analyses/DEC_decoding/README.md#dec_02)

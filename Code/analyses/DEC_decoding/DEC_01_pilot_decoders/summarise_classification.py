@@ -422,9 +422,7 @@ def main():
         "individual folds; `class_specific_scores.png`: class-specific recalls. Vector PDF copies "
         "are also saved for reuse in a later research note.",
         "",
-        "From the repository root, run the export with MATLAB, then run the two Python scripts in "
-        "the recorded environment. The local `.venv`, exported MAT data and temporary files are ignored. "
-        "Existing pipeline outputs and earlier research notes are preserved.",
+        "[Methods, settings and execution order](../../../Code/analyses/DEC_decoding/README.md#dec_01).",
         "",
         "Method references: [scikit-learn LDA](https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html), "
         "[leave-one-group-out](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.LeaveOneGroupOut.html).",

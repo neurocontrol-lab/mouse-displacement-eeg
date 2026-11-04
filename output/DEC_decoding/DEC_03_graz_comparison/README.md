@@ -17,7 +17,7 @@ The 100 features are 100 **channel/time-point pairs**. They need not represent 1
 | Posterior bins: P3, PO3, PO7 | Same seven bins/channel | 21 |
 | Full montage bins | Same seven bins, all eight channels | 56 |
 
-R-squared is squared Pearson correlation with the binary class label, matching `Code/legacy/utilities/rsquared.m`. Constant features receive zero, consistent with the legacy classifier's undefined-score handling. Feature ranking is recomputed from training trials separately in every fold; the test recording does not influence ranking, means or thresholds. Ties use fixed channel/time order. An independent Pearson calculation checks the vectorised ranking implementation.
+R-squared is squared Pearson correlation with the binary class label, matching `Code/reference/rsquared.m`. Constant features receive zero, consistent with the legacy classifier's undefined-score handling. Feature ranking is recomputed from training trials separately in every fold; the test recording does not influence ranking, means or thresholds. Ties use fixed channel/time order. An independent Pearson calculation checks the vectorised ranking implementation.
 
 All six designs use the exact accepted no-FORCe trial IDs, existing session eligibility decisions and whole-recording holdouts from the full-dataset analysis. All use the same fixed Gini CART settings, no pruning or class weighting and random seed 20261027. There is no tuning. The Full-bin tree predictions are reused exactly; the other five designs are new fits. This isolates the feature-design comparison within a fixed tree/evaluation setup.
 
@@ -66,9 +66,10 @@ The [previous full-dataset LDA results](../DEC_02_full_cohort_decoders/README.md
 - `analysis_settings.json`: exact assumptions, settings and verification.
 - `feature_design_comparison.png`: participant-wise and mean validation scores.
 
-Run `prepare_graz_features.m` in MATLAB, then `output/DEC_decoding/DEC_01_pilot_decoders/.venv/Scripts/python.exe output/DEC_decoding/DEC_02_full_cohort_decoders/analyse_graz_comparison.py` from the repository root. Full-epoch MAT files stay ignored; existing pipeline, LDA and tree outputs are preserved.
 
 Source: [Graz paper, Data Analysis and Evaluation](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf).
 
 
-[Current workflow and scripts](../../../Code/analyses/DEC_decoding/DEC_03_graz_comparison/README.md)
+[Current workflow and scripts](../../../Code/analyses/DEC_decoding/README.md#dec_03)
+
+[Methods, settings and execution order](../../../Code/analyses/DEC_decoding/README.md#dec_03)

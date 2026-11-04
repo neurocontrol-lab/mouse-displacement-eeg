@@ -4,49 +4,49 @@ Movement-aligned EEG analysis of displaced versus non-displaced mouse targets in
 
 ## Start here
 
-- [Experiment registry](EXPERIMENTS.md): questions, dependencies, code and results for every experiment.
-- [Original pipeline](Code/original_pipeline/README_pipeline.md): shared event parsing and the earlier processing stages.
-- Each experiment has its own README under `Code/analyses/`, with script links and execution order.
+Use the [experiment registry](EXPERIMENTS.md) to find an analysis, then its category README for the methods and linked scripts.
 
-## Interactive research reports
+| Category | Analysis workflow | Local interactive report | GitHub HTMLPreview |
+|---|---|---|---|
+| **PRE — Preprocessing and artifact handling** | [Methods and steps](Code/analyses/PRE_preprocessing_artifacts/README.md) | [Open](output/PRE_preprocessing_artifacts/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
+| **FEA — Features and repeatability** | [Methods and steps](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
+| **DEC — Decoding and classification** | [Methods and steps](Code/analyses/DEC_decoding/README.md) | [Open](output/DEC_decoding/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
 
-The reports are standalone HTML files with embedded figures/data and participant/session controls. They can be opened locally without MATLAB, Python or a web server. HTMLPreview links target GitHub `main`; they become available after these files are committed/pushed and require an accessible repository.
+The HTML reports include embedded figures and aggregate data and open directly in a browser. GitHub previews target the `main` branch and become available after the report files are pushed to an accessible repository. Formal PDFs and editable LaTeX are linked from each report.
 
-| Analysis | Local report | GitHub HTMLPreview |
-|---|---|---|
-| Preprocessing and artifact handling | [Open](output/PRE_preprocessing_artifacts/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
-| Features and repeatability | [Open](output/FEA_features_repeatability/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
-| Decoding and classification | [Open](output/DEC_decoding/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
+## Current analysis
 
-## Current working analysis
+Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; DEC_01–03 cover pilot feature/model choices, fixed full-cohort evaluation and Graz-style trees.
 
-No-FORCe continuous 1–20 Hz preprocessing is the primary reference. PRE_09 compares saved artifact-handling alternatives; FEA_01 audits features and repeatability; DEC_01–03 cover pilot selection, full-cohort evaluation and Graz-style trees. The historical original-pipeline default is explicitly PRE_06 (FORCe), and should not be confused with the current primary analysis.
-
-The fixed eight-channel 100 ms shrinkage LDA achieved mean participant-level balanced accuracy 76.3% in the 23 non-pilot participants, versus 70.3% for central LDA. Statistical above-chance inference is pending. See the decoding note for inclusion rules and limitations.
+The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balanced accuracy in the 23 non-pilot participants, compared with 70.3% for central LDA. Permutation significance inference remains pending.
 
 ## Repository layout
 
-- `Code/analyses/<category>/<ID_description>/`: analysis scripts and experiment README.
-- `Code/helpers/`: genuinely shared event/cleaning helpers.
-- `Code/original_pipeline/`: earlier four-stage entry scripts and explicit PRE profiles.
-- `Code/experiments.json`: directory map shared by MATLAB/Python path helpers.
-- `Code/FORCe/`: supplied library, required binaries, corrections and source audit.
-- `output/<category>/<ID_description>/`: saved numerical results and figures.
-- `output/<category>/report/`: current HTML, PDF and editable LaTeX research notes.
-- `data/`: local original recordings and mouse logs (ignored).
-- `tmp/`, `.venv/`: local temporary work and Python environment (ignored).
+| Location | Contents |
+|---|---|
+| `Code/analyses/` | Three category READMEs and experiment-specific scripts. |
+| `Code/preprocessing/` | Shared event parsing, preprocessing and response-plotting stages; explicit PRE configurations. |
+| `Code/helpers/` | Shared analysis functions and the HTML report builder. |
+| `Code/experiments.json` | Experiment directory/workflow map used by MATLAB and Python. |
+| `Code/FORCe/` | Supplied cleaning library, required binaries and implementation notes. |
+| `Code/resources/` | Channel locations used by the analysis. |
+| `Code/reference/` | Numerical source reference for the Graz-style feature ranking. |
+| `Code/tests/` | Focused parser and FORCe adapter checks. |
+| `output/<category>/<experiment>/` | Numerical results, figures and recorded settings. |
+| `output/<category>/report/` | Interactive overview, PDF note and LaTeX source. |
+| `output/legacy/` | Earlier numerical findings and event audits. |
 
-## Reproduction and review
+## Running and reviewing the code
 
-Install Python dependencies with `python -m pip install -r requirements-analysis.txt` in a local environment. MATLAB uses Signal Processing Toolbox and, for FORCe, Wavelet Toolbox and the supplied Windows x64 binaries. Consult each experiment README for the actual script order and cached input requirements. Raw recordings/caches are not bundled with the shareable reports.
+Follow each category README’s workflow tables in order. Shared montage, sample rate and timing conventions are defined in `Code/dataset_config.m`; experiment directory resolution uses `Code/experiments.json`. The shared preprocessing default is the historical PRE_06 FORCe configuration; select a PRE ID explicitly rather than assuming it describes the current no-FORCe analysis.
 
-Each run retains original recording/trial identities. PRE_01 holds the single shared parsed-event and baseline-epoch cache. Historical MAT configurations remain unchanged; scripts remap their input paths. Some historical FORCe implementations were later reverted, so saved results are preserved rather than relabelled as outputs of the current library.
+MATLAB uses Signal Processing Toolbox and, where needed, Statistics and Machine Learning Toolbox. FORCe execution additionally requires Wavelet Toolbox and its supplied Windows x64 binaries. Install Python dependencies using `python -m pip install -r requirements-analysis.txt`. Original recordings must be supplied separately for analyses that read them.
 
-## References
+To rebuild HTML summaries from saved results: `python Code/helpers/build_web_reports.py`. This does not rerun preprocessing or fit models. Original recording/trial identities are retained. Historical FORCe reconstructions are preserved because the implementation changed after some runs.
+
+## Research references
 
 - Amaunam et al. (2024), *EEG correlates of error-related activity during ballistic computer mouse movements*, 9th Graz BCI Conference.
 - Daly et al., [FORCe: Fully Online and Automated Artifact Removal for Brain-Computer Interfacing](https://doi.org/10.1109/TNSRE.2014.2346621).
 
-[Methodological changelog](CHANGELOG.md) · [FORCe patches](Code/FORCe/PATCHES.md) · [FORCe source audit](Code/FORCe/SOURCE_AUDIT.md)
-
-To rebuild all three HTML overviews from saved results: `python Code/helpers/build_web_reports.py`. This does not rerun preprocessing or refit models.
+[FORCe corrections](Code/FORCe/PATCHES.md) · [FORCe source audit](Code/FORCe/SOURCE_AUDIT.md)

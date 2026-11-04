@@ -43,3 +43,5 @@ Flag categories overlap. The >1 mV screen is based on the full high-pass input, 
 - `review_selection.csv` and `figures/`: selected concerning inputs with final outputs for visual review.
 
 The data answer which flagged inputs remain in the accepted set. Expert inspection and output-specific evidence are still needed before calling retained signals contamination.
+
+[Methods, settings and execution order](../../../../Code/analyses/PRE_preprocessing_artifacts/README.md#pre_09)

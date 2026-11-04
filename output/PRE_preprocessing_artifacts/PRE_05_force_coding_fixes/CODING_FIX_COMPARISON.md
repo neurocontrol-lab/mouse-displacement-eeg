@@ -1,12 +1,12 @@
-# FORCe v2.3 coding-fix pilot comparison
+# FORCe PRE_05 coding-fix pilot comparison
 
 The minor update uses the existing pipeline and library, with spe30 and mle01,
 all 29 eligible task runs (2,915 trial rows), two-second windows, two decomposition
 levels, continuous 1 Hz high-pass -> FORCe -> epoch 20 Hz low-pass, and the same
-baseline and final amplitude rule. Stage 1 reuses the pipeline_v1 parsed manifest.
+baseline and final amplitude rule. Stage 1 reuses the PRE_01 parsed manifest.
 Seven additional raw recordings have no event-valid trials and remain excluded.
 
-Reference: `../pipeline_v2_2`. Current: this directory. Earlier outputs
+Reference: `../PRE_04_split_filtering`. Current: this directory. Earlier outputs
 are preserved. Current curves are solid and reference curves are dashed.
 
 ## Applied scope
@@ -26,7 +26,7 @@ contribution of each individual correction.
 
 2,616 -> 2,617 accepted trials; 2,616 common, one recovered, none lost.
 
-| Participant | Session | Previous | v2.3 |
+| Participant | Session | Previous | PRE_05 |
 |---|---|---:|---:|
 | mle01 | post | 357 | 357 |
 | mle01 | pre | 484 | 484 |

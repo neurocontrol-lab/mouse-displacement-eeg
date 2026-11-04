@@ -69,7 +69,7 @@ The full pre-zero interval is [-1, 0) s. The additional [-1, -0.2) s interval ex
 
 The new pipeline has a lower full pre-zero RMS condition difference in **6 of 6** participant/session comparisons, and a lower before-baseline RMS difference in **6 of 6**. These are descriptive comparisons without significance testing. Smaller differences are consistent with increased pre-movement agreement, but can also arise from amplitude attenuation or smoothing. They do not demonstrate selective artifact removal or establish that the conditions should be identical before movement.
 
-Inputs: matching `processed/*_EEG.mat` epochs and `*_quality.csv` acceptance/condition fields from `pipeline_v2_1` and `pipeline_v2_2`, selected by the latter’s `selected_manifest.csv`. Trial identity, labels, movement samples, time axes and channel order were checked for equality. No processing outputs were regenerated.
+Inputs: matching `processed/*_EEG.mat` epochs and `*_quality.csv` acceptance/condition fields from `PRE_03` and `PRE_04`, selected by the latter’s `selected_manifest.csv`. Trial identity, labels, movement samples, time axes and channel order were checked for equality. No processing outputs were regenerated.
 
 ## Interpretation and limits
 

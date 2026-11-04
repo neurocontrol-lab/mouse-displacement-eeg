@@ -75,3 +75,5 @@ The completed checks support retaining no-FORCe as the primary working analysis 
 - The separate retention/quality review remains the source for method-specific retained-trial counts and residual concerns.
 
 Reproduce by running `compare_matched_erp.m` in MATLAB, then `summarise_matched_erp.py`. The main numerical outputs and figures remain separate from the earlier notes.
+
+[Methods, settings and execution order](../../../../Code/analyses/PRE_preprocessing_artifacts/README.md#pre_09)

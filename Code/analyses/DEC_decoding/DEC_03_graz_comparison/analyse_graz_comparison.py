@@ -77,7 +77,7 @@ def mean_defined(values):
 
 
 def rank_r_squared(X, y):
-    """Squared Pearson correlation, equivalent to legacy utilities/rsquared.m.
+    """Squared Pearson correlation, equivalent to Code/reference/rsquared.m.
 
     Fits on training rows only. Constant features get 0, as in the legacy
     classifier's NaN-to-zero handling. Stable ties use channel/time order.
@@ -263,7 +263,7 @@ def main():
         tree_parameters=TREE_PARAMS,
         selection="Training-fold squared Pearson correlation; "
         "top 100, stable ties, constant features scored zero",
-        legacy_reference="Code/legacy/utilities/rsquared.m",
+        legacy_reference="Code/reference/rsquared.m",
         pearson_check_max_error=check_error,
         raw_epoch_interval="[-1,+1) s, 1000 samples/channel, 8000 candidates",
         raw_response_interval="[0.2,0.9) s, 350 samples/channel, 2800 candidates",
@@ -468,7 +468,7 @@ def build_readme(aggregate):
         "| Full montage bins | Same seven bins, all eight channels | 56 |",
         "",
         "R-squared is squared Pearson correlation with the binary class label, matching "
-        "`Code/legacy/utilities/rsquared.m`. Constant features receive zero, consistent "
+        "`Code/reference/rsquared.m`. Constant features receive zero, consistent "
         "with the legacy classifier's undefined-score handling. Feature ranking is "
         "recomputed from training trials separately in every fold; the test recording "
         "does not influence ranking, means or thresholds. Ties use fixed channel/time order. "
@@ -563,10 +563,7 @@ def build_readme(aggregate):
         "- `analysis_settings.json`: exact assumptions, settings and verification.",
         "- `feature_design_comparison.png`: participant-wise and mean validation scores.",
         "",
-        "Run `prepare_graz_features.m` in MATLAB, then "
-        "`.venv/Scripts/python.exe "
-        "Code/analyses/DEC_decoding/DEC_03_graz_comparison/analyse_graz_comparison.py` from the repository root. "
-        "Full-epoch MAT files stay ignored; existing pipeline, LDA and tree outputs are preserved.",
+        "",
         "",
         "Source: [Graz paper, Data Analysis and Evaluation](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf).",
         "",
