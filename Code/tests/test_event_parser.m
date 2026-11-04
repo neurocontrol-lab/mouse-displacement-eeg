@@ -1,5 +1,5 @@
 function test_event_parser()
-here=fileparts(fileparts(mfilename('fullpath'))); addpath(here,fullfile(here,'helpers')); cfg=config();
+here=fileparts(fileparts(mfilename('fullpath'))); addpath(here,fullfile(here,'helpers')); cfg=dataset_config();
 folder=fullfile(cfg.root,'data','mle01');
 raw=readmatrix(fullfile(folder,'20181113091555_mle01_retest_run3_EEG.easy'),'FileType','text');
 mouse=readtable(fullfile(folder,'20181113091557_mle01_retest_run3_tdcserror_.csv'));

@@ -1,0 +1,6 @@
+# Research artifacts must retain their exact bytes in Git.
+*.pdf binary
+*.mat binary
+*.png binary
+*.docx binary
+*.mexw64 binary

@@ -9,4 +9,18 @@ S2CleanTrials.mat
 /tmp/
 
 # Generated full-participant analysis outputs
-/output/pipeline_v2_3_all/
+/output/PRE_preprocessing_artifacts/PRE_06_force_full_cohort/processed/
+/output/PRE_preprocessing_artifacts/PRE_06_force_full_cohort/figures/**/*.mat
+/output/PRE_preprocessing_artifacts/PRE_06_force_full_cohort/figures/**/*.png
+
+# Local runtimes, compiler products, QA and superseded report drafts
+/.venv/
+**/__pycache__/
+*.pyc
+/output/**/archive/
+/output/**/qa/
+/output/**/tmp/
+*.aux
+*.log
+*.out
+*.synctex.gz

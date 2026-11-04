@@ -1,0 +1,12 @@
+cohort,reason,n
+pilot,amplitude,234
+pilot,gap_or_filter_guard,82
+pilot,incomplete_or_duplicate_events,4
+pilot,mouse_trial_count_order_or_timing,739
+pilot,ok,2565
+validation,amplitude,1938
+validation,gap_or_filter_guard,2725
+validation,incomplete_or_duplicate_events,71
+validation,mouse_eeg_event_disagreement,2
+validation,mouse_trial_count_order_or_timing,1775
+validation,ok,27666

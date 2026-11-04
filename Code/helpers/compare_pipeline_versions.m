@@ -1,6 +1,6 @@
 % Compare the configured reference and current pipeline on matched trials.
 % Dashed = reference; solid = current. Onset steps use samples -2 ms and 0 ms.
-codeDir=fileparts(fileparts(mfilename('fullpath'))); addpath(codeDir); cfg=config();
+codeDir=fileparts(fileparts(mfilename('fullpath'))); addpath(codeDir,fullfile(codeDir,'original_pipeline')); cfg=config('PRE_06');
 out=fullfile(cfg.output,'comparison'); if ~isfolder(out), mkdir(out); end
 manifest=readtable(fullfile(cfg.output,'selected_manifest.csv'),'TextType','string');
 summary=table(); steps=table(); waveforms=table();

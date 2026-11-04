@@ -1,0 +1,4 @@
+/prepared/
+*.mat
+__pycache__/
+/tmp/

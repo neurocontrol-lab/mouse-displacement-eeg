@@ -1,0 +1,46 @@
+{
+  "sklearn": "1.9.1",
+  "condition_id": 1,
+  "condition": "BP no-FORCe",
+  "channels": [
+    "Cz",
+    "FCz"
+  ],
+  "feature_interval": "[0.2, 0.9) seconds",
+  "bin_ms": 100,
+  "n_features": 14,
+  "sample_weight": null,
+  "tree_parameters": {
+    "ccp_alpha": 0.0,
+    "class_weight": null,
+    "criterion": "gini",
+    "max_depth": null,
+    "max_features": null,
+    "max_leaf_nodes": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "random_state": 20261027,
+    "splitter": "best"
+  },
+  "validation": "Identical leave-one-whole-run-out folds to the saved LDA, separately by participant/session",
+  "tuning": "None. Parameters fixed before inspecting decision-tree scores.",
+  "lda_source": "../heldout_predictions.csv; condition 1, 100ms; no LDA refit",
+  "tree_score": "Uncalibrated leaf probability of displaced class; often 0 or 1 for an unpruned tree",
+  "lda_score": "Saved LDA decision function; AUC calculated within run, then averaged",
+  "match_to_Graz": "Binary decision-tree family only; paper does not report tree hyperparameters.",
+  "differences_from_Graz": [
+    "Our 14 binned Cz/FCz features, not 100 r-squared-ranked channel/time samples",
+    "Whole-run holdouts, not reported 10-fold CV",
+    "Sessions separate, not per-subject pooled evaluation",
+    "No-FORCe primary condition and matched common accepted trial subset",
+    "Explicit sklearn default tree assumptions; original software/settings not recovered"
+  ],
+  "class_handling": "DT: equal sample weights, empirical class proportions. Saved LDA: equal class priors. The comparison is between these configured decoders, not model architecture alone.",
+  "n_trials": 2562,
+  "tree_fits": 29,
+  "total_comparison_folds": 58,
+  "paper": "https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf"
+}

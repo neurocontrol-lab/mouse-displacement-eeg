@@ -1,0 +1,5 @@
+*.aux
+*.log
+*.out
+/tmp/
+FORCe_retention_and_ErrP_pilot_note.pdf

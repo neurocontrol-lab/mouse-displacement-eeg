@@ -1,5 +1,5 @@
 % Participant views of Cz and FCz across sessions, for exploratory inspection.
-codeDir=fileparts(fileparts(mfilename('fullpath'))); addpath(codeDir); cfg=config();
+codeDir=fileparts(fileparts(mfilename('fullpath'))); addpath(codeDir,fullfile(codeDir,'original_pipeline')); cfg=config('PRE_06');
 source=fullfile(cfg.output,'figures','by_session');
 out=fullfile(cfg.output,'figures','by_participant'); if ~isfolder(out), mkdir(out); end
 for subject=string(cfg.subjects)

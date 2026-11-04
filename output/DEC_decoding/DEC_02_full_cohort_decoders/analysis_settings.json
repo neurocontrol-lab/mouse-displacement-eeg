@@ -1,0 +1,79 @@
+{
+  "sklearn": "1.9.1",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "participants": [
+    "ara13",
+    "bal08",
+    "bpe06",
+    "bro19",
+    "cna07",
+    "cve01",
+    "den12",
+    "eab31",
+    "emo24",
+    "fbo09",
+    "gba12",
+    "gcr27",
+    "lbo12",
+    "ldu23",
+    "meb17",
+    "mka24",
+    "mle01",
+    "nfu22",
+    "nsh23",
+    "rle13",
+    "sga12",
+    "spe30",
+    "sto20",
+    "vco27",
+    "yle21"
+  ],
+  "pilots": [
+    "mle01",
+    "spe30"
+  ],
+  "preprocessing": "Saved v1 fourth-order continuous 1-20 Hz Butterworth, zero phase; no FORCe; baseline [-0.2,0); final two-second peak absolute amplitude <=100 microvolts; raw gap/finite/edge checks over [-1.5,1.5) with two-second guards",
+  "feature_interval": "[0.2,0.9) s",
+  "bin_ms": 100,
+  "models": {
+    "LDA_full": {
+      "label": "LDA, all eight",
+      "n_features": 56
+    },
+    "LDA_central": {
+      "label": "LDA, Cz/FCz",
+      "n_features": 14
+    },
+    "DT_full": {
+      "label": "Decision tree, all eight",
+      "n_features": 56
+    }
+  },
+  "lda": "Training-fold StandardScaler -> LDA(solver=lsqr,shrinkage=auto,priors=[0.5,0.5])",
+  "tree_parameters": {
+    "criterion": "gini",
+    "splitter": "best",
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": null,
+    "max_leaf_nodes": null,
+    "min_impurity_decrease": 0.0,
+    "class_weight": null,
+    "ccp_alpha": 0.0,
+    "random_state": 20261027
+  },
+  "tree_class_handling": "Equal sample weights, empirical class proportions",
+  "validation": "Leave one complete recording run out within each participant/session; identical folds for all models",
+  "selection": "All no-FORCe accepted trials; no FORCe acceptance intersection",
+  "cohort_aggregation": "Mean of eligible sessions within each participant, then equal-weight participant mean; pilots separate",
+  "missing_data": "Session needs >=2 accepted recording runs and both labels in every training fold. Single-class test folds remain predicted; their AUC and fold BA are undefined, explicitly counted.",
+  "tuning": "None; all three configurations fixed after the two-participant pilot",
+  "n_accepted_trials": 30231,
+  "n_evaluated_trials": 30210,
+  "n_predictions": 90630,
+  "n_fits": 1047,
+  "n_evaluated_sessions": 73
+}

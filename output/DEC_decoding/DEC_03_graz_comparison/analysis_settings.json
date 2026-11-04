@@ -1,0 +1,68 @@
+{
+  "tree_parameters": {
+    "criterion": "gini",
+    "splitter": "best",
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": null,
+    "max_leaf_nodes": null,
+    "min_impurity_decrease": 0.0,
+    "class_weight": null,
+    "ccp_alpha": 0.0,
+    "random_state": 20261027
+  },
+  "selection": "Training-fold squared Pearson correlation; top 100, stable ties, constant features scored zero",
+  "legacy_reference": "Code/legacy/utilities/rsquared.m",
+  "pearson_check_max_error": 8.326672684688674e-16,
+  "raw_epoch_interval": "[-1,+1) s, 1000 samples/channel, 8000 candidates",
+  "raw_response_interval": "[0.2,0.9) s, 350 samples/channel, 2800 candidates",
+  "bin_interval": "[0.2,0.9) s, seven 100 ms means/channel",
+  "channel_sets": {
+    "Central": [
+      "Cz",
+      "FCz"
+    ],
+    "Centroparietal": [
+      "CP1",
+      "CP5"
+    ],
+    "Posterior": [
+      "P3",
+      "PO3",
+      "PO7"
+    ],
+    "Full": [
+      "P3",
+      "PO3",
+      "PO7",
+      "CP5",
+      "CP1",
+      "Cz",
+      "FCz",
+      "FC1"
+    ]
+  },
+  "model_names": {
+    "DT_r2_epoch": "Top 100 r\u00b2: \u22121 to +1 s",
+    "DT_r2_response": "Top 100 r\u00b2: 0.2\u20130.9 s",
+    "DT_Central": "100 ms: Central",
+    "DT_Centroparietal": "100 ms: Centroparietal",
+    "DT_Posterior": "100 ms: Posterior",
+    "DT_Full": "100 ms: Full"
+  },
+  "preprocessing": "Unchanged primary full-dataset no-FORCe pipeline",
+  "validation": "Identical existing participant/session-specific whole-run holdouts and accepted IDs",
+  "paper_interval_note": "Paper documents [-1,+1] s epochs but no separate classification interval; full-epoch selection is an explicit interpretation",
+  "differences_from_paper": [
+    "No FORCe; existing fourth-order analysis filter",
+    "Whole-run holdouts rather than reported 10-fold CV",
+    "Sessions separate; participant weighting after session summaries",
+    "Explicit fixed tree defaults because published hyperparameters unspecified"
+  ],
+  "tuning": "None; feature ranking is fitted on training folds only",
+  "new_fits": 1745,
+  "reused_Full_bin_folds": 349,
+  "comparison_folds": 2094,
+  "prediction_rows": 181260
+}

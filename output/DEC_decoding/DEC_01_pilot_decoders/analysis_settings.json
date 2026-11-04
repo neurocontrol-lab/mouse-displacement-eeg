@@ -1,0 +1,49 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "sklearn": "1.9.1",
+  "channels": [
+    "Cz",
+    "FCz"
+  ],
+  "interval_seconds": [
+    0.2,
+    0.9
+  ],
+  "right_endpoint_excluded": true,
+  "fs": 500,
+  "original_label_mapping": {
+    "1": "non-displaced / binary 0",
+    "2": "displaced / binary 1"
+  },
+  "conditions": {
+    "1": "BP no-FORCe",
+    "2": "BP FORCe",
+    "3": "Split no-FORCe",
+    "4": "Split FORCe"
+  },
+  "representations": {
+    "100ms": 14,
+    "50ms": 28,
+    "samples": 700
+  },
+  "estimator": "StandardScaler -> LinearDiscriminantAnalysis(solver=lsqr, shrinkage=auto, priors=[0.5,0.5])",
+  "validation": "Leave one complete run out, separately within each participant/session",
+  "selection": "Intersection of accepted trial IDs in all four saved conditions; no additional flag exclusions",
+  "tuning": "None; fixed settings for every condition and feature representation",
+  "primary_auc": "Unweighted mean of held-out-run ROC-AUCs; pooled OOF AUC saved as secondary",
+  "total_trials": 2562,
+  "configurations": 12,
+  "fits": 348,
+  "prediction_rows": 30744,
+  "verification": [
+    "all features finite",
+    "exactly one OOF prediction per trial/configuration",
+    "identical held-out trial IDs across configurations",
+    "whole-run train/test separation",
+    "scaler fitted on training fold only",
+    "both labels present in every training/test fold"
+  ]
+}

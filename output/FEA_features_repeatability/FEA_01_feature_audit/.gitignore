@@ -1,0 +1,6 @@
+*.mat
+*.aux
+*.log
+*.out
+/tmp/
+Feature_audit_matched_processing_pilot.pdf

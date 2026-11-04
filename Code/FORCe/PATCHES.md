@@ -92,7 +92,7 @@ altering these scientific choices.
 
 The current pilot keeps two-second windows, two decomposition levels and
 HP -> FORCe -> LP processing. Outputs are saved separately in
-`output/pipeline_v2_3`, compared with `output/pipeline_v2_2`.
+`output/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes`, compared with `output/PRE_preprocessing_artifacts/PRE_04_split_filtering`.
 
-The [completed coding-fix pilot](../../output/pipeline_v2_3/CODING_FIX_COMPARISON.md)
+The [completed coding-fix pilot](../../output/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes/CODING_FIX_COMPARISON.md)
 records the focused checks and comparison results.

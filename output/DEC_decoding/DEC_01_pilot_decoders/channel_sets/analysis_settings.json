@@ -1,0 +1,99 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "numpy": "2.5.4",
+  "scipy": "1.18.1",
+  "sklearn": "1.9.1",
+  "channels": [
+    "P3",
+    "PO3",
+    "PO7",
+    "CP5",
+    "CP1",
+    "Cz",
+    "FCz",
+    "FC1"
+  ],
+  "interval_seconds": [
+    0.2,
+    0.9
+  ],
+  "right_endpoint_excluded": true,
+  "fs": 500,
+  "original_label_mapping": {
+    "1": "non-displaced / binary 0",
+    "2": "displaced / binary 1"
+  },
+  "conditions": {
+    "1": "BP no-FORCe",
+    "2": "BP FORCe",
+    "3": "Split no-FORCe",
+    "4": "Split FORCe"
+  },
+  "representations": {
+    "100ms": {
+      "Central": 14,
+      "Centroparietal": 14,
+      "Posterior": 21,
+      "Full": 56
+    },
+    "50ms": {
+      "Central": 28,
+      "Centroparietal": 28,
+      "Posterior": 42,
+      "Full": 112
+    },
+    "samples": {
+      "Central": 700,
+      "Centroparietal": 700,
+      "Posterior": 1050,
+      "Full": 2800
+    }
+  },
+  "estimator": "StandardScaler -> LinearDiscriminantAnalysis(solver=lsqr, shrinkage=auto, priors=[0.5,0.5])",
+  "validation": "Leave one complete run out, separately within each participant/session",
+  "selection": "Intersection of accepted trial IDs in all four saved conditions; no additional flag exclusions",
+  "tuning": "No hyperparameter search or channel selection inside this exploratory comparison",
+  "primary_auc": "Unweighted mean of held-out-run ROC-AUCs; pooled OOF AUC saved as secondary",
+  "total_trials": 2562,
+  "configurations": 48,
+  "fits": 1044,
+  "prediction_rows": 122976,
+  "verification": [
+    "all features finite",
+    "exactly one OOF prediction per trial/configuration",
+    "identical held-out trial IDs across configurations",
+    "whole-run train/test separation",
+    "scaler fitted on training fold only",
+    "both labels present in every training/test fold"
+  ],
+  "channel_sets": {
+    "Central": [
+      "Cz",
+      "FCz"
+    ],
+    "Centroparietal": [
+      "CP1",
+      "CP5"
+    ],
+    "Posterior": [
+      "P3",
+      "PO3",
+      "PO7"
+    ],
+    "Full": [
+      "P3",
+      "PO3",
+      "PO7",
+      "CP5",
+      "CP1",
+      "Cz",
+      "FCz",
+      "FC1"
+    ]
+  },
+  "reused_central_folds": 348,
+  "comparison_folds": 1392,
+  "selection_note": "The candidate groups were predefined during the audit. Scores compare them within the same pilots, not independent confirmation of a selected group.",
+  "primary_condition": 1
+}

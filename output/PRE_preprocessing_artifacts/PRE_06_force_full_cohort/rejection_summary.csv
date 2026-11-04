@@ -1,0 +1,9 @@
+reason,trials
+ok,30895
+mouse_trial_count_order_or_timing,372
+incomplete_or_duplicate_events,75
+data_loss_gap_or_filter_edge,2674
+force_channel_threshold,1603
+amplitude,19
+force_all_ics_removed,19
+mouse_eeg_event_disagreement,2

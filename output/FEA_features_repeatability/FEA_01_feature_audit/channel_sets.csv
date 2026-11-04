@@ -1,0 +1,5 @@
+set,channels,binnedFeatures,timepointFeatures
+Central,"Cz, FCz",14,700
+Centroparietal,"CP1, CP5",14,700
+Posterior,"P3, PO3, PO7",21,1050
+Full,"P3, PO3, PO7, CP5, CP1, Cz, FCz, FC1",56,2800

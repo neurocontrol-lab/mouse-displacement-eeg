@@ -1,7 +1,7 @@
 function test_force_integration()
 % Optional quick check on one real epoch; no pipeline outputs are written.
 here=fileparts(fileparts(mfilename('fullpath'))); addpath(here,fullfile(here,'helpers'));
-cfg=config(); addpath(cfg.forceRoot,fullfile(cfg.forceRoot,'mex-files'));
+cfg=dataset_config(); cfg.forceWindowSeconds=2; addpath(cfg.forceRoot,fullfile(cfg.forceRoot,'mex-files'));
 % Focused spectrum regression: orientation and bin labels, retaining legacy magnitudes.
 signal=cos(2*pi*10*(0:499)/500); spectrum=powerspectrum(signal,500);
 assert(isequal(spectrum,powerspectrum(signal',500)));

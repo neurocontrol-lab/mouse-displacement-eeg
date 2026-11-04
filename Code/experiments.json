@@ -1,0 +1,58 @@
+{
+  "DEC_01": {
+    "result": "output/DEC_decoding/DEC_01_pilot_decoders",
+    "code": "Code/analyses/DEC_decoding/DEC_01_pilot_decoders"
+  },
+  "DEC_02": {
+    "result": "output/DEC_decoding/DEC_02_full_cohort_decoders",
+    "code": "Code/analyses/DEC_decoding/DEC_02_full_cohort_decoders"
+  },
+  "DEC_03": {
+    "result": "output/DEC_decoding/DEC_03_graz_comparison",
+    "code": "Code/analyses/DEC_decoding/DEC_03_graz_comparison"
+  },
+  "FEA_01": {
+    "result": "output/FEA_features_repeatability/FEA_01_feature_audit",
+    "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit"
+  },
+  "PRE_01": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_01_no_force_reference",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_01_no_force_reference"
+  },
+  "PRE_02": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_02_force_1s_windows",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_02_force_1s_windows"
+  },
+  "PRE_03": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_03_force_2s_windows",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_03_force_2s_windows"
+  },
+  "PRE_04": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_04_split_filtering",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_04_split_filtering"
+  },
+  "PRE_05": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_05_force_coding_fixes"
+  },
+  "PRE_06": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_06_force_full_cohort",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_06_force_full_cohort"
+  },
+  "PRE_07": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_07_boundary_analysis",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_07_boundary_analysis"
+  },
+  "PRE_08": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_08_input_quality",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_08_input_quality"
+  },
+  "PRE_09": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_09_retention_and_erp",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_09_retention_and_erp"
+  },
+  "PRE_10": {
+    "result": "output/PRE_preprocessing_artifacts/PRE_10_onset_diagnostics",
+    "code": "Code/analyses/PRE_preprocessing_artifacts/PRE_10_onset_diagnostics"
+  }
+}

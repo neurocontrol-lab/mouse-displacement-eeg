@@ -1,0 +1,4 @@
+/raw_epochs/
+*.mat
+__pycache__/
+/tmp/
