@@ -211,6 +211,27 @@ Saved-output evidence only. A dedicated reproducible entry script was not presen
 
 [Saved numerical results and figures](../../../output/PRE_preprocessing_artifacts/PRE_10_onset_diagnostics/).
 
+## Interactive waveform view
+
+The [PRE report](../../../output/PRE_preprocessing_artifacts/report/index.html) defaults to BP no-FORCe and all accepted trials for all 25 participants, separately by pre/post/retest. Each view shows Correct, Error and Error−Correct on all eight channels, counts, consistent axes across sessions within each participant/channel, and a PNG download. Sessions ineligible for classification remain visible and are labelled.
+
+The primary averages use the accepted trial IDs in DEC_02, including its complete-three-second quality checks. The other three conditions are available only for mle01 and spe30 from PRE_07. **All accepted trials** uses each condition's own accepted IDs; **matched** uses the intersection accepted by all four pilot conditions. Matching does not equalise Correct and Error counts. The BP overlay follows the selected trial mode. Matching and the other conditions are disabled for participants without those outputs. The historical two-second FORCe cohort run is separate.
+
+Waveform, saved-figure and numerical-table controls are independent. Pilot condition/trial-mode choices are remembered when moving through participants with only the primary condition. The three saved PRE images are fixed pilot figures and therefore have only a figure selector, with a description that updates for the selected image. The numerical-summary section is explicitly pilot-only (mle01 and spe30), including its pooled rows. Numerical tables expose their own available participant, session, condition, waveform, summary-level and other relevant filters; each table remembers its selections. Controls only offer fields present in the selected table.
+
+| Step | Script | Operation |
+|---|---|---|
+| 1, when refreshing means | [export_report_waveforms.m](../../helpers/export_report_waveforms.m) | Aggregate saved PRE_01 epochs on DEC_02 IDs and saved PRE_07 pilot epochs; export `waveform_means.json` beside the report. No preprocessing or FORCe is rerun. |
+| 2 | [build_web_reports.py](../../helpers/build_web_reports.py) | Embed the exported means and saved summaries into the portable HTML report. |
+
+```matlab
+run('Code/helpers/export_report_waveforms.m')
+```
+
+```text
+python Code/helpers/build_web_reports.py --category PRE_preprocessing_artifacts
+```
+
 ## Research note
 
 The category report folder contains the interactive HTML overview, formal PDF and editable LaTeX. The reviewed LaTeX is the authoritative manuscript source. To rebuild the HTML overviews from saved results: `python Code/helpers/build_web_reports.py`.

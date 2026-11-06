@@ -12,7 +12,7 @@ Use the [experiment registry](EXPERIMENTS.md) to find an analysis, then its cate
 | **FEA — Features and repeatability** | [Methods and steps](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
 | **DEC — Decoding and classification** | [Methods and steps](Code/analyses/DEC_decoding/README.md) | [Open](output/DEC_decoding/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
 
-The HTML reports include embedded figures and aggregate data and open directly in a browser. GitHub previews target the `main` branch and become available after the report files are pushed to an accessible repository. Formal PDFs and editable LaTeX are linked from each report.
+The HTML reports include embedded figures and aggregate data and open directly in a browser. The PRE report provides eight-channel participant/session waveforms for all 25 participants, defaulting to BP no-FORCe with all accepted trials. Pilot-only alternatives support all-accepted/matched trial selection and a BP overlay; the current eight-channel figure can be downloaded as a PNG. GitHub previews target the `main` branch and become available after the report files are pushed to an accessible repository. Formal PDFs and editable LaTeX are linked from each report.
 
 ## Current analysis
 
@@ -34,7 +34,7 @@ The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balan
 | `Code/tests/` | Focused parser and FORCe adapter checks. |
 | `output/<category>/<experiment>/` | Numerical results, figures and recorded settings. |
 | `output/<category>/report/` | Interactive overview, PDF note and LaTeX source. |
-| `output/legacy/` | Earlier numerical findings and event audits. |
+| `output/legacy/` | Initial findings report and earlier event audits. |
 
 ## Running and reviewing the code
 
@@ -42,7 +42,7 @@ Follow each category README’s workflow tables in order. Shared montage, sample
 
 MATLAB uses Signal Processing Toolbox and, where needed, Statistics and Machine Learning Toolbox. FORCe execution additionally requires Wavelet Toolbox and its supplied Windows x64 binaries. Install Python dependencies using `python -m pip install -r requirements-analysis.txt`. Original recordings must be supplied separately for analyses that read them.
 
-To rebuild HTML summaries from saved results: `python Code/helpers/build_web_reports.py`. This does not rerun preprocessing or fit models. Original recording/trial identities are retained. Historical FORCe reconstructions are preserved because the implementation changed after some runs.
+To refresh the waveform means from saved epochs, run `Code/helpers/export_report_waveforms.m` in MATLAB; see the PRE workflow for trial-selection details. To rebuild HTML summaries from saved aggregate results: `python Code/helpers/build_web_reports.py`. This does not rerun preprocessing or fit models. Original recording/trial identities are retained. Historical FORCe reconstructions are preserved because the implementation changed after some runs.
 
 ## Research references
 

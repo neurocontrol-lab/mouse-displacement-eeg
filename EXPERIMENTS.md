@@ -43,6 +43,6 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 
 PRE_07–09 and FEA_01 use the matched four-condition pilot. DEC_02 includes all eligible no-FORCe trials with complete-context quality checks; DEC_03 reuses those exact evaluated trial IDs and folds.
 
-Participant/session waveform presentation across the cohort and permutation-based classification inference remain pending. Classification scores alone do not identify an ErrP.
+The PRE interactive report presents eight-channel cohort waveforms by participant/session, with pilot-only all-accepted/matched condition comparisons. Permutation-based classification inference remains pending. Classification scores alone do not identify an ErrP.
 
 [Initial EEG findings](output/legacy/reports/initial_EEG_findings.pdf) · [Earlier event audit](output/legacy/event_audit/)
