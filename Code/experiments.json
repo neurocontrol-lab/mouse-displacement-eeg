@@ -14,6 +14,11 @@
     "code": "Code/analyses/DEC_decoding/DEC_03_graz_comparison",
     "workflow": "Code/analyses/DEC_decoding/README.md#dec_03"
   },
+  "DEC_04": {
+    "result": "output/DEC_decoding/DEC_04_permutation_inference",
+    "code": "Code/analyses/DEC_decoding/DEC_04_permutation_inference",
+    "workflow": "Code/analyses/DEC_decoding/README.md#dec_04"
+  },
   "FEA_01": {
     "result": "output/FEA_features_repeatability/FEA_01_feature_audit",
     "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit",

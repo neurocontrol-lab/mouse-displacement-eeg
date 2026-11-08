@@ -1,0 +1,55 @@
+{
+  "permutations": 1999,
+  "seed": 20261106,
+  "models": [
+    "LDA_full",
+    "LDA_central",
+    "DT_full",
+    "DT_r2_epoch"
+  ],
+  "sessions": 73,
+  "statistic": "session pooled OOF balanced accuracy, then equal mean of eligible sessions",
+  "shuffle": "independently within each recording; same shuffled labels for all four models",
+  "assumptions": "labels exchangeable within recording under the null; no claim of independent individual trials",
+  "families": {
+    "primary_validation": 23,
+    "secondary_validation": 69,
+    "exploratory_pilot": 8
+  },
+  "pilot_caveat": "pilot feature/model selection is not repeated; pilot tests remain exploratory",
+  "p_value": "(1 + count(null >= observed))/(1 + permutations)",
+  "threshold": "95th percentile, higher empirical quantile; unadjusted, descriptive",
+  "versions": {
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1"
+  },
+  "model_settings": {
+    "LDA": {
+      "solver": "lsqr",
+      "shrinkage": "auto",
+      "priors": [
+        0.5,
+        0.5
+      ],
+      "training_standardisation": true
+    },
+    "tree": {
+      "criterion": "gini",
+      "splitter": "best",
+      "max_depth": null,
+      "min_samples_split": 2,
+      "min_samples_leaf": 1,
+      "max_features": null,
+      "max_leaf_nodes": null,
+      "min_impurity_decrease": 0.0,
+      "class_weight": null,
+      "ccp_alpha": 0.0,
+      "random_state": 20261027
+    }
+  },
+  "workers": 6,
+  "evaluated_trials": 30210,
+  "heldout_recordings": 349,
+  "model_fits_including_observed": 2792000
+}

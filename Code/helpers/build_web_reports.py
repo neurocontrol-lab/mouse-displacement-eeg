@@ -80,6 +80,9 @@ REPORTS = {
         "title": "Displaced/non-displaced classification",
         "summary": "The fixed all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant-level balanced accuracy in the 23 non-pilot participants. The model is trained within participant/session with held-out runs. Above-chance permutation inference remains pending; discrimination does not establish ErrP identity.",
         "pdf": "D_ND_classification_research_note.pdf",
+        "figure_descriptions": {
+            "permutation_LDA_primary": "Observed balanced accuracy and the participant-specific 95th-percentile permutation threshold for eight-channel LDA in the 23 non-pilot participants. Thresholds are unadjusted, not confidence intervals; use the participant table's Holm-adjusted p-values for corrected significance."
+        },
         "tables": [
             (
                 "Full-cohort model comparison",
@@ -91,11 +94,24 @@ REPORTS = {
                 "Graz-style tree comparison",
                 result_path("DEC_03") / "cohort_summary.csv",
             ),
+            (
+                "Participant permutation significance",
+                result_path("DEC_04") / "participant_significance.csv",
+            ),
+            (
+                "Session permutation checks (uncorrected)",
+                result_path("DEC_04") / "session_significance.csv",
+            ),
+            (
+                "Permutation significance summary",
+                result_path("DEC_04") / "cohort_summary.csv",
+            ),
         ],
         "figures": [
             ROOT / "output/DEC_decoding/report/figures/participant_scores.png",
             ROOT / "output/DEC_decoding/report/figures/session_scores.png",
             ROOT / "output/DEC_decoding/report/figures/graz_comparison.png",
+            ROOT / "output/DEC_decoding/report/figures/permutation_LDA_primary.png",
         ],
     },
 }
@@ -174,7 +190,7 @@ function renderGallery(){
 }
 byId('figure').onchange=showFigure;
 ['subject','session'].forEach(id=>byId(id).onchange=renderGallery);
-const tableFilterLabels={subject:'Participant',session:'Session',sessionA:'Session A',sessionB:'Session B',level:'Summary level',cohort:'Cohort',model_id:'Model',condition:'Condition',referenceCondition:'Reference condition',channel:'Channel',channelSet:'Channel set',waveform:'Waveform',trialClass:'Trial class',boundary:'Boundary (s)',contrast:'Contrast',test:'Test',resolution:'Resolution'};
+const tableFilterLabels={subject:'Participant',session:'Session',sessionA:'Session A',sessionB:'Session B',level:'Summary level',cohort:'Cohort',family:'Inference family',significant_holm_05:'Holm significance (0/1)',model_id:'Model',condition:'Condition',referenceCondition:'Reference condition',channel:'Channel',channelSet:'Channel set',waveform:'Waveform',trialClass:'Trial class',boundary:'Boundary (s)',contrast:'Contrast',test:'Test',resolution:'Resolution'};
 const tableSelections=new Map();
 function filterLabel(field,value){
     if(field==='condition'||field==='referenceCondition')return `${value} · ${conditionNames[value]||value}`;
@@ -207,8 +223,8 @@ function renderTable(){
     let rows=table.rows.filter(r=>filters.every(s=>!s.value||r[s.dataset.field]===s.value));
     const q=byId('search').value.toLowerCase();
     if(q)rows=rows.filter(r=>Object.values(r).join(' ').toLowerCase().includes(q));
-    const headings=Object.keys(table.rows[0]||{}),tr=document.createElement('tr');
-    headings.forEach(h=>{const th=document.createElement('th');th.textContent=h;tr.append(th)});
+    const headings=table.columns||Object.keys(table.rows[0]||{}),tr=document.createElement('tr');
+    headings.forEach(h=>{const th=document.createElement('th');th.textContent=(table.labels||{})[h]||h;tr.append(th)});
     byId('tablehead').replaceChildren(tr);const body=byId('tablebody');body.replaceChildren();
     rows.slice(0,500).forEach(r=>{const row=document.createElement('tr');headings.forEach(h=>row.append(cell(r[h])));body.append(row)});
     const scope=!headings.includes('session')&&!headings.includes('sessionA')?' This table aggregates sessions.':'';
@@ -339,6 +355,40 @@ def build(category, spec):
         for title, path in spec["tables"]
         if path.exists()
     ]
+    for table in tables:
+        if table["title"] == "Participant permutation significance":
+            table["columns"] = [
+                "subject",
+                "cohort",
+                "model_id",
+                "balanced_accuracy",
+                "chance_95",
+                "p_value",
+                "p_holm",
+            ]
+        elif table["title"] == "Session permutation checks (uncorrected)":
+            table["columns"] = [
+                "subject",
+                "session",
+                "cohort",
+                "model_id",
+                "n_trials",
+                "balanced_accuracy",
+                "chance_95",
+                "p_value",
+            ]
+        if "columns" in table:
+            table["labels"] = {
+                "subject": "Participant",
+                "session": "Session",
+                "cohort": "Cohort",
+                "model_id": "Model",
+                "n_trials": "Trials",
+                "balanced_accuracy": "Balanced accuracy",
+                "chance_95": "95% chance threshold",
+                "p_value": "p",
+                "p_holm": "Holm-adjusted p",
+            }
     figure_subjects = {
         row["subject"]
         for table in tables
@@ -406,6 +456,19 @@ def build(category, spec):
         summary = summary.replace(
             phrase, "<strong>" + phrase + " (pilot only)</strong>"
         )
+    if (
+        category.startswith("DEC")
+        and (result_path("DEC_04") / "participant_significance.csv").exists()
+    ):
+        inference_rows = read_csv(
+            result_path("DEC_04") / "participant_significance.csv"
+        )
+        primary = [r for r in inference_rows if r["family"] == "primary_validation"]
+        significant = sum(r["significant_holm_05"] == "1" for r in primary)
+        summary = summary.replace(
+            "Above-chance permutation inference remains pending; discrimination does not establish ErrP identity.",
+            f"Permutation tests support above-null LDA performance after Holm correction in {significant}/{len(primary)} non-pilot participants. Discrimination does not establish ErrP identity.",
+        )
     table_scope = (
         '<p class="note"><strong>Pilot only — mle01 and spe30.</strong> '
         "These numerical tables cover the pilot artifact-handling and boundary analyses, "
@@ -413,13 +476,48 @@ def build(category, spec):
         if category.startswith("PRE")
         else ""
     )
+    supplements = []
+    if (
+        category.startswith("PRE")
+        and (destination / "BP_noFORCe_participant_waveforms.pdf").exists()
+    ):
+        supplements.append(
+            '<a href="BP_noFORCe_participant_waveforms.pdf">All participant/session waveforms (PDF)</a>'
+        )
+    if (
+        category.startswith("DEC")
+        and (destination / "D_ND_permutation_significance_note.pdf").exists()
+    ):
+        supplements.append(
+            '<a href="D_ND_permutation_significance_note.pdf">Primary LDA permutation note (PDF)</a>'
+        )
+    supplement_links = "".join(" · " + link for link in supplements)
+    inference_scope = ""
+    if (
+        category.startswith("DEC")
+        and (result_path("DEC_04") / "participant_significance.csv").exists()
+    ):
+        inference_scope = (
+            "<p><strong>Permutation inference:</strong> choose the participant significance table below for observed balanced accuracy, "
+            "the unadjusted 95th-percentile chance threshold, and raw/Holm p-values for the four fixed classifiers. "
+            "Scores are fractions (0–1). Primary LDA: 23 non-pilot tests; secondary models: a separate 69-test family; "
+            "the eight pilot/model tests are exploratory. Session-table p-values are uncorrected exploratory checks.</p>"
+            "<details><summary>Permutation method and interpretation</summary><p>1,999 shuffles preserve D/ND counts within each recording. "
+            "Every permutation refits the models on the same whole-recording holdouts, including training-fold top-100 feature selection. "
+            "Session balanced accuracy pools test predictions; participant scores average eligible sessions equally. "
+            "One-sided p=(exceedances+1)/2000, with minimum 0.0005; Holm adjusts within the stated families. "
+            "The 95th-percentile threshold is unadjusted; use adjusted p-values for corrected significance. "
+            "Labels must be exchangeable within recordings. Discrimination does not establish ErrP identity.</p>"
+            '<p>Methods: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html">grouped permutation testing</a>; '
+            '<a href="https://doi.org/10.2202/1544-6115.1585">Monte Carlo p-values</a>.</p></details>'
+        )
     body = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(spec['title'])}</title><style>{STYLE}</style></head><body>
 <nav aria-label="Research reports">{related}</nav><h1>{html.escape(spec['title'])}</h1><p>{summary}</p>
-<p><a href="{spec['pdf']}">Formal PDF note</a> · <a href="../../../EXPERIMENTS.md">Experiment registry</a></p>
+<p><a href="{spec['pdf']}">Formal PDF note</a> · <a href="../../../EXPERIMENTS.md">Experiment registry</a>{supplement_links}</p>
 <section><h2>Scope and interpretation</h2><p>This report displays saved numerical results and condition means. It does not rerun preprocessing, alter trial selection or fit a classifier. Displayed waveform values are rounded to five decimal places in µV. Raw recordings, individual trials and fitted models are excluded.</p><details><summary>Methods and experiment navigation</summary><ul>{''.join(experiments)}</ul><p>Input flags indicate suspected contamination; they do not identify EOG/EMG sources definitively. Classifier differences do not establish an ErrP. Full methods, processing contrasts and limitations are in the PDF and experiment READMEs.</p></details></section>
 <section id="waveSection" hidden><h2>Participant/session eight-channel waveforms</h2><div class="controls"><label>Participant<select id="waveSubject"></select></label><label>Session<select id="waveSession"></select></label><label>Processing condition<select id="condition"><option value="1">1 · BP no-FORCe</option><option value="2">2 · BP FORCe (pilot only)</option><option value="3">3 · Split no-FORCe (pilot only)</option><option value="4">4 · Split FORCe (pilot only)</option></select></label><label>Trial selection<select id="selection"><option value="all">All accepted trials</option><option value="matched">Matched across four conditions (pilot only)</option></select></label><label>Overlay BP no-FORCe<input type="checkbox" id="overlay"></label><button id="downloadWave" type="button">Download figure (PNG)</button></div><h3 id="waveTitle"></h3><p id="counts" class="note"></p><p id="waveDetails" class="note"></p><p class="note">The cohort view uses accepted decoder-analysis trial IDs, including sessions ineligible for cross-validation, with quality eligibility across the complete three-second interval. Pilot conditions use that same interval; matching does not balance the two class counts. The historical two-second FORCe cohort run is separate and is not included here.</p><div id="waves" class="grid"></div></section>
 <section><h2>Saved figures</h2><p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label></div><p id="figureDescription" class="note" aria-live="polite"></p><figure><img id="plot" alt="Saved analysis figure"><figcaption id="plotcaption"></figcaption></figure></section>
-<section><h2>Numerical summaries</h2>{table_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div></section><footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. No new significance tests are implied.</footer>
+<section><h2>Numerical summaries</h2>{table_scope}{inference_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div></section><footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. Report controls display saved results and do not rerun analyses.</footer>
 <script id="report-data" type="application/json">{json.dumps(data,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')}</script><script>{SCRIPT}</script></body></html>'''
     (destination / "index.html").write_text(body, encoding="utf-8")
     print(

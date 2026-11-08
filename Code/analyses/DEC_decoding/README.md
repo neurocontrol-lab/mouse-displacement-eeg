@@ -11,6 +11,7 @@ Can displaced versus non-displaced trials be decoded on held-out recording runs,
 | [DEC_01](#dec_01) | Pilot decoders | mle01 and spe30; matched trials | [Open](../../../output/DEC_decoding/DEC_01_pilot_decoders/) |
 | [DEC_02](#dec_02) | Full-cohort decoders | 25 participants available; 23 non-pilots analysed separately | [Open](../../../output/DEC_decoding/DEC_02_full_cohort_decoders/) |
 | [DEC_03](#dec_03) | Graz-style feature comparison | Same evaluated trials and run folds as DEC_02 | [Open](../../../output/DEC_decoding/DEC_03_graz_comparison/) |
+| [DEC_04](#dec_04) | Within-run permutation inference | Fixed four-model comparison; 23 non-pilots and two exploratory pilots | [Open](../../../output/DEC_decoding/DEC_04_permutation_inference/) |
 
 ## Shared conventions
 
@@ -22,7 +23,7 @@ The predefined response interval is [0.2,0.9) s. Channel sets are Central (Cz/FC
 
 Fixed LDA: training-fold standardisation followed by shrinkage LDA (`solver="lsqr"`, `shrinkage="auto"`, equal class priors). Trees use explicitly recorded CART settings. Standardisation, model fitting and supervised ranking are training-only. Whole-run holdouts are within participant/session; this is not transfer of a trained model to an unseen participant.
 
-Balanced accuracy is the mean D/ND recall. Participant results average eligible sessions equally. Pilots are reported separately from the remaining 23 participants. Permutation significance inference is pending.
+Balanced accuracy is the mean D/ND recall. Participant results average eligible sessions equally. Pilots are reported separately from the remaining 23 participants. DEC_04 evaluates permutation-derived chance thresholds and one-sided p-values for the fixed decoder configurations.
 
 ## DEC_01
 
@@ -114,6 +115,37 @@ python Code/analyses/DEC_decoding/DEC_03_graz_comparison/analyse_graz_comparison
 Uses the exact DEC_02 evaluated trial IDs and folds. The full [-1,+1) s raw-amplitude pool is an explicit interpretation of the Graz methods; the publication does not specify a distinct classifier candidate interval or tree hyperparameters. This is a same-cohort exploratory follow-up, not an independent new test set.
 
 [Saved numerical results and figures](../../../output/DEC_decoding/DEC_03_graz_comparison/).
+
+## DEC_04
+
+**Within-run permutation inference.** Compare the fixed full LDA, central LDA, full binned tree and full-epoch Graz-style top-100 tree against their label-shuffled nulls. Primary preprocessing is BP no-FORCe; no additional preprocessing conditions are fitted here.
+
+The exact DEC_02 eligible sessions, accepted IDs and whole-run folds are reused. All four observed prediction vectors must reproduce DEC_02/03 before permutations run. For 1,999 shuffles, D/ND labels are permuted independently within each recording, preserving its counts. This assumes within-recording label exchangeability under the null; it does not preserve arbitrary serial label dependence.
+
+All classifiers are refitted for every permutation/fold, with training-only standardisation and reranking of the Graz features. Label-independent raw moments are cached to accelerate the algebraically identical training-only r-squared ranking; unpermuted ranks are checked against the original helper. Every model receives the same shuffled labels. Seeds are deterministic per participant, session and permutation, independent of worker order. Sessions checkpoint every 100 shuffles so a rerun can resume.
+
+Balanced accuracy pools all held-out test predictions within each session, then participant statistics average eligible sessions equally. Null participant scores use that identical aggregation. The one-sided Monte Carlo p-value is `(1 + number(null >= observed))/(1 + permutations)`. The 95th-percentile threshold uses the higher empirical quantile and is unadjusted; Holm p-values determine family-wise corrected significance.
+
+**Families:** 23 primary non-pilot full-LDA tests; a separate family of 69 secondary non-pilot tests (three baselines); and eight exploratory pilot/model tests. Pilot adjustment does not undo selection on those participants. Session-level p-values are unadjusted exploratory checks. The p-value resolution at 1,999 shuffles is 0.0005.
+
+| Step | Script | Operation |
+|---|---|---|
+| 1, if needed | [prepare_graz_features.m](DEC_03_graz_comparison/prepare_graz_features.m) | Re-export saved full-epoch amplitudes for training-fold selection. |
+| 2 | [run_permutations.py](DEC_04_permutation_inference/run_permutations.py) | Reproduce saved predictions, refit the four models under shuffles, save session nulls and participant/session inference tables. |
+| 3 | [build_inference_note.py](DEC_04_permutation_inference/build_inference_note.py) | Build the primary LDA note's tables and observed-versus-chance figure from completed inference. |
+| 4 | [build_web_reports.py](../../helpers/build_web_reports.py) | Add all baseline inference tables to the existing DEC report. |
+
+```text
+python Code/analyses/DEC_decoding/DEC_04_permutation_inference/run_permutations.py --permutations 1999 --workers 4
+python Code/analyses/DEC_decoding/DEC_04_permutation_inference/build_inference_note.py
+python Code/helpers/build_web_reports.py --category DEC_decoding
+```
+
+To regenerate only the inference tables from completed score arrays, use `run_permutations.py --summarise-only`; this does not refit models or require the full-epoch exports.
+
+The editable `D_ND_permutation_significance_note.tex` in the category report folder is compiled with LaTeX after step 3. The compact PDF focuses on full LDA; all four models remain available in the existing web report. Null arrays contain scores, not EEG. These tests establish label-related discrimination conditional on this analysis, not the neural identity of an ErrP.
+
+[Saved inference results](../../../output/DEC_decoding/DEC_04_permutation_inference/).
 
 ## Research note
 

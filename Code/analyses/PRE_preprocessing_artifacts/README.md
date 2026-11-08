@@ -222,6 +222,7 @@ Waveform, saved-figure and numerical-table controls are independent. Pilot condi
 | Step | Script | Operation |
 |---|---|---|
 | 1, when refreshing means | [export_report_waveforms.m](../../helpers/export_report_waveforms.m) | Aggregate saved PRE_01 epochs on DEC_02 IDs and saved PRE_07 pilot epochs; export `waveform_means.json` beside the report. No preprocessing or FORCe is rerun. |
+| Optional shareable figures | [export_waveform_figures.py](../../helpers/export_waveform_figures.py) | Export 75 primary BP no-FORCe participant/session PNGs and a combined PDF using the same saved means and counts. |
 | 2 | [build_web_reports.py](../../helpers/build_web_reports.py) | Embed the exported means and saved summaries into the portable HTML report. |
 
 ```matlab
@@ -229,6 +230,7 @@ run('Code/helpers/export_report_waveforms.m')
 ```
 
 ```text
+python Code/helpers/export_waveform_figures.py
 python Code/helpers/build_web_reports.py --category PRE_preprocessing_artifacts
 ```
 

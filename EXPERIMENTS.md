@@ -36,13 +36,15 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 | Experiment | Question / comparison | Scope | Inputs | Workflow | Results | Status |
 |---|---|---|---|---|---|---|
 | **DEC_01** Pilot decoders | Compare shrinkage LDA channel sets, 100/50 ms bins and samples across four processing conditions; include the pilot tree comparison. | mle01 and spe30; matched trials | FEA_01, PRE_09 | [Steps](Code/analyses/DEC_decoding/README.md#dec_01) | [Open](output/DEC_decoding/DEC_01_pilot_decoders/) | Completed; exploratory selection |
-| **DEC_02** Full-cohort decoders | Evaluate fixed all-eight-channel LDA, central LDA and an all-channel tree on held-out runs within each participant/session. | 25 participants available; 23 non-pilots analysed separately | PRE_01, DEC_01 | [Steps](Code/analyses/DEC_decoding/README.md#dec_02) | [Open](output/DEC_decoding/DEC_02_full_cohort_decoders/) | Completed; permutation inference pending |
+| **DEC_02** Full-cohort decoders | Evaluate fixed all-eight-channel LDA, central LDA and an all-channel tree on held-out runs within each participant/session. | 25 participants available; 23 non-pilots analysed separately | PRE_01, DEC_01 | [Steps](Code/analyses/DEC_decoding/README.md#dec_02) | [Open](output/DEC_decoding/DEC_02_full_cohort_decoders/) | Completed; inference in DEC_04 |
 | **DEC_03** Graz-style feature comparison | Compare a tree with 100 training-selected r-squared amplitudes against predefined binned channel sets. | Same evaluated trials and run folds as DEC_02 | DEC_02 | [Steps](Code/analyses/DEC_decoding/README.md#dec_03) | [Open](output/DEC_decoding/DEC_03_graz_comparison/) | Completed; exploratory feature follow-up |
+| **DEC_04** Permutation inference | Within-run label shuffles for full/central LDA, binned tree and Graz-style top-100 tree; participant-specific chance thresholds and corrected p-values. | 23 non-pilots; two exploratory pilots | DEC_02, DEC_03 | [Steps](Code/analyses/DEC_decoding/README.md#dec_04) | [Open](output/DEC_decoding/DEC_04_permutation_inference/) | Completed; 1,999 shuffles |
+
 
 ## Interpretation and next work
 
 PRE_07–09 and FEA_01 use the matched four-condition pilot. DEC_02 includes all eligible no-FORCe trials with complete-context quality checks; DEC_03 reuses those exact evaluated trial IDs and folds.
 
-The PRE interactive report presents eight-channel cohort waveforms by participant/session, with pilot-only all-accepted/matched condition comparisons. Permutation-based classification inference remains pending. Classification scores alone do not identify an ErrP.
+The PRE interactive report presents eight-channel cohort waveforms by participant/session, with pilot-only all-accepted/matched condition comparisons. DEC_04 completes permutation-based inference for four fixed classifiers; all 23 non-pilot participants pass the primary LDA Holm threshold. Expert waveform interpretation and code review remain separate. Classification scores alone do not identify an ErrP.
 
 [Initial EEG findings](output/legacy/reports/initial_EEG_findings.pdf) · [Earlier event audit](output/legacy/event_audit/)

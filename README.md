@@ -16,9 +16,9 @@ The HTML reports include embedded figures and aggregate data and open directly i
 
 ## Current analysis
 
-Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; DEC_01–03 cover pilot feature/model choices, fixed full-cohort evaluation and Graz-style trees.
+Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; DEC_01–04 cover pilot feature/model choices, fixed full-cohort evaluation, Graz-style trees and within-run permutation inference.
 
-The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balanced accuracy in the 23 non-pilot participants, compared with 70.3% for central LDA. Permutation significance inference remains pending.
+The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balanced accuracy in the 23 non-pilot participants, compared with 70.3% for central LDA. With 1,999 within-run label permutations (DEC_04), all 23/23 non-pilot participants exceeded the null after Holm correction. The compact primary-LDA significance note and all-model tables are linked from the DEC report.
 
 ## Repository layout
 
