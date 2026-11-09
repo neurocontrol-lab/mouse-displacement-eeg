@@ -1,4 +1,3 @@
-
 {
     const report = D.erp;
     const scope = byId('erpSubject');
@@ -37,13 +36,13 @@
     }
 
     const decoded = new Map();
-    function loadSamples(key, descriptor) {
-        if (!decoded.has(key)) {
+    function loadSamples(data, descriptor) {
+        if (!decoded.has(descriptor)) {
             const packed = Uint8Array.from(atob(descriptor.gzip), c => c.charCodeAt(0));
             const stream = new Blob([packed]).stream().pipeThrough(new DecompressionStream('gzip'));
-            decoded.set(key, new Response(stream).arrayBuffer().then(buffer => {
-                const expected = report.subjects.length * report.sessions.length * 3
-                    * 2 * report.channels.length * descriptor.samples * 2;
+            decoded.set(descriptor, new Response(stream).arrayBuffer().then(buffer => {
+                const expected = data.subjects.length * data.sessions.length * (descriptor.subsets ?? 3)
+                    * (descriptor.classes ?? 2) * data.channels.length * descriptor.samples * 2;
                 if (buffer.byteLength !== expected) throw new Error('Unexpected waveform size.');
                 const values = new DataView(buffer);
                 const seriesBytes = 2 * descriptor.samples;
@@ -57,23 +56,24 @@
                 return values;
             }));
         }
-        return decoded.get(key);
+        return decoded.get(descriptor);
     }
 
-    function combine(samples, width, subjectScope, sessionScope, subset) {
-        // Pool pairs within a participant, then average the contributing participants.
-        const size = width * report.channels.length * 2;
+    function combine(data, descriptor, samples, subjectScope, sessionScope, subset) {
+        // Pool trials within a participant, then average the contributing participants.
+        const size = descriptor.samples * data.channels.length * (descriptor.classes ?? 2);
+        const counts = descriptor.counts ?? data.counts;
         const total = new Float64Array(size);
         let participants = 0, pairs = 0;
-        for (const [i, subject] of report.subjects.entries()) {
-            if (subject !== subjectScope && report.cohorts[subject] !== subjectScope) continue;
+        for (const [i, subject] of data.subjects.entries()) {
+            if (subject !== subjectScope && data.cohorts[subject] !== subjectScope) continue;
             const sum = new Float64Array(size);
             let subjectPairs = 0;
-            for (const [j, visit] of report.sessions.entries()) {
+            for (const [j, visit] of data.sessions.entries()) {
                 if (sessionScope !== 'all' && visit !== sessionScope) continue;
-                const n = report.counts[i][j][subset];
+                const n = counts[i][j][subset];
                 if (!n) continue;
-                const offset = ((i * report.sessions.length + j) * 3 + subset) * size;
+                const offset = ((i * data.sessions.length + j) * (descriptor.subsets ?? 3) + subset) * size;
                 for (let k = 0; k < size; k++) sum[k] += n * samples.getInt16(2 * (offset + k), true);
                 subjectPairs += n;
             }
@@ -85,7 +85,26 @@
         return {pairs, participants, means: participants ? total.map(x => x / (participants * 100)) : total};
     }
 
-    function panel(channel, desc, curves, extent, window, visible) {
+    async function waveformView(data, key, subject, visit, subset = 0) {
+        const desc = data.waveforms[key];
+        const values = await loadSamples(data, desc);
+        const {pairs, participants, means} = combine(data, desc, values, subject, visit, subset);
+        const n = desc.samples;
+        const channels = data.channels;
+        const traces = channels.map((_, i) => {
+            const first = [...means.subarray(i * n, (i + 1) * n)];
+            if (desc.classes === 1) return [first];
+            const offset = (channels.length + i) * n;
+            const second = [...means.subarray(offset, offset + n)];
+            return [first, second, second.map((v, j) => v - first[j])];
+        });
+        return {desc, channels, traces, pairs, participants};
+    }
+
+    function panel(channel, desc, curves, extent, window, visible, {
+        names = ['ND', 'D', 'D − ND'], palette = colors,
+        eventLabel = alignment.selectedOptions[0].textContent, lineAt, eventRange,
+    } = {}) {
         const div = document.createElement('div');
         div.className = 'chart';
         const title = document.createElement('b');
@@ -94,7 +113,7 @@
         svg.setAttribute('class', 'erp-plot');
         svg.setAttribute('viewBox', '0 0 510 190');
         svg.setAttribute('role', 'img');
-        svg.setAttribute('aria-label', channel + ' matched waveforms aligned to ' + alignment.selectedOptions[0].textContent);
+        svg.setAttribute('aria-label', channel + ' waveforms aligned to ' + eventLabel);
         const readout = document.createElement('p');
         readout.className = 'erp-cursor';
         readout.textContent = 'Point to a time to read amplitudes.';
@@ -107,6 +126,11 @@
         const label = (x, y, value, anchor) =>
             '<text x="' + x + '" y="' + y + '" text-anchor="' + anchor + '" fill="currentColor">' + value + '</text>';
         let marks = '';
+        if (eventRange) {
+            const [lo, , hi] = eventRange;
+            marks += '<rect x="' + x(lo) + '" y="' + top + '" width="' + (x(hi) - x(lo))
+                + '" height="' + (bottom - top) + '" fill="#ffedcb"/>';
+        }
         if (window && window.electrodes.split('/').includes(channel)) {
             marks += '<rect x="' + x(window.start_ms) + '" y="' + top + '" width="'
                 + (x(window.end_ms_exclusive) - x(window.start_ms)) + '" height="' + (bottom - top) + '" fill="#ffefc3"/>';
@@ -114,6 +138,14 @@
         for (let t = Math.ceil(desc.first_ms / 200) * 200; t <= end; t += 200) {
             marks += line(x(t), top, x(t), bottom, t === 0 ? '#596778' : '#d8e1eb');
             marks += label(x(t), bottom + 16, t, 'middle');
+        }
+        if (lineAt !== undefined) {
+            marks += line(x(lineAt), top, x(lineAt), bottom, '#b5a58a');
+        }
+        if (eventRange) {
+            const median = x(eventRange[1]);
+            marks += '<line x1="' + median + '" x2="' + median + '" y1="' + top + '" y2="' + bottom
+                + '" stroke="#a85416" stroke-dasharray="4 4"/>';
         }
         for (const voltage of [-extent, 0, extent]) {
             marks += line(left, y(voltage), right, y(voltage), voltage === 0 ? '#9babb9' : '#d8e1eb');
@@ -123,7 +155,7 @@
         for (const i of visible) {
             const points = curves[i].map((v, j) =>
                 x(desc.first_ms + j * desc.step_ms).toFixed(1) + ',' + y(v).toFixed(1));
-            marks += '<polyline points="' + points.join(' ') + '" fill="none" stroke="' + colors[i]
+            marks += '<polyline points="' + points.join(' ') + '" fill="none" stroke="' + palette[i]
                 + '" stroke-width="' + (i === 2 ? '1.9' : '1.45') + '"/>';
         }
         svg.innerHTML = marks;
@@ -132,7 +164,7 @@
             const px = (event.clientX - bounds.left) * 510 / bounds.width;
             const i = Math.round((px - left) * desc.samples / (right - left));
             if (i < 0 || i >= desc.samples) return;
-            const values = visible.map(k => ['ND', 'D', 'D − ND'][k] + ' ' + curves[k][i].toFixed(2) + ' µV');
+            const values = visible.map(k => names[k] + ' ' + curves[k][i].toFixed(2) + ' µV');
             readout.textContent = (desc.first_ms + i * desc.step_ms) + ' ms · ' + values.join(' · ');
         });
         svg.addEventListener('pointerleave', () => {
@@ -146,7 +178,6 @@
     async function render() {
         const current = ++revision;
         const key = alignment.value;
-        const desc = report.waveforms[key];
         const subset = Number(delay.value);
         const visible = toggles.filter(t => t.checked).map(t => Number(t.value));
         grid.replaceChildren();
@@ -156,9 +187,10 @@
         }
         countsNote.textContent = 'Loading waveforms…';
         try {
-            const values = await loadSamples(key, desc);
+            const {desc, channels, traces, pairs, participants} = await waveformView(
+                report, key, scope.value, session.value, subset
+            );
             if (current !== revision) return;
-            const {pairs, participants, means} = combine(values, desc.samples, scope.value, session.value, subset);
             if (!pairs) {
                 countsNote.textContent = 'No matched pairs for this selection.';
                 return;
@@ -168,17 +200,10 @@
             countsNote.textContent = scopeLabel + ' · ' + visitLabel + ' · ' + participants
                 + (participants === 1 ? ' participant · ' : ' participants · ') + pairs.toLocaleString()
                 + ' pairs (each class n=' + pairs.toLocaleString() + ').';
-            const n = desc.samples;
-            const traces = report.channels.map((_, i) => {
-                const nd = [...means.subarray(i * n, (i + 1) * n)];
-                const offset = (report.channels.length + i) * n;
-                const d = [...means.subarray(offset, offset + n)];
-                return [nd, d, d.map((v, j) => v - nd[j])];
-            });
             // Keep the scale stable when toggling curves on the same selection.
             const extent = Math.max(1, Math.ceil(Math.max(...traces.flat(2).map(Math.abs)) * 1.06));
             const window = highlight.value === '' ? null : tests[Number(highlight.value)];
-            grid.replaceChildren(...report.channels.map((ch, i) => panel(ch, desc, traces[i], extent, window, visible)));
+            grid.replaceChildren(...channels.map((ch, i) => panel(ch, desc, traces[i], extent, window, visible)));
         } catch (error) {
             if (current === revision) {
                 countsNote.textContent = 'Could not read the embedded waveforms. The saved figures and tables are available below.';
@@ -191,4 +216,5 @@
     alignment.addEventListener('change', () => { windowOptions(); render(); });
     windowOptions();
     render();
+    setupERPFigureGallery(waveformView, panel);
 }

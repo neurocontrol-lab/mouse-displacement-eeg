@@ -1,0 +1,144 @@
+"""Build the portable Data audit report from the saved audit outputs."""
+
+from collections import Counter
+import csv
+import gzip
+import json
+from pathlib import Path
+
+from research_paths import ROOT, result_path
+
+
+CATEGORY = "AUD_data_audit"
+STYLE = """
+.audit-heading{display:flex;gap:16px;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
+.audit-chart{margin:0;min-width:0}
+.audit-chart svg{display:block;width:100%;height:auto;color:#53657a;font:11px system-ui,sans-serif}
+.audit-chart figcaption{font-weight:600}
+.audit-table td:first-child,.audit-table th:first-child{text-align:left}
+.audit-table td,.audit-table th{text-align:right}
+.audit-table th:first-child{min-width:10em}
+.audit-legend{display:flex;gap:10px 18px;flex-wrap:wrap;margin:.5rem 0;font-size:.85rem;color:#53657a}
+.audit-legend b{color:#20334b}
+"""
+
+BODY = """
+<p>Use the timing audit to check what the EEG markers represent. Use the trajectory audit to check which behavioural labels and endpoint estimates can be linked to those trials.</p>
+<nav aria-label="Audit views"><a href="#timing">Event timing</a><a href="#trajectories">Mouse trajectories</a><a id="targetHitsLink" href="#target-hits" hidden>Observed target hits</a><a href="../../../Code/analyses/AUD_data_audit/README.md">Methods and saved outputs</a><a href="../../../EXPERIMENTS.md">Experiment registry</a></nav>
+<section id="timing">
+<div class="audit-heading"><h2>AUD_01 · Event timing and target jump</h2><a href="../AUD_01_event_timing_audit/RESULTS.md">Results note</a></div>
+<p class="note">Marker 300 is initial target appearance, 400 is movement onset, and 500 is the recorded target jump. Compare observed mouse and EEG intervals, then see how often the candidate thresholds match the mouse marker.</p>
+<div class="controls">
+<label>Participant<select id="timingSubject"></select></label>
+<label>Marker<select id="timingMarker"><option value="500">500 · Target jump</option><option value="400">400 · Movement onset</option></select></label>
+<label>Cutoff<select id="timingScope"><option value="per_run">Fitted per run</option><option value="shared">Shared fit</option><option value="fixed">Fixed benchmark</option></select></label>
+</div>
+<div class="tablewrap"><table id="timingObserved" class="audit-table"></table></div>
+<h3>Candidate first crossings</h3>
+<p class="note">Fitted cutoffs are evaluated on held-out trials within each recording. The ±6 ms and one-sample columns use different tolerances because log intervals vary slightly.</p>
+<p id="timingSharedNote" class="note" hidden>Each fold uses one cutoff across all participants, sessions, and runs. If the fitted values differ, both are shown in fold order. Values are rounded to three decimal places. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
+<p id="timingFixedNote" class="note" hidden></p>
+<div class="tablewrap"><table id="timingComparison" class="audit-table"></table></div>
+</section>
+<section id="trajectories">
+<div class="audit-heading"><h2>AUD_02 · Mouse trajectories and reach outcomes</h2><div><a href="../AUD_02_mouse_trajectories/RESULTS.md">Results note</a> · <a href="../../../Code/analyses/AUD_data_audit/README.md#aud_02">Methods</a></div></div>
+<p class="note">Compare the verified manuscript endpoint with the closest observed approach to the logged target center during the outward reach. The manuscript label and the 250 ms steering classification are shown separately.</p>
+<div class="controls">
+<label>Participant<select id="reachSubject"></select></label>
+<label>Session<select id="reachSession"></select></label>
+<label>Displacement<select id="reachCondition"><option value="">All</option><option value="D">Displaced</option><option value="ND">Non-displaced</option></select></label>
+<label>Manuscript label<select id="reachLabel"></select></label>
+<label>250 ms steering<select id="reachSteering"></select></label>
+<label>EEG-accepted only<input type="checkbox" id="reachAccepted"></label>
+</div>
+<p id="reachSummary" class="note" aria-live="polite"></p>
+<div class="tablewrap"><table id="reachCounts" class="audit-table"></table></div>
+<h3>Example trajectories</h3>
+<p class="note">Examples are selected near the 10th, 50th and 90th endpoint-distance percentiles within each participant, session, displacement, manuscript label, steering group and EEG eligibility group. A group can also show one example without a verified endpoint. Counts and distances above use all matching trials.</p>
+<div class="controls"><label>Example trial<select id="reachTrial"></select></label></div>
+<p id="reachTrialInfo" aria-live="polite"></p>
+<div class="audit-legend"><span><b>Blue</b> cursor</span><span><b>Purple</b> jump and displaced target center</span><span><b>Green</b> manuscript endpoint</span><span><b>Orange</b> detected steering onset</span><span><b>Gray ring</b> estimated outward end</span><span><b>Blue ring</b> closest observed approach</span></div>
+<div id="trajectoryCharts" class="grid">
+<figure class="card audit-chart"><figcaption>Cursor path and target centers</figcaption><svg id="reachPath" role="img" aria-label="Cursor path with movement, jump, steering, and endpoint positions"></svg></figure>
+<figure class="card audit-chart"><figcaption>Endpoint distances in the current selection</figcaption><svg id="reachDistances" role="img" aria-label="Distribution of endpoint distances in cursor pixels"></svg></figure>
+<figure class="card audit-chart"><figcaption>Lateral cursor displacement</figcaption><svg id="reachLateral" role="img" aria-label="Cursor lateral displacement over time"></svg></figure>
+<figure class="card audit-chart"><figcaption>Lateral mouse speed (nominal)</figcaption><svg id="reachSpeed" role="img" aria-label="Estimated lateral speed over time"></svg></figure>
+</div>
+<p class="note">Time plots use the jump as zero for displaced trials and movement onset for non-displaced trials. Positive lateral displacement is toward the jump for displaced trials and to the right for non-displaced trials. On displaced trials, the orange dashed line in the speed plot marks the 150 mm/s steering threshold. The orange markers show where and when steering was detected. Early steering requires the threshold to be sustained for 20 ms by 250 ms after the jump. The report labels trials with insufficient outward trajectory coverage separately.</p>
+</section>
+<section id="target-hits" hidden>
+<div class="audit-heading"><h2>AUD_02 · Observed target hits</h2><a href="../AUD_02_mouse_trajectories/target_boundary/RESULTS.md">Results and trial labels</a></div>
+<p class="note">Counts cover EEG-accepted trials. A hit is any recorded cursor sample inside or on the provisional 40 px circle, including entry after an overshoot. No hit detected means no entry was recorded before observation ended.</p>
+<div class="controls">
+<label>Participant<select id="hitSubject"></select></label>
+<label>Session<select id="hitSession"></select></label>
+</div>
+<div class="tablewrap"><table id="hitCounts" class="audit-table"></table></div>
+</section>
+<footer>Built from saved AUD_01 and AUD_02 results. The report embeds selected trajectory examples and summary fields. Trial-level audit tables are linked from the methods.</footer>
+"""
+
+
+def rows(path):
+    reader = gzip.open if path.suffix == ".gz" else open
+    with reader(path, "rt", encoding="utf-8", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def hit_counts(path):
+    if not path.is_file():
+        return []
+    counts = Counter((r["subject"], r["session"], r["condition"], r["outcome"]) for r in rows(path))
+    return [
+        [*key, counts[(*key, "hit_detected")], counts[(*key, "no_hit_detected")]]
+        for key in sorted({key[:3] for key in counts})
+    ]
+
+
+def audit_data():
+    timing = result_path("AUD_01")
+    trajectories = result_path("AUD_02")
+    audit = rows(trajectories / "trial_audit.csv.gz")
+    index = {(r["run"], int(r["trial"])): r for r in audit}
+    examples = json.loads((trajectories / "trajectory_examples.json").read_text(encoding="utf-8"))
+    def number(row, field):
+        return float(row[field]) if row[field] else None
+    def filters(row):
+        return [row[k] for k in ("subject", "session", "condition", "manuscript_label", "steering_250")] + [
+            int(row["eeg_accepted"]), int(row["behaviour_link"] == "linked"),
+            number(row, "endpoint_distance_px"), number(row, "closest_distance_px"),
+        ]
+    for example in examples:
+        r = index[example["run"], example["trial"]]
+        example["filters"] = filters(r)
+        example["jump_direction"] = int(r["jump_direction"])
+        for name in ("endpoint_ms_from_movement", "jump_ms_from_movement",
+                     "outward_steering_ms_from_jump", "outward_end_ms_from_movement"):
+            example[name] = number(r, name)
+        example["outward_end_reason"] = r["outward_end_reason"]
+    return {
+        "subjects": sorted({r["subject"] for r in audit}),
+        "timing": rows(timing / "marker_timing.csv"),
+        "fixedCutoffs": json.loads((timing / "settings.json").read_text(encoding="utf-8"))["fixed"],
+        "sharedCutoffs": [r for r in rows(timing / "fitted_cutoffs.csv.gz") if r["fit_scope"] == "shared"],
+        "comparison": rows(timing / "threshold_comparison.csv") + rows(timing / "threshold_comparison_by_participant.csv"),
+        "reaches": [filters(row) for row in audit],
+        "examples": examples,
+        "targetHits": hit_counts(trajectories / "target_boundary" / "observed_hit_trials.csv.gz"),
+    }
+
+
+def build(shared_style, related):
+    destination = ROOT / "output" / CATEGORY / "report"
+    destination.mkdir(parents=True, exist_ok=True)
+    data = json.dumps(audit_data(), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    script = Path(__file__).with_name("audit_report.js").read_text(encoding="utf-8")
+    page = (
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        f'<title>Data audit</title><style>{shared_style}{STYLE}</style></head><body>'
+        f'<nav aria-label="Research reports">{related}</nav><h1>Data audit</h1>{BODY}'
+        f'<script id="audit-data" type="application/json">{data}</script><script>{script}</script></body></html>'
+    )
+    (destination / "index.html").write_text(page, encoding="utf-8")
+    print(f"{CATEGORY}: {len(page)/1e6:.1f} MB HTML")

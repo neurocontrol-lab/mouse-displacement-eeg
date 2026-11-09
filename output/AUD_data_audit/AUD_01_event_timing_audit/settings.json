@@ -1,0 +1,48 @@
+{
+  "markers": {
+    "400": "movement",
+    "500": "jump"
+  },
+  "nominal_cursor_pixels_per_mouse_mm": 6,
+  "eeg_ms_per_sample": 2,
+  "search_ms_from_initial_target": 1250,
+  "timing_margin_ms": 6,
+  "minimum_trials_per_run_and_marker": 4,
+  "folds": "Alternate ordered trial IDs within each recording and marker. Fold 0 starts with the first trial.",
+  "search_start": "After marker 300 for movement, at marker 400 for jump.",
+  "fit": "Maximize exact first crossings in training. Choose the lowest cutoff in a tie.",
+  "fixed": {
+    "400": {
+      "forward_50_mm_s": [
+        "forward_speed_mm_s",
+        50
+      ],
+      "2d_50_mm_s": [
+        "speed_2d_mm_s",
+        50
+      ],
+      "forward_3_px": [
+        "forward_step_px",
+        3
+      ],
+      "2d_3_px": [
+        "step_2d_px",
+        3
+      ]
+    },
+    "500": {
+      "forward_18_px": [
+        "forward_step_px",
+        18
+      ],
+      "forward_560_mm_s": [
+        "forward_speed_mm_s",
+        560
+      ],
+      "elapsed_84_ms": [
+        "elapsed_from_movement_ms",
+        84
+      ]
+    }
+  }
+}

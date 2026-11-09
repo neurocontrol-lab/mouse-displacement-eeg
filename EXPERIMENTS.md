@@ -6,10 +6,18 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 
 | Prefix | Category | What it covers | Methods and script order | Interactive report |
 |---|---|---|---|---|
+| **AUD** | Data audit | Event timing, mouse trajectories and behavioural labels. | [Workflow tables](Code/analyses/AUD_data_audit/README.md) | [Open](output/AUD_data_audit/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/AUD_data_audit/report/index.html) |
 | **PRE** | Preprocessing and artifact handling | Filtering, FORCe application, input quality, rejection and their effects on event-related waveforms. | [Workflow tables](Code/analyses/PRE_preprocessing_artifacts/README.md) | [Open](output/PRE_preprocessing_artifacts/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
 | **FEA** | Features and repeatability | Channel/time feature comparisons and consistency of averaged responses within participants. | [Workflow tables](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
 | **ERP** | Event-related potentials | Waveform alignment, timing and morphology. | [Workflow tables](Code/analyses/ERP_event_related_potentials/README.md) | [Open](output/ERP_event_related_potentials/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/ERP_event_related_potentials/report/index.html) |
 | **DEC** | Decoding and classification | D/ND classifiers, held-out-run evaluation and Graz-style feature comparisons. | [Workflow tables](Code/analyses/DEC_decoding/README.md) | [Open](output/DEC_decoding/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
+
+## AUD: Data audit
+
+| Experiment | Question / comparison | Scope | Inputs | Workflow | Results | Status |
+|---|---|---|---|---|---|---|
+| **AUD_01** Event timing and target-jump audit | Compare logged onset markers with candidate motion and time thresholds. | 25 participants | PRE_01, mouse logs | [Steps](Code/analyses/AUD_data_audit/README.md#aud_01) | [Results note](output/AUD_data_audit/AUD_01_event_timing_audit/RESULTS.md) | Completed |
+| **AUD_02** Mouse trajectories and reach outcomes | Join manuscript labels, verify endpoints and measure follow-through and fixed-window steering from mouse logs. | 25 participants | AUD_01, PRE_01, DEC_02, behavioural table and mouse logs | [Steps](Code/analyses/AUD_data_audit/README.md#aud_02) | [Open](output/AUD_data_audit/report/index.html#trajectories) | Completed |
 
 ## PRE: Preprocessing and artifact handling
 
@@ -37,6 +45,8 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 | Experiment | Question / comparison | Scope | Inputs | Workflow | Results | Status |
 |---|---|---|---|---|---|---|
 | **ERP_01** Movement and target-jump alignment | Compare matched D/ND waveform morphology at movement onset and recorded target jumps using fixed-window cohort tests and individual run repeatability. | 25 participants; 23 non-pilots in group tests | PRE_01, DEC_02 | [Steps](Code/analyses/ERP_event_related_potentials/README.md#erp_01) | [Open](output/ERP_event_related_potentials/ERP_01_event_locked_waveforms/) | Completed |
+| **ERP_02** Steering and endpoint distance | Compare jump-aligned early and no-early steering, align to detected steering, and describe EEG associations with target distance. | 25 participants, with comparison-specific coverage | AUD_01, AUD_02, PRE_01, DEC_02, ERP_01 | [Steps](Code/analyses/ERP_event_related_potentials/README.md#erp_02) | [Open](output/ERP_event_related_potentials/ERP_02_steering_and_endpoint/RESULTS.md) | Completed |
+| **ERP_03** Corrective versus erroneous trajectories | Compare jump-aligned EEG by manuscript trajectory class on matched displaced trials. | 25 participants | AUD_02, PRE_01, ERP_02 | [Steps](Code/analyses/ERP_event_related_potentials/README.md#erp_03) | [Open](output/ERP_event_related_potentials/ERP_03_corrective_trajectories/RESULTS.md) | Completed |
 
 ## DEC: Decoding and classification
 

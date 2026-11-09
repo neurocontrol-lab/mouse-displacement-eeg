@@ -1,9 +1,7 @@
 """Plot matched ERPs and summarize fixed-window effects across and within participants."""
 
 from collections import Counter, defaultdict
-import base64
 import csv
-import gzip
 import json
 from pathlib import Path
 import sys
@@ -17,6 +15,7 @@ from scipy.stats import t, ttest_1samp
 
 sys.path.insert(0, str(next(p for p in Path(__file__).resolve().parents if p.name == "Code")))
 from research_paths import result_path
+from helpers.erp_report_encoding import pack_waveforms
 
 
 # Half-open windows in ms. Fix these before inspecting the cohort waveforms.
@@ -130,20 +129,8 @@ def plot_waveforms(out, times, sums, counts, channels, sessions, validation, del
 
 def save_report_means(out, subjects, sessions, channels, cohorts, times, sums, counts):
     """Save display means in participant/session/subset/class/channel/sample order."""
-    waveforms = {}
-    for alignment, values in sums.items():
-        denominator = counts[None, None, None, :, :, :]
-        means = np.divide(values, denominator, out=np.zeros_like(values),
-                          where=denominator > 0)
-        assert np.max(np.abs(means)) <= 100.000001
-        # Hundredths of a microvolt fit in signed 16 bits. Preserve the 500 Hz grid.
-        packed = np.rint(means.transpose(4, 5, 3, 2, 1, 0) * 100).astype("<i2")
-        # Differences between successive samples compress well and preserve every packed value.
-        deltas = np.diff(packed, axis=-1, prepend=np.zeros_like(packed[..., :1]))
-        waveforms[alignment] = dict(
-            first_ms=int(times[alignment][0]), step_ms=2, samples=packed.shape[-1],
-            gzip=base64.b64encode(gzip.compress(deltas.tobytes(), mtime=0)).decode("ascii"),
-        )
+    waveforms = {alignment: pack_waveforms(times[alignment], values, counts)
+                 for alignment, values in sums.items()}
     data = dict(subjects=list(subjects), sessions=list(sessions), channels=list(channels),
                 cohorts=cohorts, counts=counts.transpose(1, 2, 0).astype(int).tolist(),
                 waveforms=waveforms)

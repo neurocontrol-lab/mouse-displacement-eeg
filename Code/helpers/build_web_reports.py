@@ -14,9 +14,11 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from research_paths import ROOT, EXPERIMENTS, result_path
+import audit_web_report
 import erp_web_report
 
 REPORTS = {
+    audit_web_report.CATEGORY: {"title": "Data audit"},
     "PRE_preprocessing_artifacts": {
         "title": "Preprocessing and artifact handling",
         "summary": "The primary BP no-FORCe waveform view covers all 25 participants. Four-condition comparisons remain limited to mle01 and spe30, with all accepted or matched trials. Sharp-join attenuation alone does not demonstrate neural-signal preservation.",
@@ -350,6 +352,14 @@ if(location.hostname==='htmlpreview.github.io'){const base='https://github.com/n
 
 
 def build(category, spec):
+    related = " · ".join(
+        f'<a href="../../{c}/report/index.html">{v["title"]}</a>'
+        for c, v in REPORTS.items()
+        if c != category
+    )
+    if category == audit_web_report.CATEGORY:
+        audit_web_report.build(STYLE, related)
+        return
     destination = ROOT / "output" / category / "report"
     destination.mkdir(parents=True, exist_ok=True)
     erp = category == erp_web_report.CATEGORY
@@ -447,6 +457,12 @@ def build(category, spec):
         data["erp"] = json.loads(
             (result_path("ERP_01") / "waveform_means.json").read_text(encoding="utf-8")
         )
+        steering_means = result_path("ERP_02") / "waveform_means.json"
+        if steering_means.exists():
+            data["erpSteering"] = json.loads(steering_means.read_text(encoding="utf-8"))
+        trajectory_means = result_path("ERP_03") / "waveform_means.json"
+        if trajectory_means.exists():
+            data["erpTrajectories"] = json.loads(trajectory_means.read_text(encoding="utf-8"))
     experiments = []
     for eid, e in EXPERIMENTS.items():
         if category not in e["result"]:
@@ -455,11 +471,6 @@ def build(category, spec):
         experiments.append(
             f'<li><b>{eid}</b> · <a href="{local}">workflow and scripts</a> · <a href="../{Path(e["result"]).name}/">results</a></li>'
         )
-    related = " · ".join(
-        f'<a href="../../{c}/report/index.html">{v["title"]}</a>'
-        for c, v in REPORTS.items()
-        if c != category
-    )
     summary = html.escape(spec["summary"])
     if category.startswith("PRE"):
         phrase = "Four-condition comparisons remain limited to mle01 and spe30"
@@ -533,8 +544,12 @@ def build(category, spec):
     pdf = f'<a href="{spec["pdf"]}">Formal PDF note</a> · ' if spec.get("pdf") else ""
     erp_section = erp_web_report.WAVE_SECTION if erp else ""
     erp_style = erp_web_report.STYLE if erp else ""
-    erp_script = Path(__file__).with_name("erp_waveforms.js").read_text(encoding="utf-8") if erp else ""
+    erp_script = ""
+    erp_gallery = ""
     if erp:
+        erp_gallery = '<div id="erpFilteredFigure" hidden></div>'
+        erp_script = "\n".join(Path(__file__).with_name(name).read_text(encoding="utf-8")
+                               for name in ("erp_waveforms.js", "erp_figure_gallery.js"))
         table_scope = erp_web_report.TEST_SCOPE
         if any(table["title"] == "Recording amplitudes" for table in tables):
             erp_section += erp_web_report.REPEATABILITY_SECTION
@@ -545,7 +560,7 @@ def build(category, spec):
 <section><h2>Scope and interpretation</h2><p>{scope}</p><details><summary>Methods and experiment navigation</summary><ul>{''.join(experiments)}</ul><p>{method_note}</p></details></section>
 {erp_section}
 <section id="waveSection" hidden><h2>Participant/session eight-channel waveforms</h2><div class="controls"><label>Participant<select id="waveSubject"></select></label><label>Session<select id="waveSession"></select></label><label>Processing condition<select id="condition"><option value="1">1 · BP no-FORCe</option><option value="2">2 · BP FORCe (pilot only)</option><option value="3">3 · Split no-FORCe (pilot only)</option><option value="4">4 · Split FORCe (pilot only)</option></select></label><label>Trial selection<select id="selection"><option value="all">All accepted trials</option><option value="matched">Matched across four conditions (pilot only)</option></select></label><label>Overlay BP no-FORCe<input type="checkbox" id="overlay"></label><button id="downloadWave" type="button">Download figure (PNG)</button></div><h3 id="waveTitle"></h3><p id="counts" class="note"></p><p id="waveDetails" class="note"></p><p class="note">The cohort view uses accepted decoder-analysis trial IDs, including sessions ineligible for cross-validation, with quality eligibility across the complete three-second interval. Pilot conditions use that same interval; matching does not balance the two class counts. The historical two-second FORCe cohort run is separate and is not included here.</p><div id="waves" class="grid"></div></section>
-<section><h2>Saved figures</h2><p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label></div><p id="figureDescription" class="note" aria-live="polite"></p><figure><img id="plot" alt="Saved analysis figure"><figcaption id="plotcaption"></figcaption></figure></section>
+<section id="savedFigures"><h2>Saved figures</h2><p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label></div><p id="figureDescription" class="note" aria-live="polite"></p><figure><img id="plot" alt="Saved analysis figure">{erp_gallery}<figcaption id="plotcaption"></figcaption></figure></section>
 <section><h2>Numerical summaries</h2>{table_scope}{inference_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div></section><footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. Report controls display saved results and do not rerun analyses.</footer>
 <script id="report-data" type="application/json">{json.dumps(data,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')}</script><script>{SCRIPT}{erp_script}</script></body></html>'''
     (destination / "index.html").write_text(body, encoding="utf-8")

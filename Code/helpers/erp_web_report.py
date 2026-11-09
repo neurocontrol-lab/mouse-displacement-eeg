@@ -8,13 +8,17 @@ CATEGORY = "ERP_event_related_potentials"
 
 def report_spec():
     out = result_path("ERP_01")
+    steering = result_path("ERP_02")
+    trajectories = result_path("ERP_03")
     return {
         "title": "Event-related potentials",
         "summary": (
             "ERP_01 compares movement- and target-jump-aligned waveforms from the same "
             "displaced (D) and non-displaced (ND) trials. The clearest non-pilot difference "
             "was a positivity near 270 ms after the recorded jump. Only the Cz/FCz "
-            "200–280 ms jump window reached the Holm-adjusted threshold."
+            "200–280 ms jump window reached the Holm-adjusted threshold. ERP_02 describes "
+            "steering and target distance within displaced reaches. ERP_03 compares "
+            "the manuscript’s corrective and erroneous trajectories."
         ),
         "tables": [
             ("Non-pilot group tests", out / "component_tests.csv"),
@@ -22,22 +26,56 @@ def report_spec():
             ("Participant/session amplitudes", out / "session_component_amplitudes.csv"),
             ("Recording amplitudes", out / "run_component_amplitudes.csv"),
             ("Matched trial coverage", out / "match_coverage.csv"),
+            ("ERP_02 steering contrasts", steering / "steering_contrast_summary.csv"),
+            ("ERP_02 steering contrasts by participant and session", steering / "steering_contrast_by_session.csv"),
+            ("ERP_02 trial coverage", steering / "coverage_by_session.csv"),
+            ("ERP_02 distance slopes by participant", steering / "endpoint_distance_slopes.csv"),
+            ("ERP_03 trajectory contrast", trajectories / "group_summary.csv"),
+            ("ERP_03 trajectory contrast by participant", trajectories / "participant_amplitudes.csv"),
+            ("ERP_03 trial coverage", trajectories / "coverage.csv"),
         ],
         "figures": [out / f"{name}.png" for name in (
             "matched_waveforms", "movement_differences_by_session",
             "jump_differences_by_session", "short_vs_long_delay",
-        )],
+        )] + [steering / f"{name}.png" for name in (
+            "jump_early_steering", "jump_control_subsets", "jump_and_steering_alignment", "distance_associations",
+        )] + [trajectories / "jump_corrective_vs_erroneous.png"],
         "figure_descriptions": {
+            "jump_corrective_vs_erroneous": (
+                "ERP_03. Corrective and erroneous displaced reaches defined by the manuscript’s "
+                "velocity and endpoint-distribution criteria. Pairs share a recording and jump "
+                "direction and are matched on reaction time and movement-to-jump delay. "
+                "The cohort figure gives each contributing non-pilot participant equal weight."
+            ),
             "matched_waveforms": "D, ND and D − ND on eight channels under both alignments. Non-pilot participants have equal weight.",
             "movement_differences_by_session": "Movement-aligned D − ND means for pre, post and retest in the non-pilot group.",
             "jump_differences_by_session": "Jump-aligned D − ND means for pre, post and retest in the non-pilot group.",
-            "short_vs_long_delay": "D − ND for the shorter and longer halves of the jump delays within each recording, averaged across non-pilot participants.",
+            "short_vs_long_delay": (
+                "D − ND for the shorter and longer halves of matched pairs within each recording, "
+                "ranked by the time from movement onset to the jump on the displaced trial. "
+                "Averaged across non-pilot participants."
+            ),
+            "jump_early_steering": "ERP_02. Early steering versus no early confirmation in matched displaced trials, averaged across non-pilots.",
+            "jump_control_subsets": "ERP_02. Early steering minus later steering, and early steering minus no detection, using the corresponding matched pairs.",
+            "jump_and_steering_alignment": "ERP_02. Jump- and steering-aligned waveforms on the same trials. The amber band and dashed line mark the other event's 5th–95th percentile range and median.",
+            "distance_associations": (
+                "Each blue dot is a participant’s fitted change in EEG voltage per 100 px farther from "
+                "the target across trials (ΔV/Δdistance). The diamond is the median. A slope farther "
+                "from zero means a larger voltage change per 100 px. Negative slopes mean higher "
+                "voltage on closer reaches. The largest absolute median for closest approach was "
+                "−0.22 µV per 100 px at Cz/FCz, 200–280 ms after the jump (Interaction negativity). "
+                "For manuscript endpoint distance it was +0.18 µV per 100 px at Cz/FCz, 280–360 ms."
+            ),
         },
     }
 
 
 TABLE_LABELS = {
     "alignment": "Alignment", "component_window": "Component window",
+    "erroneous_uv": "Erroneous (µV)", "corrective_uv": "Corrective (µV)",
+    "difference_uv": "Difference (µV)",
+    "mean_difference_uv": "Mean difference (µV)",
+    "median_difference_uv": "Median difference (µV)",
     "electrodes": "Electrodes", "start_ms": "Start (ms)", "end_ms_exclusive": "End (ms, exclusive)",
     "expected_sign": "Expected sign (−1/+1)", "participants": "Participants",
     "mean_ND_uV": "Mean ND (µV)", "mean_D_uV": "Mean D (µV)",
@@ -77,7 +115,7 @@ WAVE_SECTION = """
 <label>Participant or cohort<select id="erpSubject"></select></label>
 <label>Session<select id="erpSession"><option value="all">Pooled sessions</option></select></label>
 <label>Alignment<select id="erpAlignment"><option value="jump">Target jump / pseudo-jump</option><option value="movement">Movement onset</option></select></label>
-<label>Delay group<select id="erpDelay"><option value="0">All matched pairs</option><option value="1">Shorter delays</option><option value="2">Longer delays</option></select></label>
+<label>Jump delay group<select id="erpDelay"><option value="0">All matched pairs</option><option value="1">Shorter delays</option><option value="2">Longer delays</option></select></label>
 <label>Shade a test window<select id="erpWindow"></select></label>
 </div>
 <div class="erp-legend" aria-label="Visible waveforms">
@@ -87,7 +125,9 @@ WAVE_SECTION = """
 </div>
 <p id="erpCounts" class="note" aria-live="polite"></p>
 <p class="note">Pooled sessions weight pairs equally within each participant. Cohort views weight participants equally.
-Shorter and longer delays are ranked within each recording; an odd middle pair appears only in the full set.
+Within each recording, pairs are ranked by the time from movement onset (400) to the target jump (500) on the displaced trial.
+The shorter and longer groups contain equal numbers of pairs. An odd middle pair appears only in the full set.
+Reaction time from initial target appearance (300) to movement onset (400) is used to match D and ND before this split.
 The eight panels share a voltage scale within each selection. The shaded interval marks the test electrodes.</p>
 <div id="erpWaves" class="grid"></div>
 </section>

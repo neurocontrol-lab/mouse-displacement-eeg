@@ -4,6 +4,8 @@ How do filtering, FORCe windows and quality/rejection rules affect movement-alig
 
 [Experiment registry](../../../EXPERIMENTS.md) · [Interactive report](../../../output/PRE_preprocessing_artifacts/report/index.html)
 
+[Data audit](../AUD_data_audit/README.md) covers event timing and mouse trajectories.
+
 ## Experiments
 
 | ID | Analysis | Scope | Results |

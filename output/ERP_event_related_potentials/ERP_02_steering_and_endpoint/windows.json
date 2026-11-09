@@ -1,0 +1,52 @@
+[
+  {
+    "alignment": "jump",
+    "component_window": "ERN-like",
+    "electrodes": [
+      "Cz",
+      "FCz"
+    ],
+    "start_ms": 50,
+    "end_ms_exclusive": 100
+  },
+  {
+    "alignment": "jump",
+    "component_window": "Pe-like",
+    "electrodes": [
+      "CP1"
+    ],
+    "start_ms": 200,
+    "end_ms_exclusive": 500
+  },
+  {
+    "alignment": "jump",
+    "component_window": "Interaction negativity",
+    "electrodes": [
+      "Cz",
+      "FCz"
+    ],
+    "start_ms": 200,
+    "end_ms_exclusive": 280
+  },
+  {
+    "alignment": "jump",
+    "component_window": "Interaction positivity",
+    "electrodes": [
+      "Cz",
+      "FCz"
+    ],
+    "start_ms": 280,
+    "end_ms_exclusive": 360
+  },
+  {
+    "alignment": "jump",
+    "component_window": "Posterior positivity",
+    "electrodes": [
+      "P3",
+      "PO3",
+      "PO7"
+    ],
+    "start_ms": 200,
+    "end_ms_exclusive": 400
+  }
+]

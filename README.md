@@ -8,6 +8,7 @@ Use the [experiment registry](EXPERIMENTS.md) to find an analysis, then its cate
 
 | Category | Analysis workflow | Local interactive report | GitHub HTMLPreview |
 |---|---|---|---|
+| **AUD — Data audit** | [Methods and steps](Code/analyses/AUD_data_audit/README.md) | [Open](output/AUD_data_audit/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/AUD_data_audit/report/index.html) |
 | **PRE — Preprocessing and artifact handling** | [Methods and steps](Code/analyses/PRE_preprocessing_artifacts/README.md) | [Open](output/PRE_preprocessing_artifacts/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
 | **FEA — Features and repeatability** | [Methods and steps](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
 | **ERP — Event-related potentials** | [Methods and steps](Code/analyses/ERP_event_related_potentials/README.md) | [Open](output/ERP_event_related_potentials/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/ERP_event_related_potentials/report/index.html) |
@@ -17,7 +18,9 @@ The HTML reports include embedded figures and aggregate data and open directly i
 
 ## Current analysis
 
-Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; ERP_01 tests waveform timing and morphology; DEC_01–04 cover pilot feature/model choices, fixed full-cohort evaluation, Graz-style trees and within-run permutation inference.
+AUD_01 checks event timing. AUD_02 verifies trajectory labels and endpoints against the mouse logs and measures outward follow-through and steering.
+
+Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; ERP_01 tests waveform timing and morphology; ERP_02 relates jump- and steering-aligned waveforms to reach behaviour; DEC_01–04 cover pilot feature/model choices, fixed full-cohort evaluation, Graz-style trees and within-run permutation inference.
 
 The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balanced accuracy in the 23 non-pilot participants, compared with 70.3% for central LDA. With 1,999 within-run label permutations (DEC_04), all 23/23 non-pilot participants exceeded the null after Holm correction. The compact primary-LDA significance note and all-model tables are linked from the DEC report.
 
