@@ -19,6 +19,11 @@
     "code": "Code/analyses/DEC_decoding/DEC_04_permutation_inference",
     "workflow": "Code/analyses/DEC_decoding/README.md#dec_04"
   },
+  "ERP_01": {
+    "result": "output/ERP_event_related_potentials/ERP_01_event_locked_waveforms",
+    "code": "Code/analyses/ERP_event_related_potentials/ERP_01_event_locked_waveforms",
+    "workflow": "Code/analyses/ERP_event_related_potentials/README.md#erp_01"
+  },
   "FEA_01": {
     "result": "output/FEA_features_repeatability/FEA_01_feature_audit",
     "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit",

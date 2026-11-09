@@ -8,6 +8,7 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 |---|---|---|---|---|
 | **PRE** | Preprocessing and artifact handling | Filtering, FORCe application, input quality, rejection and their effects on event-related waveforms. | [Workflow tables](Code/analyses/PRE_preprocessing_artifacts/README.md) | [Open](output/PRE_preprocessing_artifacts/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
 | **FEA** | Features and repeatability | Channel/time feature comparisons and consistency of averaged responses within participants. | [Workflow tables](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
+| **ERP** | Event-related potentials | Waveform alignment, timing and morphology. | [Workflow tables](Code/analyses/ERP_event_related_potentials/README.md) | [Open](output/ERP_event_related_potentials/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/ERP_event_related_potentials/report/index.html) |
 | **DEC** | Decoding and classification | D/ND classifiers, held-out-run evaluation and Graz-style feature comparisons. | [Workflow tables](Code/analyses/DEC_decoding/README.md) | [Open](output/DEC_decoding/report/index.html) · [HTMLPreview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
 
 ## PRE: Preprocessing and artifact handling
@@ -31,6 +32,12 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 |---|---|---|---|---|---|---|
 | **FEA_01** Feature audit and repeatability | Compare channel sets, time-point amplitudes, 100 ms bins and within-participant waveform repeatability. | Two pilots; 2,562 matched trials | PRE_07, PRE_09 | [Steps](Code/analyses/FEA_features_repeatability/README.md#fea_01) | [Open](output/FEA_features_repeatability/FEA_01_feature_audit/) | Completed |
 
+## ERP: Event-related potentials
+
+| Experiment | Question / comparison | Scope | Inputs | Workflow | Results | Status |
+|---|---|---|---|---|---|---|
+| **ERP_01** Movement and target-jump alignment | Compare matched D/ND waveform morphology at movement onset and recorded target jumps using fixed-window cohort tests and individual run repeatability. | 25 participants; 23 non-pilots in group tests | PRE_01, DEC_02 | [Steps](Code/analyses/ERP_event_related_potentials/README.md#erp_01) | [Open](output/ERP_event_related_potentials/ERP_01_event_locked_waveforms/) | Completed |
+
 ## DEC: Decoding and classification
 
 | Experiment | Question / comparison | Scope | Inputs | Workflow | Results | Status |
@@ -45,6 +52,6 @@ Experiments are grouped by their scientific purpose. IDs are permanent within ea
 
 PRE_07–09 and FEA_01 use the matched four-condition pilot. DEC_02 includes all eligible no-FORCe trials with complete-context quality checks; DEC_03 reuses those exact evaluated trial IDs and folds.
 
-The PRE interactive report presents eight-channel cohort waveforms by participant/session, with pilot-only all-accepted/matched condition comparisons. DEC_04 completes permutation-based inference for four fixed classifiers; all 23 non-pilot participants pass the primary LDA Holm threshold. Expert waveform interpretation and code review remain separate. Classification scores alone do not identify an ErrP.
+The PRE interactive report presents eight-channel cohort waveforms by participant/session, with pilot-only all-accepted/matched condition comparisons. DEC_04 completes permutation-based inference for four fixed classifiers; all 23 non-pilot participants pass the primary LDA Holm threshold. ERP_01 compares movement and jump alignment on the same matched pairs and reports fixed-window group tests separately from pilot results. Classification scores alone do not identify an ErrP.
 
 [Initial EEG findings](output/legacy/reports/initial_EEG_findings.pdf) · [Earlier event audit](output/legacy/event_audit/)

@@ -1,6 +1,6 @@
 # EEG responses during ballistic mouse movements
 
-Movement-aligned EEG analysis of displaced versus non-displaced mouse targets in 25 available participants. The presence, morphology and interpretation of an ErrP remain research questions; decoding provides complementary evidence.
+Event-aligned EEG analysis of displaced versus non-displaced mouse targets in 25 available participants. The presence, morphology and interpretation of an ErrP remain research questions; decoding provides complementary evidence.
 
 ## Start here
 
@@ -10,13 +10,14 @@ Use the [experiment registry](EXPERIMENTS.md) to find an analysis, then its cate
 |---|---|---|---|
 | **PRE — Preprocessing and artifact handling** | [Methods and steps](Code/analyses/PRE_preprocessing_artifacts/README.md) | [Open](output/PRE_preprocessing_artifacts/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/PRE_preprocessing_artifacts/report/index.html) |
 | **FEA — Features and repeatability** | [Methods and steps](Code/analyses/FEA_features_repeatability/README.md) | [Open](output/FEA_features_repeatability/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/FEA_features_repeatability/report/index.html) |
+| **ERP — Event-related potentials** | [Methods and steps](Code/analyses/ERP_event_related_potentials/README.md) | [Open](output/ERP_event_related_potentials/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/ERP_event_related_potentials/report/index.html) |
 | **DEC — Decoding and classification** | [Methods and steps](Code/analyses/DEC_decoding/README.md) | [Open](output/DEC_decoding/report/index.html) | [Preview](https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html) |
 
-The HTML reports include embedded figures and aggregate data and open directly in a browser. The PRE report provides eight-channel participant/session waveforms for all 25 participants, defaulting to BP no-FORCe with all accepted trials. Pilot-only alternatives support all-accepted/matched trial selection and a BP overlay; the current eight-channel figure can be downloaded as a PNG. GitHub previews target the `main` branch and become available after the report files are pushed to an accessible repository. Formal PDFs and editable LaTeX are linked from each report.
+The HTML reports include embedded figures and aggregate data and open directly in a browser. The PRE report provides eight-channel participant/session waveforms for all 25 participants, defaulting to BP no-FORCe with all accepted trials. Pilot-only alternatives support all-accepted/matched trial selection and a BP overlay; the current eight-channel figure can be downloaded as a PNG. The ERP report compares movement and target-jump alignment for matched pairs, with participant, session and delay controls, plus individual repeatability across runs. GitHub previews target the `main` branch and become available after the report files are pushed to an accessible repository. Formal PDFs and editable LaTeX are linked where available.
 
 ## Current analysis
 
-Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; DEC_01–04 cover pilot feature/model choices, fixed full-cohort evaluation, Graz-style trees and within-run permutation inference.
+Continuous 1–20 Hz no-FORCe preprocessing is the primary reference (PRE_01). PRE_09 evaluates artifact-handling alternatives; FEA_01 audits features and repeatability; ERP_01 tests waveform timing and morphology; DEC_01–04 cover pilot feature/model choices, fixed full-cohort evaluation, Graz-style trees and within-run permutation inference.
 
 The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balanced accuracy in the 23 non-pilot participants, compared with 70.3% for central LDA. With 1,999 within-run label permutations (DEC_04), all 23/23 non-pilot participants exceeded the null after Holm correction. The compact primary-LDA significance note and all-model tables are linked from the DEC report.
 
@@ -24,7 +25,7 @@ The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balan
 
 | Location | Contents |
 |---|---|
-| `Code/analyses/` | Three category READMEs and experiment-specific scripts. |
+| `Code/analyses/` | Category READMEs and experiment-specific scripts. |
 | `Code/preprocessing/` | Shared event parsing, preprocessing and response-plotting stages; explicit PRE configurations. |
 | `Code/helpers/` | Shared analysis functions and the HTML report builder. |
 | `Code/experiments.json` | Experiment directory/workflow map used by MATLAB and Python. |
@@ -33,7 +34,7 @@ The all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant balan
 | `Code/reference/` | Numerical source reference for the Graz-style feature ranking. |
 | `Code/tests/` | Focused parser and FORCe adapter checks. |
 | `output/<category>/<experiment>/` | Numerical results, figures and recorded settings. |
-| `output/<category>/report/` | Interactive overview, PDF note and LaTeX source. |
+| `output/<category>/report/` | Interactive overview and, where available, PDF note and LaTeX source. |
 | `output/legacy/` | Initial findings report and earlier event audits. |
 
 ## Running and reviewing the code

@@ -16,7 +16,7 @@ EEG is sampled at 500 Hz across P3, PO3, PO7, CP5, CP1, Cz, FCz and FC1. Raw vol
 
 Run commands from the repository root. MATLAB analysis uses Signal Processing Toolbox and, where needed, Statistics and Machine Learning Toolbox. Executing FORCe also requires Wavelet Toolbox and the supplied Windows x64 binaries. Install Python dependencies using `python -m pip install -r requirements-analysis.txt`.
 
-The audit uses 2,562 exact recording/trial IDs accepted in all four PRE_07 conditions. Central = Cz/FCz; Centroparietal = CP1/CP5; Posterior = P3/PO3/PO7; Full = all eight. The response feature interval is [0.2,0.9) s. Both 500 Hz time-point amplitudes and 100 ms means are examined.
+FEA_01 uses 2,562 exact recording/trial IDs accepted in all four PRE_07 conditions. Central = Cz/FCz; Centroparietal = CP1/CP5; Posterior = P3/PO3/PO7; Full = all eight. The response feature interval is [0.2,0.9) s. Both 500 Hz time-point amplitudes and 100 ms means are examined.
 
 Repeatability compares averaged waveforms; high shape correlation is not amplitude equivalence or single-trial decoding. Sessions remain separate. Descriptive pilot feature separation does not select the best classifier by itself.
 

@@ -14,6 +14,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from research_paths import ROOT, EXPERIMENTS, result_path
+import erp_web_report
 
 REPORTS = {
     "PRE_preprocessing_artifacts": {
@@ -76,6 +77,7 @@ REPORTS = {
         ],
         "figures": sorted((result_path("FEA_01") / "figures").glob("*.png")),
     },
+    erp_web_report.CATEGORY: erp_web_report.report_spec(),
     "DEC_decoding": {
         "title": "Displaced/non-displaced classification",
         "summary": "The fixed all-eight-channel 100 ms shrinkage LDA achieved 76.3% mean participant-level balanced accuracy in the 23 non-pilot participants. The model is trained within participant/session with held-out runs. Above-chance permutation inference remains pending; discrimination does not establish ErrP identity.",
@@ -190,7 +192,7 @@ function renderGallery(){
 }
 byId('figure').onchange=showFigure;
 ['subject','session'].forEach(id=>byId(id).onchange=renderGallery);
-const tableFilterLabels={subject:'Participant',session:'Session',sessionA:'Session A',sessionB:'Session B',level:'Summary level',cohort:'Cohort',family:'Inference family',significant_holm_05:'Holm significance (0/1)',model_id:'Model',condition:'Condition',referenceCondition:'Reference condition',channel:'Channel',channelSet:'Channel set',waveform:'Waveform',trialClass:'Trial class',boundary:'Boundary (s)',contrast:'Contrast',test:'Test',resolution:'Resolution'};
+const tableFilterLabels={subject:'Participant',session:'Session',sessionA:'Session A',sessionB:'Session B',level:'Summary level',cohort:'Cohort',family:'Inference family',significant_holm_05:'Holm significance (0/1)',model_id:'Model',condition:'Condition',referenceCondition:'Reference condition',channel:'Channel',channelSet:'Channel set',waveform:'Waveform',trialClass:'Trial class',alignment:'Alignment',component_window:'Component window',boundary:'Boundary (s)',contrast:'Contrast',test:'Test',resolution:'Resolution'};
 const tableSelections=new Map();
 function filterLabel(field,value){
     if(field==='condition'||field==='referenceCondition')return `${value} · ${conditionNames[value]||value}`;
@@ -349,7 +351,8 @@ if(location.hostname==='htmlpreview.github.io'){const base='https://github.com/n
 
 def build(category, spec):
     destination = ROOT / "output" / category / "report"
-    destination.mkdir(exist_ok=True)
+    destination.mkdir(parents=True, exist_ok=True)
+    erp = category == erp_web_report.CATEGORY
     tables = [
         {"title": title, "rows": read_csv(path)}
         for title, path in spec["tables"]
@@ -389,6 +392,9 @@ def build(category, spec):
                 "p_value": "p",
                 "p_holm": "Holm-adjusted p",
             }
+    if erp:
+        for table in tables:
+            table["labels"] = erp_web_report.TABLE_LABELS
     figure_subjects = {
         row["subject"]
         for table in tables
@@ -437,6 +443,10 @@ def build(category, spec):
             row["subject"] + "|" + row["session"]: row["status"]
             for row in read_csv(result_path("DEC_02") / "session_eligibility.csv")
         }
+    if erp:
+        data["erp"] = json.loads(
+            (result_path("ERP_01") / "waveform_means.json").read_text(encoding="utf-8")
+        )
     experiments = []
     for eid, e in EXPERIMENTS.items():
         if category not in e["result"]:
@@ -511,14 +521,33 @@ def build(category, spec):
             '<p>Methods: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.permutation_test_score.html">grouped permutation testing</a>; '
             '<a href="https://doi.org/10.2202/1544-6115.1585">Monte Carlo p-values</a>.</p></details>'
         )
-    body = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(spec['title'])}</title><style>{STYLE}</style></head><body>
+    scope = (
+        erp_web_report.SCOPE if erp else
+        "This report displays saved numerical results and condition means. It does not rerun preprocessing, alter trial selection or fit a classifier. Displayed waveform values are rounded to five decimal places in µV. Raw recordings, individual trials and fitted models are excluded."
+    )
+    method_note = (
+        "The browser displays aggregate means at the original 2 ms spacing, rounded to 0.01 µV before aggregation. The group tests use full precision. See the workflow for test windows and matching details."
+        if erp else
+        "Input flags indicate suspected contamination; they do not identify EOG/EMG sources definitively. Classifier differences do not establish an ErrP. Full methods, processing contrasts and limitations are in the PDF and experiment READMEs."
+    )
+    pdf = f'<a href="{spec["pdf"]}">Formal PDF note</a> · ' if spec.get("pdf") else ""
+    erp_section = erp_web_report.WAVE_SECTION if erp else ""
+    erp_style = erp_web_report.STYLE if erp else ""
+    erp_script = Path(__file__).with_name("erp_waveforms.js").read_text(encoding="utf-8") if erp else ""
+    if erp:
+        table_scope = erp_web_report.TEST_SCOPE
+        if any(table["title"] == "Recording amplitudes" for table in tables):
+            erp_section += erp_web_report.REPEATABILITY_SECTION
+            erp_script += Path(__file__).with_name("erp_repeatability.js").read_text(encoding="utf-8")
+    body = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(spec['title'])}</title><style>{STYLE}{erp_style}</style></head><body>
 <nav aria-label="Research reports">{related}</nav><h1>{html.escape(spec['title'])}</h1><p>{summary}</p>
-<p><a href="{spec['pdf']}">Formal PDF note</a> · <a href="../../../EXPERIMENTS.md">Experiment registry</a>{supplement_links}</p>
-<section><h2>Scope and interpretation</h2><p>This report displays saved numerical results and condition means. It does not rerun preprocessing, alter trial selection or fit a classifier. Displayed waveform values are rounded to five decimal places in µV. Raw recordings, individual trials and fitted models are excluded.</p><details><summary>Methods and experiment navigation</summary><ul>{''.join(experiments)}</ul><p>Input flags indicate suspected contamination; they do not identify EOG/EMG sources definitively. Classifier differences do not establish an ErrP. Full methods, processing contrasts and limitations are in the PDF and experiment READMEs.</p></details></section>
+<p>{pdf}<a href="../../../EXPERIMENTS.md">Experiment registry</a>{supplement_links}</p>
+<section><h2>Scope and interpretation</h2><p>{scope}</p><details><summary>Methods and experiment navigation</summary><ul>{''.join(experiments)}</ul><p>{method_note}</p></details></section>
+{erp_section}
 <section id="waveSection" hidden><h2>Participant/session eight-channel waveforms</h2><div class="controls"><label>Participant<select id="waveSubject"></select></label><label>Session<select id="waveSession"></select></label><label>Processing condition<select id="condition"><option value="1">1 · BP no-FORCe</option><option value="2">2 · BP FORCe (pilot only)</option><option value="3">3 · Split no-FORCe (pilot only)</option><option value="4">4 · Split FORCe (pilot only)</option></select></label><label>Trial selection<select id="selection"><option value="all">All accepted trials</option><option value="matched">Matched across four conditions (pilot only)</option></select></label><label>Overlay BP no-FORCe<input type="checkbox" id="overlay"></label><button id="downloadWave" type="button">Download figure (PNG)</button></div><h3 id="waveTitle"></h3><p id="counts" class="note"></p><p id="waveDetails" class="note"></p><p class="note">The cohort view uses accepted decoder-analysis trial IDs, including sessions ineligible for cross-validation, with quality eligibility across the complete three-second interval. Pilot conditions use that same interval; matching does not balance the two class counts. The historical two-second FORCe cohort run is separate and is not included here.</p><div id="waves" class="grid"></div></section>
 <section><h2>Saved figures</h2><p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label></div><p id="figureDescription" class="note" aria-live="polite"></p><figure><img id="plot" alt="Saved analysis figure"><figcaption id="plotcaption"></figcaption></figure></section>
 <section><h2>Numerical summaries</h2>{table_scope}{inference_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div></section><footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. Report controls display saved results and do not rerun analyses.</footer>
-<script id="report-data" type="application/json">{json.dumps(data,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')}</script><script>{SCRIPT}</script></body></html>'''
+<script id="report-data" type="application/json">{json.dumps(data,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')}</script><script>{SCRIPT}{erp_script}</script></body></html>'''
     (destination / "index.html").write_text(body, encoding="utf-8")
     print(
         f'{category}: {len(figures)} figures; {sum(len(t["rows"]) for t in tables)} summary rows; {len(body)/1e6:.1f} MB HTML'

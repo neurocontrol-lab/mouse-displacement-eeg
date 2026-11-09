@@ -1,0 +1,10 @@
+[
+  {"alignment": "movement", "component_window": "ERN-like", "electrodes": ["Cz", "FCz"], "start_ms": 50, "end_ms_exclusive": 100, "expected_sign": -1},
+  {"alignment": "movement", "component_window": "Pe-like", "electrodes": ["CP1"], "start_ms": 200, "end_ms_exclusive": 500, "expected_sign": 1},
+  {"alignment": "jump", "component_window": "ERN-like", "electrodes": ["Cz", "FCz"], "start_ms": 50, "end_ms_exclusive": 100, "expected_sign": -1},
+  {"alignment": "jump", "component_window": "Pe-like", "electrodes": ["CP1"], "start_ms": 200, "end_ms_exclusive": 500, "expected_sign": 1},
+  {"alignment": "jump", "component_window": "Interaction negativity", "electrodes": ["Cz", "FCz"], "start_ms": 200, "end_ms_exclusive": 280, "expected_sign": -1},
+  {"alignment": "jump", "component_window": "Interaction positivity", "electrodes": ["Cz", "FCz"], "start_ms": 280, "end_ms_exclusive": 360, "expected_sign": 1},
+  {"alignment": "movement", "component_window": "Graz negativity", "electrodes": ["Cz", "FCz"], "start_ms": 400, "end_ms_exclusive": 600, "expected_sign": -1},
+  {"alignment": "movement", "component_window": "Graz positivity", "electrodes": ["Cz", "FCz"], "start_ms": 650, "end_ms_exclusive": 750, "expected_sign": 1}
+]
