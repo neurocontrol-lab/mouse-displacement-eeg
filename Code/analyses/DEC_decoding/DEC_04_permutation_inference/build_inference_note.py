@@ -51,22 +51,18 @@ def main():
     text = (
         f"Eight-channel shrinkage LDA exceeded the within-recording label-shuffle null after Holm correction in {n_sig}/23 non-pilot participants. "
         f"The unadjusted participant-specific 95th-percentile chance thresholds ranged from {lo:.1f}\\% to {hi:.1f}\\%. "
-        "These thresholds describe the null distribution; adjusted significance is determined by the Holm-corrected $p$-values, not by crossing the unadjusted threshold alone.\n"
+        "The Holm-corrected $p$-values determine significance after adjustment.\n"
     )
     floor_count = sum(int(r["exceedances"]) == 0 for r in primary)
     max_raw = max(float(r["p_value"]) for r in primary)
     adjusted = sorted({float(r["p_holm"]) for r in primary})
     text += (
-        f"Raw primary p-values ranged from 0.0005 to {max_raw:.4f}; "
-        f"{floor_count}/23 participants reached the Monte Carlo minimum of 0.0005. "
+        f"Raw primary p-values ranged from 0.0005 to {max_raw:.4f}. "
+        f"The Monte Carlo minimum of 0.0005 occurred for {floor_count}/23 participants."
     )
     if len(adjusted) == 1:
-        text += f"All primary Holm-adjusted p-values were {adjusted[0]:.4f}. "
-    text += (
-        "Repeated adjusted values reflect the step-down correction and finite sampling resolution, "
-        "not identical effect sizes. Values at the Monte Carlo floor do not resolve smaller exact tail probabilities.\n"
-    )
-    (tables / "permutation_result_summary.tex").write_text(text)
+        text += f" All primary Holm-adjusted p-values were {adjusted[0]:.4f}."
+    (tables / "permutation_result_summary.tex").write_text(text + "\n")
     data = sorted(primary, key=lambda r: float(r["balanced_accuracy"]))
     fig, ax = plt.subplots(figsize=(8, 8))
     y = np.arange(len(data))

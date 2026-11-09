@@ -3,15 +3,17 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern,booktabs,graphicx,amsmath,hyperref,float}
 \hypersetup{hypertexnames=false,colorlinks=true,urlcolor=blue,linkcolor=blue,pdftitle={Permutation inference for displaced/non-displaced EEG decoding},pdfauthor={Satyam Awasthi}}
+\newcommand{\decwebreport}{\href{https://htmlpreview.github.io/?https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/index.html}{DEC web report}}
+\newcommand{\classificationnote}{\href{https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/output/DEC_decoding/report/D_ND_classification_research_note.pdf}{classification research note}}
 \setlength{\emergencystretch}{2em}
 \setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
 \title{Permutation inference for displaced/non-displaced EEG decoding}
 \author{Satyam Awasthi}\date{}
 \begin{document}\maketitle
 \section{Question and fixed primary analysis}
-Does the fixed eight-channel, 100 ms shrinkage-LDA decoder exceed a participant-specific label-shuffled chance distribution under the existing whole-recording validation? The 23 non-pilot participants form the primary evaluation. mle01 and spe30 informed feature/model selection and remain explicitly exploratory. This note complements the earlier classification results and the participant/session waveform figures.
+Does the fixed eight-channel, 100 ms shrinkage-LDA decoder exceed a participant-specific label-shuffled chance distribution under the existing whole-recording validation? The 23 non-pilot participants form the primary evaluation. mle01 and spe30 informed feature/model selection and remain explicitly exploratory. The \classificationnote{} reports the observed decoder performance.
 
-The primary pipeline is continuous 1--20 Hz BP no-FORCe, with the same accepted trial IDs, event alignment, baseline and quality checks as the saved decoder analysis. Seven 100 ms means per channel over $[0.2,0.9)$ s provide 56 features. Standardisation and shrinkage LDA (equal class priors, automatic covariance shrinkage) are fitted on training recordings only. No preprocessing or model tuning is repeated or changed here.
+The primary pipeline uses continuous 1--20 Hz bandpass filtering without FORCe. It reuses the accepted trial IDs, event alignment, baseline and quality checks from DEC\_02, described in the \classificationnote{}. Seven 100 ms means per channel over $[0.2,0.9)$ s provide 56 features. Standardisation and shrinkage LDA (equal class priors, automatic covariance shrinkage) are fitted on training recordings only. No preprocessing or model tuning is repeated or changed here.
 
 \section{Permutation method and statistic}
 We draw 1,999 random label permutations independently within each recording, preserving its D/ND counts. Each permutation refits the models using exactly the existing leave-one-recording-out folds, separately within participant/session. Test predictions are pooled within a session before computing balanced accuracy (mean D/ND recall). Participant statistics average eligible session scores equally; each participant's null statistic uses the same aggregation. Exclusions remain rle13/pre and vco27/pre, whose training folds cannot support the protocol. The analysis covers 73 eligible sessions and 30,210 evaluated trials.
@@ -20,9 +22,9 @@ The one-sided Monte Carlo value is
 \[
 p=\frac{1+\#\{b:T_b\ge T_{\mathrm{obs}}\}}{1+1999},
 \]
-with ties included and minimum attainable $p=0.0005$. Chance$_{95}$ is the empirical 95th percentile of the null (upper order statistic), an unadjusted descriptive threshold. Holm adjustment controls family-wise error across the 23 primary participant tests. Session-level values in the web report are unadjusted exploratory checks, not additional corrected primary claims.
+with ties included and minimum attainable $p=0.0005$. Chance$_{95}$ is the empirical 95th percentile of the null (upper order statistic), an unadjusted descriptive threshold. Holm adjustment controls family-wise error across the 23 primary participant tests. The \decwebreport{} gives unadjusted session-level values for exploratory checks.
 
-The web report also includes central LDA, the all-eight-channel binned tree, and the Graz-style top-100 amplitude tree. The latter reranks all 8,000 full-epoch candidates using training data inside every permutation and fold. These 69 secondary non-pilot tests form a separate Holm family. The eight pilot/model tests form an exploratory family; correction does not remove bias from earlier pilot model/feature selection. Observed held-out predictions for all four models are checked against the saved analyses.
+The \decwebreport{} also includes central LDA, the all-eight-channel binned tree, and the Graz-style top-100 amplitude tree. The Graz-style tree ranks 8,000 candidate features (eight channels $\times$ 1,000 time samples per epoch) and selects the top 100 using training data within each permutation and fold. The three secondary models give $23 \times 3 = 69$ participant-level tests in a separate Holm family. Each participant--model test combines eligible sessions as above. The two exploratory pilots each contribute four model tests, giving a separate eight-test family. We verify the observed held-out predictions for all four models against \href{https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/Code/analyses/DEC_decoding/README.md#dec_02}{DEC\_02} and \href{https://github.com/neurocontrol-lab/mouse-displacement-eeg/blob/main/Code/analyses/DEC_decoding/README.md#dec_03}{DEC\_03}.
 
 \clearpage
 \section{Primary participant results}
@@ -35,7 +37,7 @@ The web report also includes central LDA, the all-eight-channel binned tree, and
 \input{tables/permutation_pilots.tex}
 \caption{Exploratory pilots, shown separately. Their Holm values belong to the eight-test pilot/model family; they are not independent validation of pilot-driven choices.}
 \end{table}
-The secondary model tables and unadjusted session checks are available in the existing DEC web report.
+The \decwebreport{} contains the secondary model tables and unadjusted session checks.
 
 \clearpage
 \section{Observed performance and chance thresholds}
