@@ -131,9 +131,13 @@
             marks += '<rect x="' + x(lo) + '" y="' + top + '" width="' + (x(hi) - x(lo))
                 + '" height="' + (bottom - top) + '" fill="#ffedcb"/>';
         }
-        if (window && window.electrodes.split('/').includes(channel)) {
-            marks += '<rect x="' + x(window.start_ms) + '" y="' + top + '" width="'
-                + (x(window.end_ms_exclusive) - x(window.start_ms)) + '" height="' + (bottom - top) + '" fill="#ffefc3"/>';
+        if (window && channel.split(' / ').every(ch => window.electrodes.split('/').includes(ch))) {
+            const start = Math.max(window.start_ms, desc.first_ms);
+            const stop = Math.min(window.end_ms_exclusive, end);
+            if (stop > start) {
+                marks += '<rect class="erp-window-shade" x="' + x(start) + '" y="' + top + '" width="'
+                    + (x(stop) - x(start)) + '" height="' + (bottom - top) + '" fill="#d8eaf7"/>';
+            }
         }
         for (let t = Math.ceil(desc.first_ms / 200) * 200; t <= end; t += 200) {
             marks += line(x(t), top, x(t), bottom, t === 0 ? '#596778' : '#d8e1eb');

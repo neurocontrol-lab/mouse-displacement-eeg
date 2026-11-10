@@ -3,11 +3,12 @@
 from collections import Counter, defaultdict
 import csv
 import gzip
+import json
 
 import numpy as np
 
 from audit_mouse_trajectories import (
-    lateral_speed, outward_reach, read_csv, read_trials, result_path, save_csv,
+    example_trace, lateral_speed, outward_reach, read_csv, read_trials, result_path, save_csv,
     staged_outputs, target_segment_end,
 )
 
@@ -31,7 +32,9 @@ def assess(trial, row):
     assert round(distances[outward.closest], 3) == float(row["closest_distance_px"])
 
     identity = {key: row[key] for key in ("run", "trial", "subject", "session", "condition")}
-    hits = np.flatnonzero(distances[anchor:last + 1] <= LABEL_RADIUS_PX)
+    eligible = distances[anchor:last + 1]
+    minimum = float(eligible.min())
+    hits = np.flatnonzero(eligible <= LABEL_RADIUS_PX)
     first_hit = anchor + int(hits[0]) if hits.size else None
     label = dict(
         **identity, radius_px=LABEL_RADIUS_PX,
@@ -39,6 +42,8 @@ def assess(trial, row):
         first_hit_ms_from_anchor=round((time[first_hit] - time[anchor]) * 1000, 3) if first_hit is not None else None,
         observed_through_ms_from_anchor=round((time[last] - time[anchor]) * 1000, 3),
         observation_end_reason=observation_end,
+        full_log_min_distance_px=minimum,
+        close_75=int(minimum <= 75), close_100=int(minimum <= 100),
     )
 
     details = []
@@ -69,7 +74,7 @@ def assess(trial, row):
             first_entry_ms_after_estimated_end=round((time[later] - time[outward.end]) * 1000, 3) if later is not None else None,
             later_entry_y_change_px=round(y[later] - y[outward.end], 3) if later is not None else None,
         ))
-    return label, details
+    return label, details, outward, last, first_hit
 
 
 def audit():
@@ -78,13 +83,26 @@ def audit():
         source = {(r["run"], r["trial"]): r for r in csv.DictReader(stream) if r["eeg_accepted"] == "1"}
     parsed = result_path("PRE_01") / "parsed"
     labels, records = [], []
+    examples = {}
     coverage = defaultdict(Counter)
     for recording in read_csv(parsed / "manifest.csv"):
         for trial in read_trials(parsed, recording, include_target_positions=True):
             row = source.pop((recording["run"], trial.metadata["trial"]), None)
             if row is None:
                 continue
-            label, details = assess(trial, row)
+            label, details, outward, last, first_hit = assess(trial, row)
+            group = tuple(row[k] for k in ("subject", "session", "condition", "steering_250"))
+            group += (label["outcome"], first_hit is not None and first_hit > outward.end)
+            if group not in examples:
+                time = trial.samples[:, 0]
+                endpoint = None
+                if row["endpoint_mouse_s"]:
+                    saved = float(row["endpoint_mouse_s"])
+                    index = int(np.searchsorted(time, saved))
+                    assert time[index] == saved
+                    if index <= last:
+                        endpoint = index
+                examples[group] = example_trace(trial, row, endpoint, outward, display_end=last, first_hit=first_hit)
             labels.append(label)
             records.extend(details)
             for record in details:
@@ -105,6 +123,9 @@ def audit():
     ]
     with staged_outputs(out / "target_boundary") as work:
         save_csv(work / "observed_hit_trials.csv.gz", labels)
+        (work / "observed_hit_examples.json").write_text(
+            json.dumps(list(examples.values()), separators=(",", ":"), allow_nan=False), encoding="utf-8"
+        )
         save_csv(work / "boundary_trials.csv.gz", records)
         save_csv(work / "boundary_counts.csv", summary)
     for (condition, outcome), n in sorted(Counter((r["condition"], r["outcome"]) for r in labels).items()):

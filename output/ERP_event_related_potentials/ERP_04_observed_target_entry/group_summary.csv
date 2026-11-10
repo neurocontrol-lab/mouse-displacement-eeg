@@ -1,0 +1,201 @@
+cohort,contrast,session,reference,comparison,component_window,electrodes,start_ms,end_ms_exclusive,participants,matched_pairs,mean_difference_uv,median_difference_uv,positive_participants
+validation,hit,pre,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,19,413,-1.180796188699582,-1.2234148100148374,7
+pilot,hit,pre,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,17,-1.8781872255683911,-1.8781872255683911,1
+validation,hit,pre,D no hit detected,D hit detected,Pe-like,CP1,200,500,19,413,0.1109366015100799,-0.5426350678437938,8
+pilot,hit,pre,D no hit detected,D hit detected,Pe-like,CP1,200,500,2,17,-1.0834321212900022,-1.0834321212900022,1
+validation,hit,pre,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,19,413,-0.3097353000571268,-1.0713123375679792,6
+pilot,hit,pre,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,17,-0.8400471245741556,-0.8400471245741556,1
+validation,hit,pre,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,19,413,0.5998093377524449,0.1045696917906298,10
+pilot,hit,pre,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,17,0.36174089200945314,0.36174089200945314,1
+validation,hit,pre,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,19,413,0.11875596373705379,-0.32483305878591917,7
+pilot,hit,pre,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,17,-0.6095749416364297,-0.6095749416364297,0
+validation,hit,post,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,753,-1.3579629290880781,-0.27118754273951895,9
+pilot,hit,post,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,38,-1.7852598114255507,-1.7852598114255507,0
+validation,hit,post,D no hit detected,D hit detected,Pe-like,CP1,200,500,22,753,0.26224052131705095,0.4855415454594059,12
+pilot,hit,post,D no hit detected,D hit detected,Pe-like,CP1,200,500,2,38,-0.266262507113318,-0.266262507113318,1
+validation,hit,post,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,753,0.5589964372090437,0.06308500816319906,12
+pilot,hit,post,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,38,-1.4271856476253348,-1.4271856476253348,1
+validation,hit,post,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,753,0.5154342824910457,0.2931444022915157,13
+pilot,hit,post,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,38,0.6418980252032308,0.6418980252032308,1
+validation,hit,post,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,753,0.6604456513882259,0.5605438210409942,15
+pilot,hit,post,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,38,-0.9250582128849405,-0.9250582128849405,1
+validation,hit,retest,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,811,-0.3260877386692854,0.0495143995748728,11
+pilot,hit,retest,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,63,0.8015420513917586,0.8015420513917586,1
+validation,hit,retest,D no hit detected,D hit detected,Pe-like,CP1,200,500,22,811,0.25650004139626675,0.14822549437748078,13
+pilot,hit,retest,D no hit detected,D hit detected,Pe-like,CP1,200,500,2,63,-1.0178990700196375,-1.0178990700196375,0
+validation,hit,retest,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,811,0.3090632573436599,0.6930414974179,13
+pilot,hit,retest,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,63,0.4032160759144614,0.4032160759144614,2
+validation,hit,retest,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,811,-0.48655276761704386,-0.96474360406272,7
+pilot,hit,retest,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,63,-1.4216514638029387,-1.4216514638029387,0
+validation,hit,retest,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,811,0.30007421585916316,0.3411396140761185,13
+pilot,hit,retest,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,63,-1.1541829446220626,-1.1541829446220626,0
+validation,hit,pooled,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,1977,-0.41243890695469965,-0.18382429583009202,9
+pilot,hit,pooled,D no hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,118,-0.7824680713872427,-0.7824680713872427,1
+validation,hit,pooled,D no hit detected,D hit detected,Pe-like,CP1,200,500,22,1977,0.11363368635122578,0.21991564359094334,12
+pilot,hit,pooled,D no hit detected,D hit detected,Pe-like,CP1,200,500,2,118,-0.35377011039488826,-0.35377011039488826,0
+validation,hit,pooled,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,1977,0.14852869586825362,0.05791928983258798,11
+pilot,hit,pooled,D no hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,118,-0.15006064696839871,-0.15006064696839871,1
+validation,hit,pooled,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,1977,-0.008254077936558519,-0.1390251078049598,10
+pilot,hit,pooled,D no hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,118,-0.20668535348575023,-0.20668535348575023,1
+validation,hit,pooled,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,1977,0.0999550763425689,0.13455339175283038,12
+pilot,hit,pooled,D no hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,118,-0.8173672968881742,-0.8173672968881742,0
+validation,hit400,pre,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,17,210,-3.2391574283581774,-2.2204901520971383,2
+pilot,hit400,pre,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,2,5,-3.566381846847588,-3.566381846847588,0
+validation,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,17,210,0.23348798196438356,-0.5814461657093619,7
+pilot,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,2,5,-3.6777684096195156,-3.6777684096195156,0
+validation,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,17,210,-1.64718598848915,-2.68918103885064,6
+pilot,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,2,5,-3.819767814636223,-3.819767814636223,0
+validation,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,17,210,-0.18887420743819128,-0.6912572350414585,6
+pilot,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,2,5,-1.9797067839628597,-1.9797067839628597,0
+validation,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,17,210,-0.490272218947196,-0.5913209884713608,7
+pilot,hit400,pre,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,2,5,-1.453873495867189,-1.453873495867189,0
+validation,hit400,post,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,19,475,-0.05067626208032166,-0.5479774200289511,7
+pilot,hit400,post,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,2,17,-2.2924456194768017,-2.2924456194768017,0
+validation,hit400,post,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,19,475,0.3512590615720397,0.3692219915284519,11
+pilot,hit400,post,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,2,17,-2.65643768552583,-2.65643768552583,1
+validation,hit400,post,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,19,475,0.6335086785827575,0.6468688774340858,13
+pilot,hit400,post,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,2,17,-5.578241406537245,-5.578241406537245,1
+validation,hit400,post,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,19,475,0.3601768015116303,0.6573567993194311,11
+pilot,hit400,post,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,2,17,2.818217341959694,2.818217341959694,2
+validation,hit400,post,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,19,475,0.2671769887473518,0.5473001294090566,12
+pilot,hit400,post,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,2,17,-2.8902055878131963,-2.8902055878131963,1
+validation,hit400,retest,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,22,536,-0.37024186346255755,0.3884607235428287,12
+pilot,hit400,retest,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,2,32,3.484005971124847,3.484005971124847,2
+validation,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,22,536,0.8619345061452539,1.0436675475151604,13
+pilot,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,2,32,-0.5316342754028587,-0.5316342754028587,1
+validation,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,22,536,0.5901446147897237,-0.39187070937465496,10
+pilot,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,2,32,1.5857823618469307,1.5857823618469307,2
+validation,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,22,536,-0.7203160902319345,-1.050241229205633,8
+pilot,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,2,32,-0.7417468191295946,-0.7417468191295946,1
+validation,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,22,536,0.3820301740639936,0.7161299830444168,15
+pilot,hit400,retest,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,2,32,-0.4510221546923212,-0.4510221546923212,1
+validation,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,22,1221,-0.8554742427944888,-0.9190686113588873,7
+pilot,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,ERN-like,Cz/FCz,50,100,2,54,1.2748826901459112,1.2748826901459112,1
+validation,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,22,1221,0.5576850667971951,0.4863240098083603,12
+pilot,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Pe-like,CP1,200,500,2,54,-0.3211036769976948,-0.3211036769976948,1
+validation,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,22,1221,0.45401078229578234,0.26115841844319077,12
+pilot,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Interaction negativity,Cz/FCz,200,280,2,54,0.3585533292388756,0.3585533292388756,1
+validation,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,22,1221,-0.28802761619942835,-0.23448046558399116,10
+pilot,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Interaction positivity,Cz/FCz,280,360,2,54,0.1998890292412392,0.1998890292412392,1
+validation,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,22,1221,0.14550783650609922,-0.15360406971074558,10
+pilot,hit400,pooled,D no hit by 400 ms,D hit by 400 ms,Posterior positivity,P3/PO3/PO7,200,400,2,54,-0.24661437583935708,-0.24661437583935708,1
+validation,near75,pre,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,20,627,0.5475608968450263,-0.06628519380268605,9
+pilot,near75,pre,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,2,59,-0.8478648725829664,-0.8478648725829664,1
+validation,near75,pre,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,20,627,0.28041291098927756,0.22156334483023482,11
+pilot,near75,pre,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,2,59,0.8058990709011347,0.8058990709011347,2
+validation,near75,pre,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,20,627,0.6861451551838197,-0.08187604869592335,10
+pilot,near75,pre,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,2,59,-0.48784902170383876,-0.48784902170383876,0
+validation,near75,pre,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,20,627,-0.7635628343518671,0.11257500268907522,11
+pilot,near75,pre,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,2,59,0.28246605872563735,0.28246605872563735,1
+validation,near75,pre,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,20,627,0.016417563395406808,0.11151530279172389,11
+pilot,near75,pre,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,2,59,-0.07227930531247467,-0.07227930531247467,1
+validation,near75,post,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,23,824,-0.4300339351752917,0.12411134586008288,12
+pilot,near75,post,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,2,85,-1.3507033058351121,-1.3507033058351121,1
+validation,near75,post,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,23,824,0.7819918127725505,0.34723613172724915,14
+pilot,near75,post,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,2,85,1.1379511826686832,1.1379511826686832,2
+validation,near75,post,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,23,824,0.3021538820428527,-0.009993763521624732,11
+pilot,near75,post,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,2,85,1.2492916795087101,1.2492916795087101,2
+validation,near75,post,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,23,824,1.7583652120282074,0.764322256007393,16
+pilot,near75,post,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,2,85,2.5960084790708486,2.5960084790708486,2
+validation,near75,post,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,23,824,1.1701457079935718,0.7346224742654623,15
+pilot,near75,post,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,2,85,0.8630046844000185,0.8630046844000185,2
+validation,near75,retest,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,22,799,0.14838791635103188,0.04055673813721772,11
+pilot,near75,retest,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,2,87,1.9945284982739007,1.9945284982739007,1
+validation,near75,retest,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,22,799,0.5757948753290898,0.6446791968635748,16
+pilot,near75,retest,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,2,87,-0.4890964612128489,-0.4890964612128489,0
+validation,near75,retest,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,22,799,0.13669882803444364,0.8977108863021861,12
+pilot,near75,retest,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,2,87,-0.49542252066939474,-0.49542252066939474,1
+validation,near75,retest,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,22,799,0.36042845254794165,0.23522750635181155,13
+pilot,near75,retest,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,2,87,-0.015976779325018287,-0.015976779325018287,1
+validation,near75,retest,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,22,799,0.18361491584083198,0.03762771000847121,12
+pilot,near75,retest,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,2,87,0.1628893204770394,0.1628893204770394,2
+validation,near75,pooled,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,23,2250,0.4334637102191744,0.3654684631450138,15
+pilot,near75,pooled,D no approach within 75 px,D reached within 75 px,ERN-like,Cz/FCz,50,100,2,231,-0.03876342593745963,-0.03876342593745963,1
+validation,near75,pooled,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,23,2250,0.35980715444094974,0.37727200618364876,15
+pilot,near75,pooled,D no approach within 75 px,D reached within 75 px,Pe-like,CP1,200,500,2,231,0.5370835956819514,0.5370835956819514,2
+validation,near75,pooled,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,23,2250,0.3277448161967787,0.16611309911079086,12
+pilot,near75,pooled,D no approach within 75 px,D reached within 75 px,Interaction negativity,Cz/FCz,200,280,2,231,0.026287450886755437,0.026287450886755437,1
+validation,near75,pooled,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,23,2250,-0.002783740405045737,0.4586530933612575,13
+pilot,near75,pooled,D no approach within 75 px,D reached within 75 px,Interaction positivity,Cz/FCz,280,360,2,231,0.9600232972576281,0.9600232972576281,1
+validation,near75,pooled,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,23,2250,0.14867929054763654,0.26858200782041,15
+pilot,near75,pooled,D no approach within 75 px,D reached within 75 px,Posterior positivity,P3/PO3/PO7,200,400,2,231,0.3290428984820245,0.3290428984820245,2
+validation,near100,pre,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,20,639,0.5829634921042588,-0.12164238594616572,8
+pilot,near100,pre,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,2,99,-1.1000018009749104,-1.1000018009749104,0
+validation,near100,pre,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,20,639,-0.16588615620415145,0.3945580618765729,13
+pilot,near100,pre,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,2,99,0.594646952051659,0.594646952051659,1
+validation,near100,pre,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,20,639,0.07914231896019741,-0.20693429797663077,9
+pilot,near100,pre,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,2,99,0.8879032163662153,0.8879032163662153,1
+validation,near100,pre,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,20,639,-1.0117144206205553,0.20499023813602263,12
+pilot,near100,pre,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,2,99,0.6960881337605271,0.6960881337605271,1
+validation,near100,pre,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,20,639,-0.14578884887564514,0.2732571817060344,11
+pilot,near100,pre,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,2,99,0.7531271225098253,0.7531271225098253,1
+validation,near100,post,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,23,734,0.9478185035141593,0.4449819051016126,13
+pilot,near100,post,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,2,81,-1.4282589609135274,-1.4282589609135274,0
+validation,near100,post,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,23,734,-0.015295201111833178,-0.12135205735310972,11
+pilot,near100,post,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,2,81,0.012704982892787292,0.012704982892787292,1
+validation,near100,post,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,23,734,-0.7577651272948411,-0.3642899438946703,7
+pilot,near100,post,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,2,81,0.7898312921363115,0.7898312921363115,2
+validation,near100,post,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,23,734,0.13108746689969494,0.5911917714141834,12
+pilot,near100,post,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,2,81,-0.0293911704912877,-0.0293911704912877,1
+validation,near100,post,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,23,734,-0.1298079941637439,0.03984357770026903,12
+pilot,near100,post,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,2,81,-0.16354530218561142,-0.16354530218561142,1
+validation,near100,retest,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,23,653,-0.9725455969606819,-0.18020828073909334,10
+pilot,near100,retest,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,2,65,2.142627732744513,2.142627732744513,2
+validation,near100,retest,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,23,653,0.4212097954606941,0.4562546538925547,15
+pilot,near100,retest,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,2,65,0.603310298469911,0.603310298469911,2
+validation,near100,retest,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,23,653,0.3551367027069968,0.9495729430640363,12
+pilot,near100,retest,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,2,65,1.053314887079099,1.053314887079099,2
+validation,near100,retest,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,23,653,1.0178609133180034,0.8773222427001954,13
+pilot,near100,retest,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,2,65,-0.05416072548459905,-0.05416072548459905,1
+validation,near100,retest,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,23,653,0.7215782130224547,0.4704266624002048,14
+pilot,near100,retest,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,2,65,-0.12716667038648066,-0.12716667038648066,1
+validation,near100,pooled,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,23,2026,0.4541619733728858,0.05401614517244502,12
+pilot,near100,pooled,D no approach within 100 px,D reached within 100 px,ERN-like,Cz/FCz,50,100,2,245,-0.5073454160702603,-0.5073454160702603,0
+validation,near100,pooled,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,23,2026,-0.10994310326257974,0.4066910983937082,15
+pilot,near100,pooled,D no approach within 100 px,D reached within 100 px,Pe-like,CP1,200,500,2,245,0.3859627049510673,0.3859627049510673,1
+validation,near100,pooled,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,23,2026,-0.2599551756627098,-0.3642058674674322,10
+pilot,near100,pooled,D no approach within 100 px,D reached within 100 px,Interaction negativity,Cz/FCz,200,280,2,245,0.748931235282619,0.748931235282619,2
+validation,near100,pooled,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,23,2026,-0.21983548722691482,0.6933634529845363,13
+pilot,near100,pooled,D no approach within 100 px,D reached within 100 px,Interaction positivity,Cz/FCz,280,360,2,245,0.2380340955155743,0.2380340955155743,1
+validation,near100,pooled,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,23,2026,-0.12052128618726664,0.0819675733619728,13
+pilot,near100,pooled,D no approach within 100 px,D reached within 100 px,Posterior positivity,P3/PO3/PO7,200,400,2,245,0.22491185585571932,0.22491185585571932,1
+validation,d_nd_hit,pre,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,19,445,2.1680317929267248,1.2328452289624205,13
+pilot,d_nd_hit,pre,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,17,-3.150502474289137,-3.150502474289137,0
+validation,d_nd_hit,pre,ND hit detected,D hit detected,Pe-like,CP1,200,500,19,445,0.49291705228793575,0.9474512693531729,10
+pilot,d_nd_hit,pre,ND hit detected,D hit detected,Pe-like,CP1,200,500,2,17,-3.0505194191894587,-3.0505194191894587,0
+validation,d_nd_hit,pre,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,19,445,1.373910455732494,0.815897882224192,12
+pilot,d_nd_hit,pre,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,17,-2.188554841275972,-2.188554841275972,1
+validation,d_nd_hit,pre,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,19,445,1.0296511600982008,0.5796052021538756,10
+pilot,d_nd_hit,pre,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,17,-3.6126284202851164,-3.6126284202851164,1
+validation,d_nd_hit,pre,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,19,445,1.3937631790389724,1.2453605579716598,13
+pilot,d_nd_hit,pre,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,17,-0.9801098644360757,-0.9801098644360757,1
+validation,d_nd_hit,post,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,871,-2.0267346137504423,-1.234036280807403,9
+pilot,d_nd_hit,post,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,38,-5.033935324883139,-5.033935324883139,0
+validation,d_nd_hit,post,ND hit detected,D hit detected,Pe-like,CP1,200,500,22,871,0.75788268457135,0.12775653451063052,12
+pilot,d_nd_hit,post,ND hit detected,D hit detected,Pe-like,CP1,200,500,2,38,-2.4739583860404664,-2.4739583860404664,0
+validation,d_nd_hit,post,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,871,2.126736237893305,0.889288595387624,15
+pilot,d_nd_hit,post,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,38,-2.2665136948195403,-2.2665136948195403,0
+validation,d_nd_hit,post,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,871,2.6540742279629517,2.2483199472085253,14
+pilot,d_nd_hit,post,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,38,-1.0565865531527638,-1.0565865531527638,0
+validation,d_nd_hit,post,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,871,2.1935885706198572,1.545220797974732,16
+pilot,d_nd_hit,post,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,38,-0.4634637246719264,-0.4634637246719264,1
+validation,d_nd_hit,retest,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,957,-0.5794564314198966,-0.3070445586644687,11
+pilot,d_nd_hit,retest,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,63,-3.4501601063294434,-3.4501601063294434,1
+validation,d_nd_hit,retest,ND hit detected,D hit detected,Pe-like,CP1,200,500,22,957,-0.3306355488054385,-0.3232701867963789,9
+pilot,d_nd_hit,retest,ND hit detected,D hit detected,Pe-like,CP1,200,500,2,63,-0.8720269959554522,-0.8720269959554522,0
+validation,d_nd_hit,retest,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,957,2.359866506793303,3.09300947389063,16
+pilot,d_nd_hit,retest,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,63,-0.8400120383228766,-0.8400120383228766,1
+validation,d_nd_hit,retest,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,957,0.05529897630377218,0.29640447094182826,11
+pilot,d_nd_hit,retest,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,63,-2.5261619644478577,-2.5261619644478577,0
+validation,d_nd_hit,retest,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,957,1.2281357392816667,2.157661267493242,17
+pilot,d_nd_hit,retest,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,63,-0.04528955746005758,-0.04528955746005758,1
+validation,d_nd_hit,pooled,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,22,2273,-0.32241452452486496,-0.12512953894258466,11
+pilot,d_nd_hit,pooled,ND hit detected,D hit detected,ERN-like,Cz/FCz,50,100,2,118,-3.2827705298014647,-3.2827705298014647,0
+validation,d_nd_hit,pooled,ND hit detected,D hit detected,Pe-like,CP1,200,500,22,2273,0.22861924516508128,0.03527614079547425,12
+pilot,d_nd_hit,pooled,ND hit detected,D hit detected,Pe-like,CP1,200,500,2,118,-1.5500967470722546,-1.5500967470722546,0
+validation,d_nd_hit,pooled,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,22,2273,2.759878179870787,1.5743911529391648,18
+pilot,d_nd_hit,pooled,ND hit detected,D hit detected,Interaction negativity,Cz/FCz,200,280,2,118,-0.9555055909680759,-0.9555055909680759,1
+validation,d_nd_hit,pooled,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,22,2273,1.1737676221787672,1.1649112446280712,15
+pilot,d_nd_hit,pooled,ND hit detected,D hit detected,Interaction positivity,Cz/FCz,280,360,2,118,-1.58553642330569,-1.58553642330569,0
+validation,d_nd_hit,pooled,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,22,2273,1.7151567987018006,1.9365265049782587,18
+pilot,d_nd_hit,pooled,ND hit detected,D hit detected,Posterior positivity,P3/PO3/PO7,200,400,2,118,0.39414528158097917,0.39414528158097917,1

@@ -21,7 +21,11 @@ from prepare_steering_trials import rows, write
 
 SUBSETS = ("all", "late", "not_detected")
 CONTROL_NAMES = ("No early steering", "Later steering", "No steering detected")
-DISTANCES = ("endpoint_distance_px", "closest_distance_px")
+DISTANCES = {
+    "full_log_min_distance_px": "Full eligible log (primary)",
+    "closest_distance_px": "Closest during outward reach",
+    "endpoint_distance_px": "Manuscript endpoint",
+}
 CHANNEL_COLORS = ("#53657a", "#137f6a", "#27232b")
 
 
@@ -188,9 +192,9 @@ def endpoint_associations(out, trial_rows, features, windows):
                                 p90_slope_uv_per_100px=np.percentile(values,90)))
     write(out/"endpoint_distance_summary.csv",summary)
 
-    fig, axes=plt.subplots(1,2,figsize=(12.2,4.7),sharex=True,sharey=True)
+    fig, axes=plt.subplots(1,3,figsize=(14.5,4.7),sharex=True,sharey=True)
     names=[w["component_window"] for w in windows]
-    for ax,key,label in zip(axes,DISTANCES,("Manuscript endpoint distance","Closest observed distance")):
+    for ax, (key, label) in zip(axes, DISTANCES.items()):
         ax.axvline(0,color=".55",lw=.8,ls=":")
         for j,name in enumerate(names):
             values=[r["slope_uv_per_100px"] for r in results
@@ -248,6 +252,12 @@ def main():
     delay_quantiles=plot_alignment(out,d,d["channels"],nonpilot,detected)
     save_report_means(out, d, cohorts, detected)
     contrasts=describe_pairs(out,d,windows,cohorts)
+    observed = rows(result_path("AUD_02") / "target_boundary/observed_hit_trials.csv.gz")
+    minima = {(r["run"], r["trial"]): float(r["full_log_min_distance_px"])
+              for r in observed if r["condition"] == "D"}
+    assert len(minima) == len(trial_rows)
+    for row in trial_rows:
+        row["full_log_min_distance_px"] = minima[row["run"], row["trial"]]
     slopes=endpoint_associations(out,trial_rows,d["features"],windows)
     with gzip.open(out/"trial_window_amplitudes.csv.gz","wt",encoding="utf-8",newline="") as f:
         writer=csv.writer(f)

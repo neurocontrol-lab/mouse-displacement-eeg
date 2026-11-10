@@ -20,6 +20,7 @@ STYLE = """
 .audit-table th:first-child{min-width:10em}
 .audit-legend{display:flex;gap:10px 18px;flex-wrap:wrap;margin:.5rem 0;font-size:.85rem;color:#53657a}
 .audit-legend b{color:#20334b}
+#reachTrialField,#reachTrial{max-width:100%;min-width:0}
 """
 
 BODY = """
@@ -42,22 +43,22 @@ BODY = """
 </section>
 <section id="trajectories">
 <div class="audit-heading"><h2>AUD_02 · Mouse trajectories and reach outcomes</h2><div><a href="../AUD_02_mouse_trajectories/RESULTS.md">Results note</a> · <a href="../../../Code/analyses/AUD_data_audit/README.md#aud_02">Methods</a></div></div>
-<p class="note">Compare the verified manuscript endpoint with the closest observed approach to the logged target center during the outward reach. The manuscript label and the 250 ms steering classification are shown separately.</p>
+<p class="note">Compare the verified manuscript endpoint with the closest observed approach to the logged target center during the outward reach. Observed hit records entry into the provisional 40 px circle around the final target center. The 250 ms steering classification describes the cursor motion separately.</p>
 <div class="controls">
 <label>Participant<select id="reachSubject"></select></label>
 <label>Session<select id="reachSession"></select></label>
 <label>Displacement<select id="reachCondition"><option value="">All</option><option value="D">Displaced</option><option value="ND">Non-displaced</option></select></label>
-<label>Manuscript label<select id="reachLabel"></select></label>
+<label id="reachHitField" hidden>Observed hit<select id="reachHit"></select></label>
 <label>250 ms steering<select id="reachSteering"></select></label>
 <label>EEG-accepted only<input type="checkbox" id="reachAccepted"></label>
 </div>
 <p id="reachSummary" class="note" aria-live="polite"></p>
 <div class="tablewrap"><table id="reachCounts" class="audit-table"></table></div>
 <h3>Example trajectories</h3>
-<p class="note">Examples are selected near the 10th, 50th and 90th endpoint-distance percentiles within each participant, session, displacement, manuscript label, steering group and EEG eligibility group. A group can also show one example without a verified endpoint. Counts and distances above use all matching trials.</p>
-<div class="controls"><label>Example trial<select id="reachTrial"></select></label></div>
+<p class="note">Observed hit labels cover EEG-accepted trials. Their examples show the full eligible segment, with separate examples for first entry during and after the estimated outward reach when available. Other examples are sampled by endpoint distance. Counts and distances above use all matching trials.</p>
+<div class="controls"><label id="reachTrialField">Example trial<select id="reachTrial"></select></label></div>
 <p id="reachTrialInfo" aria-live="polite"></p>
-<div class="audit-legend"><span><b>Blue</b> cursor</span><span><b>Purple</b> jump and displaced target center</span><span><b>Green</b> manuscript endpoint</span><span><b>Orange</b> detected steering onset</span><span><b>Gray ring</b> estimated outward end</span><span><b>Blue ring</b> closest observed approach</span></div>
+<div class="audit-legend"><span><b>Blue</b> cursor</span><span><b>Purple</b> jump and displaced target center</span><span><b>Green</b> manuscript endpoint</span><span><b>Orange</b> detected steering onset</span><span><b>Gray ring</b> estimated outward end</span><span><b>Blue ring</b> closest observed outward approach</span><span id="reachHitLegend" hidden><b>Magenta</b> provisional target circle and first entry</span></div>
 <div id="trajectoryCharts" class="grid">
 <figure class="card audit-chart"><figcaption>Cursor path and target centers</figcaption><svg id="reachPath" role="img" aria-label="Cursor path with movement, jump, steering, and endpoint positions"></svg></figure>
 <figure class="card audit-chart"><figcaption>Endpoint distances in the current selection</figcaption><svg id="reachDistances" role="img" aria-label="Distribution of endpoint distances in cursor pixels"></svg></figure>
@@ -68,10 +69,14 @@ BODY = """
 </section>
 <section id="target-hits" hidden>
 <div class="audit-heading"><h2>AUD_02 · Observed target hits</h2><a href="../AUD_02_mouse_trajectories/target_boundary/RESULTS.md">Results and trial labels</a></div>
-<p class="note">Counts cover EEG-accepted trials. A hit is any recorded cursor sample inside or on the provisional 40 px circle, including entry after an overshoot. No hit detected means no entry was recorded before observation ended.</p>
+<p id="observedHitScope" class="note">Counts cover EEG-accepted trials. A hit is any recorded cursor sample inside or on the provisional 40 px circle, including entry after an overshoot. No hit detected means no entry was recorded before observation ended.</p>
+<p id="closeApproachScope" class="note" hidden>Close approach uses the minimum distance to the final target over the full eligible log. The label describes observed proximity.</p>
 <div class="controls">
 <label>Participant<select id="hitSubject"></select></label>
 <label>Session<select id="hitSession"></select></label>
+<label id="hitRadiusField" hidden>Threshold<select id="hitRadius">
+<option value="40">40 px · Observed hit</option><option value="75">75 px · Close approach</option><option value="100">100 px · Sensitivity</option>
+</select></label>
 </div>
 <div class="tablewrap"><table id="hitCounts" class="audit-table"></table></div>
 </section>
@@ -85,12 +90,15 @@ def rows(path):
         return list(csv.DictReader(stream))
 
 
-def hit_counts(path):
-    if not path.is_file():
-        return []
-    counts = Counter((r["subject"], r["session"], r["condition"], r["outcome"]) for r in rows(path))
+def hit_counts(trials):
+    counts = Counter()
+    for r in trials:
+        key = (r["subject"], r["session"], r["condition"])
+        counts[(*key, r["outcome"])] += 1
+        for field in ("close_75", "close_100"):
+            counts[(*key, field)] += r.get(field) == "1"
     return [
-        [*key, counts[(*key, "hit_detected")], counts[(*key, "no_hit_detected")]]
+        [*key, *(counts[(*key, field)] for field in ("hit_detected", "no_hit_detected", "close_75", "close_100"))]
         for key in sorted({key[:3] for key in counts})
     ]
 
@@ -100,13 +108,30 @@ def audit_data():
     trajectories = result_path("AUD_02")
     audit = rows(trajectories / "trial_audit.csv.gz")
     index = {(r["run"], int(r["trial"])): r for r in audit}
+    boundary = trajectories / "target_boundary"
+    hit_file = boundary / "observed_hit_trials.csv.gz"
+    hit_labels = {(r["run"], int(r["trial"])): r for r in rows(hit_file)} if hit_file.is_file() else {}
+    example_file = boundary / "observed_hit_examples.json"
+    hit_examples = json.loads(example_file.read_text(encoding="utf-8")) if example_file.is_file() and hit_labels else []
     examples = json.loads((trajectories / "trajectory_examples.json").read_text(encoding="utf-8"))
     def number(row, field):
         return float(row[field]) if row[field] else None
     def filters(row):
-        return [row[k] for k in ("subject", "session", "condition", "manuscript_label", "steering_250")] + [
+        outcome = hit_labels.get((row["run"], int(row["trial"])), {}).get("outcome", "not_assessed")
+        return [
+            row["subject"], row["session"], row["condition"], outcome, row["steering_250"],
             int(row["eeg_accepted"]), int(row["behaviour_link"] == "linked"),
             number(row, "endpoint_distance_px"), number(row, "closest_distance_px"),
+        ]
+    for example in hit_examples:
+        label = hit_labels[example["run"], example["trial"]]
+        example["hit_radius_px"] = float(label["radius_px"])
+        example["first_hit_ms_from_anchor"] = number(label, "first_hit_ms_from_anchor")
+        example["full_log_min_distance_px"] = number(label, "full_log_min_distance_px") if "full_log_min_distance_px" in label else None
+    if hit_examples:
+        # Use full-segment examples where observed hit was assessed.
+        examples = hit_examples + [
+            example for example in examples if (example["run"], example["trial"]) not in hit_labels
         ]
     for example in examples:
         r = index[example["run"], example["trial"]]
@@ -124,7 +149,8 @@ def audit_data():
         "comparison": rows(timing / "threshold_comparison.csv") + rows(timing / "threshold_comparison_by_participant.csv"),
         "reaches": [filters(row) for row in audit],
         "examples": examples,
-        "targetHits": hit_counts(trajectories / "target_boundary" / "observed_hit_trials.csv.gz"),
+        "targetHits": hit_counts(hit_labels.values()),
+        "closeApproachAvailable": any("close_75" in label for label in hit_labels.values()),
     }
 
 

@@ -16,6 +16,7 @@ from scipy.stats import t, ttest_1samp
 sys.path.insert(0, str(next(p for p in Path(__file__).resolve().parents if p.name == "Code")))
 from research_paths import result_path
 from helpers.erp_report_encoding import pack_waveforms
+from helpers.erp_stats import holm
 
 
 # Half-open windows in ms. Fix these before inspecting the cohort waveforms.
@@ -41,16 +42,6 @@ def write_csv(path, rows):
 def mean_by_participant(sums, counts):
     """Pool sessions within each participant, weighted by available pairs."""
     return sums.sum(axis=-1) / counts.sum(axis=-1)[None, None, None, :, :]
-
-
-def holm(p_values):
-    p_values = np.asarray(p_values)
-    order = np.argsort(p_values)
-    adjusted = np.empty_like(p_values)
-    adjusted[order] = np.minimum(1, np.maximum.accumulate(
-        p_values[order] * np.arange(len(order), 0, -1)
-    ))
-    return adjusted
 
 
 def panel(ax, time, title):

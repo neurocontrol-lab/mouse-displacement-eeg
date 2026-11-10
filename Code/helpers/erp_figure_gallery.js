@@ -4,6 +4,12 @@ function setupERPFigureGallery(waveformView, panel) {
     const figure = byId('figure');
     const caption = byId('plotcaption');
     const holder = byId('erpFilteredFigure');
+    const windowSelect = byId('erpGalleryWindow');
+    const windowNote = byId('erpGalleryWindowNote');
+    const findingLink = byId('erpGalleryFindingLink');
+    D.erpGalleryWindows.forEach((w,i) => windowSelect.add(new Option(
+        w.component_window + ' · ' + w.start_ms + '–' + w.end_ms_exclusive + ' ms', i
+    )));
     const pairedNames = ['ND', 'D', 'D − ND'];
     const steeringNames = ['No early steering', 'Early steering', 'Early minus no early steering'];
     const palette = ['#1864a4', '#b05b16', '#27232b'];
@@ -17,7 +23,7 @@ function setupERPFigureGallery(waveformView, panel) {
     ]);
     const trajectoryFigure = 'jump_corrective_vs_erroneous';
     const canFilter = f => mainFigures.has(f.name) || (D.erpSteering && steeringFigures.has(f.name))
-        || (D.erpTrajectories && f.name === trajectoryFigure);
+        || (D.erpTrajectories && f.name === trajectoryFigure) || D.erpOutcomes?.waveforms[f.name];
 
     subject.replaceChildren(new Option('All non-pilots', ''));
     option(subject, D.erp.subjects, false);
@@ -26,8 +32,8 @@ function setupERPFigureGallery(waveformView, panel) {
     byId('figureSubjectField').hidden = false;
     byId('figureSessionField').hidden = false;
     byId('figureScope').textContent =
-        'Choose a participant or session to redraw the available waveform figures from saved means. ' +
-        'With both filters set to All, the original summary figures are shown, including the pooled distance slopes.';
+        'Choose a participant, session or ERP morphology window to redraw waveforms from saved means. ' +
+        'With no selection, the original summary figures are shown.';
 
     function contrast(view, label) {
         return {view, label, curve: 2};
@@ -48,13 +54,13 @@ function setupERPFigureGallery(waveformView, panel) {
         if (name === 'matched_waveforms') {
             return Promise.all(alignments.map(async ([title, key]) => {
                 const view = await erp(key);
-                return {title, series: pairedNames.map((label, curve) => ({view, label, curve}))};
+                return {title, alignment:key, series: pairedNames.map((label, curve) => ({view, label, curve}))};
             }));
         }
         if (name === 'short_vs_long_delay') {
             return Promise.all(alignments.map(async ([title, key]) => {
                 const [short, long] = await Promise.all([erp(key, 1), erp(key, 2)]);
-                return {title, series: [
+                return {title, alignment:key, series: [
                     {view: regions(short), label: 'Shorter delay · D − ND', curve: 0},
                     {view: regions(long), label: 'Longer delay · D − ND', curve: 0},
                 ]};
@@ -64,36 +70,42 @@ function setupERPFigureGallery(waveformView, panel) {
             const [title, key] = alignments[name === 'movement_differences_by_session' ? 0 : 1];
             const sessions = visit === 'all' ? D.erp.sessions : [visit];
             const series = await Promise.all(sessions.map(async s => contrast(await erp(key, 0, s), s + ' · D − ND')));
-            return [{title, series}];
+            return [{title, alignment:key, series}];
+        }
+        if (D.erpOutcomes?.waveforms[name]) {
+            const view = await waveformView(D.erpOutcomes, name, who, visit);
+            const labels = [...D.erpOutcomes.labels[name], 'Difference'];
+            return [{title: name === 'outcome_d_nd_hit' ? 'Target jump / pseudo-jump' : 'Target jump', alignment:'jump',
+                palette: steeringPalette, series: labels.map((label, curve) => ({view, label, curve}))}];
         }
         if (name === trajectoryFigure) {
             const view = await waveformView(D.erpTrajectories, 'jump', who, visit);
             const labels = ['Erroneous', 'Corrective', 'Corrective minus erroneous'];
-            return [{title: 'Target jump', palette: steeringPalette,
+            return [{title: 'Target jump', alignment:'jump', palette: steeringPalette,
                 series: labels.map((label, curve) => ({view, label, curve}))}];
         }
         if (name === 'jump_early_steering') {
             const view = await steering('pairs');
-            return [{title: 'Target jump', palette: steeringPalette, lineAt: 250,
+            return [{title: 'Target jump', alignment:'jump', palette: steeringPalette, lineAt: 250,
                 series: steeringNames.map((label, curve) => ({view, label, curve}))}];
         }
         if (name === 'jump_control_subsets') {
             const [later, none] = await Promise.all([steering('pairs', 1), steering('pairs', 2)]);
-            return [{title: 'Target jump', series: [
+            return [{title: 'Target jump', alignment:'jump', series: [
                 contrast(later, 'Early minus later steering'), contrast(none, 'Early minus no detection'),
             ]}];
         }
         const [jump, correction] = await Promise.all([steering('detected_jump'), steering('detected_steering')]);
         const delays = D.erpSteering.delay_ranges[who + '|' + visit];
         return [
-            {title: 'Target jump', unit: 'trials', eventRange: delays,
+            {title: 'Target jump', alignment:'jump', unit: 'trials', eventRange: delays,
                 series: [{view: jump, label: 'Detected steering', curve: 0}]},
-            {title: 'Steering onset', unit: 'trials', eventRange: delays?.map(ms => -ms).reverse(),
+            {title: 'Steering onset', alignment:'steering', unit: 'trials', eventRange: delays?.map(ms => -ms).reverse(),
                 series: [{view: correction, label: 'Detected steering', curve: 0}]},
         ];
     }
 
-    function drawPlots(plots) {
+    function drawPlots(plots, windowSpec) {
         let extent = 1;
         for (const plot of plots) {
             for (const {view, curve} of plot.series.filter(s => s.view.pairs)) {
@@ -129,7 +141,8 @@ function setupERPFigureGallery(waveformView, panel) {
             const {channels, desc} = present[0].view;
             for (const [i, channel] of channels.entries()) {
                 const curves = present.map(s => s.view.traces[i][s.curve]);
-                grid.append(panel(channel, desc, curves, extent, null, curves.map((_, k) => k), {
+                const overlay = windowSpec?.alignments.includes(plot.alignment) ? windowSpec : null;
+                grid.append(panel(channel, desc, curves, extent, overlay, curves.map((_, k) => k), {
                     names: present.map(s => s.label),
                     palette: present.map(s => s.color),
                     eventLabel: plot.title,
@@ -141,22 +154,52 @@ function setupERPFigureGallery(waveformView, panel) {
         }
     }
 
+    const relevantFindings = {
+        outcome_d_nd_hit: ['#erp-window-tests','See the matched-hit estimates and Holm-adjusted p-values'],
+        distance_associations: ['#erp-distance','See the cohort distance definitions and strongest slopes'],
+    };
     let revision = 0;
     async function showSelection() {
         const current = ++revision;
         holder.replaceChildren();
-        const filtered = Boolean(subject.value || session.value);
+        const selected = D.figures.find(f => f.name === figure.value);
+        const windowSpec = windowSelect.value === '' ? null : D.erpGalleryWindows[Number(windowSelect.value)];
+        const link = relevantFindings[selected.name];
+        findingLink.replaceChildren();
+        findingLink.hidden = !link;
+        if (link) {
+            const anchor = document.createElement('a');
+            [anchor.href, anchor.textContent] = link;
+            if (selected.name === 'outcome_d_nd_hit') {
+                anchor.onclick = () => {
+                    const tests = byId('erpTestContrast');
+                    if ([...tests.options].some(option => option.value === 'd_nd_hit')) {
+                        tests.value = 'd_nd_hit';
+                        tests.dispatchEvent(new Event('change'));
+                    }
+                };
+            }
+            findingLink.append(anchor);
+        }
+        windowNote.hidden = !windowSpec;
+        windowNote.textContent = '';
+        const feedback = windowSpec?.alignments.includes('feedback');
+        if (feedback) {
+            windowNote.textContent = windowSpec.component_window + ' uses a verified outcome cue. This dataset has no verified feedback alignment.';
+        } else if (windowSpec && !canFilter(selected)) {
+            windowNote.textContent = 'Choose a waveform figure to see the ' + windowSpec.component_window + ' overlay.';
+        }
+        const filtered = Boolean(canFilter(selected) && (subject.value || session.value || (windowSpec && !feedback)));
         holder.hidden = !filtered;
         if (!filtered) {
             showFigure();
             return;
         }
         byId('plot').hidden = true;
-        const selected = D.figures.find(f => f.name === figure.value);
         byId('figureDescription').hidden = false;
         byId('figureDescription').textContent =
             'Waveforms for the current selection. Cohort means give each contributing non-pilot participant equal weight.'
-            + (selected.name === trajectoryFigure ? ' ' + selected.description : '')
+            + ((selected.name === trajectoryFigure || D.erpOutcomes?.waveforms[selected.name]) ? ' ' + selected.description : '')
             + (selected.name === 'jump_and_steering_alignment'
                 ? ' The amber band and dashed line mark the other event’s 5th–95th percentile range and median.' : '');
         caption.textContent = selected.title + ' · ' + (subject.value || 'Non-pilot cohort')
@@ -166,7 +209,15 @@ function setupERPFigureGallery(waveformView, panel) {
             const plots = await figurePlots(selected.name, subject.value || 'validation', session.value || 'all');
             if (current !== revision) return;
             holder.replaceChildren();
-            drawPlots(plots);
+            drawPlots(plots, windowSpec);
+            if (windowSpec && !feedback) {
+                const shaded = holder.querySelectorAll('.erp-window-shade').length;
+                windowNote.textContent = shaded
+                    ? windowSpec.component_window + ' · ' + windowSpec.start_ms + '–' + windowSpec.end_ms_exclusive
+                        + ' ms · ' + windowSpec.electrodes.replaceAll('/', ' / ') + ' · reference polarity '
+                        + (windowSpec.expected_sign < 0 ? 'negative' : 'positive') + '. Blue shading marks the window.'
+                    : windowSpec.component_window + ' has no matching alignment or electrodes in this figure.';
+            }
         } catch (error) {
             if (current !== revision) return;
             holder.textContent = 'Could not load the selected waveforms.';
@@ -181,7 +232,7 @@ function setupERPFigureGallery(waveformView, panel) {
         if (available.some(f => f.name === previous)) figure.value = previous;
         showSelection();
     }
-    figure.onchange = showSelection;
+    figure.onchange = windowSelect.onchange = showSelection;
     subject.onchange = session.onchange = updateSelection;
     updateSelection();
 }

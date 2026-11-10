@@ -1,7 +1,9 @@
 
 """ERP-specific content for the shared portable report builder."""
 
-from research_paths import result_path
+import json
+
+from research_paths import code_path, result_path
 
 CATEGORY = "ERP_event_related_potentials"
 
@@ -10,6 +12,14 @@ def report_spec():
     out = result_path("ERP_01")
     steering = result_path("ERP_02")
     trajectories = result_path("ERP_03")
+    outcomes = result_path("ERP_04")
+    outcome_titles = {
+        "outcome_hit": "Observed hit vs no hit detected",
+        "outcome_hit400": "Observed hit by 400 ms",
+        "outcome_near75": "Close approach at 75 px",
+        "outcome_near100": "Close approach at 100 px",
+        "outcome_d_nd_hit": "Displaced vs non-displaced hits",
+    }
     return {
         "title": "Event-related potentials",
         "summary": (
@@ -18,7 +28,8 @@ def report_spec():
             "was a positivity near 270 ms after the recorded jump. Only the Cz/FCz "
             "200–280 ms jump window reached the Holm-adjusted threshold. ERP_02 describes "
             "steering and target distance within displaced reaches. ERP_03 compares "
-            "the manuscript’s corrective and erroneous trajectories."
+            "the manuscript’s corrective and erroneous trajectories. ERP_04 compares "
+            "observed hits and close approaches."
         ),
         "tables": [
             ("Non-pilot group tests", out / "component_tests.csv"),
@@ -29,18 +40,29 @@ def report_spec():
             ("ERP_02 steering contrasts", steering / "steering_contrast_summary.csv"),
             ("ERP_02 steering contrasts by participant and session", steering / "steering_contrast_by_session.csv"),
             ("ERP_02 trial coverage", steering / "coverage_by_session.csv"),
+            ("ERP_02 distance slope summary", steering / "endpoint_distance_summary.csv"),
             ("ERP_02 distance slopes by participant", steering / "endpoint_distance_slopes.csv"),
             ("ERP_03 trajectory contrast", trajectories / "group_summary.csv"),
             ("ERP_03 trajectory contrast by participant", trajectories / "participant_amplitudes.csv"),
             ("ERP_03 trial coverage", trajectories / "coverage.csv"),
+            ("ERP_04 matched-hit window tests (exploratory)", outcomes / "matched_hit_window_tests.csv"),
+            ("ERP_04 outcome contrast summary", outcomes / "group_summary.csv"),
+            ("ERP_04 outcome contrasts by participant", outcomes / "participant_amplitudes.csv"),
+            ("ERP_04 trial coverage", outcomes / "coverage.csv"),
         ],
         "figures": [out / f"{name}.png" for name in (
             "matched_waveforms", "movement_differences_by_session",
             "jump_differences_by_session", "short_vs_long_delay",
         )] + [steering / f"{name}.png" for name in (
             "jump_early_steering", "jump_control_subsets", "jump_and_steering_alignment", "distance_associations",
-        )] + [trajectories / "jump_corrective_vs_erroneous.png"],
+        )] + [trajectories / "jump_corrective_vs_erroneous.png"] + [outcomes / f"{name}.png" for name in outcome_titles],
+        "figure_titles": outcome_titles,
         "figure_descriptions": {
+            "outcome_hit": "ERP_04. Jump-aligned displaced trials grouped by entry into the provisional 40 px circle, with pairs matched within recording and jump direction.",
+            "outcome_hit400": "ERP_04. Entry by 400 ms after the jump. Both groups have observation through 400 ms.",
+            "outcome_near75": "ERP_04. Compare displaced reaches that came within 75 px of the final target with other displaced reaches.",
+            "outcome_near100": "ERP_04. Repeat the close-approach comparison at 100 px.",
+            "outcome_d_nd_hit": "ERP_04. Compare hits after the logged jump in displaced trials with hits after the matched pseudo-jump in non-displaced trials. See the cohort window tests for the exact Cz/FCz and posterior estimates.",
             "jump_corrective_vs_erroneous": (
                 "ERP_03. Corrective and erroneous displaced reaches defined by the manuscript’s "
                 "velocity and endpoint-distribution criteria. Pairs share a recording and jump "
@@ -62,16 +84,38 @@ def report_spec():
                 "Each blue dot is a participant’s fitted change in EEG voltage per 100 px farther from "
                 "the target across trials (ΔV/Δdistance). The diamond is the median. A slope farther "
                 "from zero means a larger voltage change per 100 px. Negative slopes mean higher "
-                "voltage on closer reaches. The largest absolute median for closest approach was "
-                "−0.22 µV per 100 px at Cz/FCz, 200–280 ms after the jump (Interaction negativity). "
-                "For manuscript endpoint distance it was +0.18 µV per 100 px at Cz/FCz, 280–360 ms."
+                "voltage on closer reaches. The primary panel uses the full eligible log, including "
+                "late approaches. The other panels use the same trials with outward-only minimum and "
+                "manuscript endpoint distances."
             ),
         },
     }
 
 
+def gallery_windows():
+    erp01 = json.loads((code_path("ERP_01") / "windows.json").read_text(encoding="utf-8"))
+    options = {}
+    for row in erp01:
+        name = row["component_window"]
+        option = options.setdefault(name, {
+            **row, "electrodes": "/".join(row["electrodes"]), "alignments": [],
+        })
+        option["alignments"].append(row["alignment"])
+    extra = (
+        ("Target perturbation N100-like", "P3/PO3/PO7", 80, 150, "jump", -1),
+        ("Target perturbation P3-like", "P3/PO3/PO7", 200, 400, "jump", 1),
+        ("Feedback-related negativity", "Cz/FCz", 200, 300, "feedback", -1),
+        ("Feedback P3-like", "CP1/P3", 300, 600, "feedback", 1),
+    )
+    for name, electrodes, start, end, alignment, sign in extra:
+        options[name] = dict(component_window=name, electrodes=electrodes, start_ms=start,
+                             end_ms_exclusive=end, alignments=[alignment], expected_sign=sign)
+    return list(options.values())
+
+
 TABLE_LABELS = {
     "alignment": "Alignment", "component_window": "Component window",
+    "reference_uv": "Reference (µV)", "comparison_uv": "Comparison (µV)",
     "erroneous_uv": "Erroneous (µV)", "corrective_uv": "Corrective (µV)",
     "difference_uv": "Difference (µV)",
     "mean_difference_uv": "Mean difference (µV)",
@@ -162,5 +206,54 @@ STYLE = """
 .erp-legend label{flex-direction:row;align-items:center;gap:5px}
 .erp-legend span{border-bottom:2px solid currentColor}
 .erp-plot{display:block;width:100%;height:auto;color:#53657a;font:11px system-ui,sans-serif}
+.erp-supported{background:#e7f2fa;font-weight:600}
+#erpTestForest{max-width:850px}
+#erpDistanceValues td:nth-child(2){white-space:normal;min-width:12em}
+#erpGalleryWindowField{min-width:0;max-width:100%}
 .erp-cursor{margin:0;color:#53657a;font:12px system-ui,sans-serif;min-height:1.5em;font-variant-numeric:tabular-nums}
+"""
+
+
+FINDINGS_NAV = """
+<nav aria-label="ERP results">
+<a href="#erp-window-tests">Cohort window tests</a>
+<a href="#erp-distance">Distance associations</a>
+<a href="#savedFigures">Waveform gallery</a>
+</nav>
+"""
+
+FINDINGS_SECTION = """
+<section id="erp-window-tests" aria-labelledby="erp-tests-heading">
+<h2 id="erp-tests-heading">Cohort window tests</h2>
+<p id="erpTestSummary" aria-live="polite"></p>
+<div class="controls"><label>Contrast<select id="erpTestContrast"></select></label></div>
+<p id="erpTestMethod" class="note"></p>
+<p><a href="#savedFigures" id="erpTestWaveform">Open this contrast in the waveform gallery</a></p>
+<figure><svg id="erpTestForest" class="erp-plot" role="img" aria-label="Mean differences with marginal 95 percent confidence intervals"></svg>
+<figcaption>Each dot is a cohort mean. Bars show marginal 95% intervals. Blue marks indicate Holm-adjusted p &lt; .05. The vertical line marks zero difference. Window names describe the ERP references, and the dots show the measured polarity.</figcaption></figure>
+<div class="tablewrap"><table id="erpTestValues"></table></div>
+</section>
+<section id="erp-distance" aria-labelledby="erp-distance-heading" hidden>
+<h2 id="erp-distance-heading">ERP_02 · Distance associations</h2>
+<p>The three panels use the same 9,628 displaced trials and the same EEG windows. They differ in where along the mouse trajectory distance is measured. The full-log and outward-only minima are our definitions. The manuscript endpoint is the original estimate from the behavioural analysis.</p>
+<figure><img id="erpDistancePlot" alt="Cohort distance slopes for the three target distance definitions">
+<figcaption>Blue dots are individual non-pilot slopes. Diamonds mark their median. Farther from zero means a larger voltage change per 100 px. A negative slope means higher voltage on closer reaches.</figcaption></figure>
+<div class="tablewrap"><table id="erpDistanceValues"></table></div>
+<p class="note">The strongest window in each panel is selected by absolute median slope. These are descriptive slopes.</p>
+</section>
+"""
+
+GALLERY_WINDOW = """
+<label id="erpGalleryWindowField">ERP morphology window<select id="erpGalleryWindow">
+<option value="">None</option>
+</select></label>
+"""
+
+GALLERY_NOTES = """
+<p id="erpGalleryWindowNote" class="note" aria-live="polite" hidden></p>
+<p id="erpGalleryFindingLink" hidden></p>
+<details><summary>ERP windows and event alignment</summary>
+<p>The selector shades candidate time ranges at the listed electrodes. The ERN-like and Pe-like overlays are morphology references at movement onset and the jump. The interaction and target-perturbation windows use the jump. The Graz windows use movement onset. Shading identifies the comparison window.</p>
+<p>Feedback-related negativity and feedback P3 are listed as references. A verified outcome cue is needed to align these windows. <a href="https://pubmed.ncbi.nlm.nih.gov/23964600/">Feedback negativity study</a> · <a href="https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2012.00029/full">Feedback P3 study</a> · <a href="https://www.krigolsonlab.com/uploads/4/3/8/4/43848243/krigolson_2007_hep.pdf">Target perturbation N100 and P300 study</a></p>
+</details>
 """

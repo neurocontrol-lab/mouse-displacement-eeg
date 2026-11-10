@@ -1,9 +1,9 @@
 const D = JSON.parse(document.getElementById('audit-data').textContent);
 const byId = id => document.getElementById(id);
-const colors = {cursor:'#1864a4', jump:'#7543a6', end:'#087f67', steer:'#b05b16', neutral:'#53657a'};
+const colors = {cursor:'#1864a4', jump:'#7543a6', end:'#087f67', steer:'#b05b16', hit:'#a41662', neutral:'#53657a'};
 const sessions = ['pre', 'post', 'retest'];
 const labels = {
-    correction:'Correction', error:'Error', slow:'Slow', unknown:'Unknown',
+    hit_detected:'Hit detected', no_hit_detected:'No hit detected', not_assessed:'Hit not assessed',
     unlinked:'Unlinked', not_applicable:'Not applicable',
     detected:'Detected', not_detected:'Not detected', above_at_window_start:'Above threshold at window start',
     early:'Early (confirmed by 250 ms)', late:'Later confirmation', incomplete:'Incomplete 250 ms window',
@@ -159,6 +159,9 @@ function empty(id, message) {
 function drawPath(example) {
     const coords = example.points.map(([,x,y]) => [x,y]);
     const bounds = [...coords, example.initial_target, example.final_target];
+    const [targetX, targetY] = example.final_target;
+    const radius = example.hit_radius_px;
+    if (radius) bounds.push([targetX-radius,targetY-radius],[targetX+radius,targetY+radius]);
     const xs = extent(bounds.map(p => p[0]));
     const ys = extent(bounds.map(p => p[1]));
     // Keep a cursor pixel the same size on both axes.
@@ -168,6 +171,11 @@ function drawPath(example) {
     const width = Math.max(xWidth,yWidth*aspect), height=width/aspect;
     const cx=(xs[0]+xs[1])/2, cy=(ys[0]+ys[1])/2;
     const plot = axes('reachPath',[cx-width/2,cx+width/2],[cy-height/2,cy+height/2],'Cursor x (px)','Cursor y (px)',{down:true,height:plotHeight});
+    if (radius) {
+        const circle = mark(plot.svg,'circle',{cx:plot.x(targetX),cy:plot.y(targetY),
+            r:plot.x(targetX+radius)-plot.x(targetX),fill:'none',stroke:colors.hit,'stroke-dasharray':'3 3'});
+        mark(circle,'title',{},'Provisional target radius ('+radius+' px)');
+    }
     path(plot,coords);
     point(plot,example.movement_xy,colors.neutral,'Movement onset');
     point(plot,example.initial_target,colors.neutral,'Initial target center',true);
@@ -177,6 +185,7 @@ function drawPath(example) {
     point(plot,example.outward_end_xy,colors.neutral,'Estimated outward end',true);
     point(plot,example.closest_xy,colors.cursor,'Closest observed approach',true);
     point(plot,example.endpoint_xy,colors.end,'Manuscript endpoint');
+    point(plot,example.first_hit_xy,colors.hit,'First target entry');
 }
 function drawTime(example, speedPlot) {
     const id = speedPlot ? 'reachSpeed' : 'reachLateral';
@@ -192,7 +201,8 @@ function drawTime(example, speedPlot) {
     const marks = [
         [-origin,colors.neutral,'Movement onset'],
         [example.jump_direction ? 0 : null,colors.jump,'Target jump'],
-        [example.endpoint_ms_from_movement === null ? null : example.endpoint_ms_from_movement-origin,colors.end,'Verified endpoint'],
+        [example.endpoint_xy ? example.endpoint_ms_from_movement-origin : null,colors.end,'Verified endpoint'],
+        [example.first_hit_ms_from_anchor ?? null,colors.hit,'First target entry'],
         [example.outward_steering_ms_from_jump,colors.steer,'Steering onset'],
         [example.outward_end_ms_from_movement === null ? null : example.outward_end_ms_from_movement-origin,colors.neutral,'Estimated outward end'],
         [example.jump_direction && pairs.at(-1)[0] >= 250 ? 250 : null,colors.neutral,'250 ms observation window'],
@@ -234,26 +244,30 @@ function quantile(sorted,q) {
     return sorted[i]+(sorted[Math.ceil(k)]-sorted[i])*(k-i);
 }
 
-const reachControls = ['reachSubject','reachSession','reachCondition','reachLabel','reachSteering'];
+const reachControls = ['reachSubject','reachSession','reachCondition','reachHit','reachSteering'];
 const trialSelect = byId('reachTrial');
 let shownExamples = [];
 let distances = [];
 function renderExample() {
     const example = shownExamples[Number(trialSelect.value)];
     const info = byId('reachTrialInfo');
+    byId('reachHitLegend').hidden = !example?.hit_radius_px;
     histogram(distances,example ? example.filters[7] : null);
     if (!example) {
         info.textContent = 'No saved example matches this selection.';
         ['reachPath','reachLateral','reachSpeed'].forEach(id => empty(id,'No matching example'));
         return;
     }
-    const [,session,condition,label,steering,accepted,,distance,closest] = example.filters;
+    const [,session,condition,outcome,steering,accepted,,distance,closest] = example.filters;
     const side = example.jump_direction === 1 ? 'right jump' : example.jump_direction === -1 ? 'left jump' : 'no jump';
     const endpoint = distance === null ? 'Endpoint unavailable' : 'Endpoint '+number(distance)+' px from final target center';
     info.textContent = [
         example.run+' / trial '+example.trial, session, side,
-        'Manuscript '+title(label), condition === 'D' ? 'Steering '+title(steering) : '',
-        endpoint, closest === null ? '' : 'Closest observed '+number(closest)+' px',
+        title(outcome), condition === 'D' ? 'Steering '+title(steering) : '',
+        example.first_hit_ms_from_anchor != null
+            ? 'First entry at '+number(example.first_hit_ms_from_anchor)+' ms' : '',
+        endpoint, closest === null ? '' : 'Closest outward '+number(closest)+' px',
+        example.full_log_min_distance_px != null ? 'Closest full log '+number(example.full_log_min_distance_px)+' px' : '',
         example.outward_end_reason ? 'Outward end: '+example.outward_end_reason.replaceAll('_',' ') : '', accepted ? 'EEG accepted' : 'Not in EEG-accepted selection',
     ].filter(Boolean).join(' · ');
     drawPath(example);
@@ -264,7 +278,8 @@ function renderExample() {
 function updateReaches() {
     const selections = reachControls.map(id => byId(id).value);
     const acceptedOnly = byId('reachAccepted').checked;
-    const matches = row => selections.every((value,i) => !value || row[i] === value) && (!acceptedOnly || row[5] === 1);
+    const matches = row => selections.every((value,i) => !value || row[i] === value)
+        && (!acceptedOnly || row[5] === 1);
     const selected = D.reaches.filter(matches);
     distances = selected.map(row => row[7]).filter(v => v !== null);
     const linked = selected.filter(r => r[6] === 1).length;
@@ -302,8 +317,9 @@ function updateReaches() {
 options('timingSubject',D.subjects,'All participants');
 options('reachSubject',D.subjects,'All participants',D.subjects[0]);
 options('reachSession',sessions,'All sessions','pre');
-options('reachLabel',[...new Set(D.reaches.map(r => r[3]))].sort(),'All labels');
 options('reachSteering',[...new Set(D.reaches.map(r => r[4]))].sort(),'All steering groups');
+options('reachHit',['hit_detected','no_hit_detected','not_assessed'],'All outcomes');
+byId('reachHitField').hidden = !D.targetHits.length;
 byId('reachCondition').value = 'D';
 ['timingSubject','timingMarker','timingScope'].forEach(id => byId(id).addEventListener('change',updateTiming));
 [...reachControls,'reachAccepted'].forEach(id => byId(id).addEventListener('change',updateReaches));
@@ -316,17 +332,25 @@ if (D.targetHits.length) {
     byId('targetHitsLink').hidden = false;
     options('hitSubject', [...new Set(D.targetHits.map(r => r[0]))].sort(), 'All participants');
     options('hitSession', sessions, 'All sessions');
+    byId('hitRadiusField').hidden = !D.closeApproachAvailable;
     function updateHits() {
         const subject = byId('hitSubject').value;
         const session = byId('hitSession').value;
+        const radius = byId('hitRadius').value;
+        const hit = radius === '40';
+        const index = hit ? 3 : radius === '75' ? 5 : 6;
+        byId('observedHitScope').hidden = !hit;
+        byId('closeApproachScope').hidden = hit;
         const selected = D.targetHits.filter(([who, visit]) => (!subject || who === subject) && (!session || visit === session));
         const summary = [['D', 'Displaced (D)'], ['ND', 'Non-displaced (ND)']].map(([condition, label]) => {
-            const totals = selected.filter(r => r[2] === condition).reduce(([hits, misses], r) => [hits + r[3], misses + r[4]], [0, 0]);
+            const totals = selected.filter(r => r[2] === condition).reduce(([inside, outside], r) =>
+                [inside + r[index], outside + r[3] + r[4] - r[index]], [0, 0]);
             return [label, ...totals.map(count)];
         });
-        table('hitCounts', ['Trial condition', 'Hit detected', 'No hit detected'], summary);
+        const headings = hit ? ['Hit detected', 'No hit detected'] : ['Within '+radius+' px', 'No approach within '+radius+' px'];
+        table('hitCounts', ['Trial condition', ...headings], summary);
     }
-    ['hitSubject', 'hitSession'].forEach(id => byId(id).addEventListener('change', updateHits));
+    ['hitSubject', 'hitSession', 'hitRadius'].forEach(id => byId(id).addEventListener('change', updateHits));
     updateHits();
 }
 

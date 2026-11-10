@@ -44,6 +44,11 @@
     "code": "Code/analyses/ERP_event_related_potentials/ERP_03_corrective_trajectories",
     "workflow": "Code/analyses/ERP_event_related_potentials/README.md#erp_03"
   },
+  "ERP_04": {
+    "result": "output/ERP_event_related_potentials/ERP_04_observed_target_entry",
+    "code": "Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry",
+    "workflow": "Code/analyses/ERP_event_related_potentials/README.md#erp_04"
+  },
   "FEA_01": {
     "result": "output/FEA_features_repeatability/FEA_01_feature_audit",
     "code": "Code/analyses/FEA_features_repeatability/FEA_01_feature_audit",

@@ -80,7 +80,7 @@ python Code/helpers/build_web_reports.py --category ERP_event_related_potentials
 
 **Steering alignment.** For trials with an onset detected anywhere in the observed outward reach, add the mouse jump-to-steering interval to EEG marker 500 and round the interval to the nearest EEG sample. Show [−1,000, +500) ms around steering if supported by the saved movement epoch. Show the same trials around the jump for comparison. Both views retain the −200 to 0 ms movement baseline and the continuous 1–20 Hz no-FORCe signal. Weight the available trials equally within participant, then weight the non-pilot participants equally.
 
-**Distance.** Compare amplitude slopes for manuscript endpoint distance and closest observed distance on the same trials, with a verified manuscript endpoint in the outward segment. Estimate each slope within participant after centring by recording and jump side and adjusting for reaction time and jump delay. Report µV per 100 px farther from the target center. All ERP_02 comparisons are descriptive. A detected steering onset is a behavioural threshold crossing, and target geometry and a timed outcome cue remain unverified.
+**Distance.** Use the minimum distance over the full eligible mouse log as the primary measure. Compare it with outward-only minimum distance and manuscript endpoint distance on the same trials, each with a verified manuscript endpoint in the outward segment. The full-log minimum comes from the AUD_02 observed-hit export. Estimate each slope within participant after centring by recording and jump side and adjusting for reaction time and jump delay. Report µV per 100 px farther from the target center. All ERP_02 comparisons are descriptive. A detected steering onset is a behavioural threshold crossing, and target geometry and a timed outcome cue remain unverified.
 
 [Results note](../../../output/ERP_event_related_potentials/ERP_02_steering_and_endpoint/RESULTS.md) · [Interactive report](../../../output/ERP_event_related_potentials/report/index.html)
 
@@ -114,3 +114,46 @@ python Code/helpers/build_web_reports.py --category ERP_event_related_potentials
 Use the accepted displaced trials labelled corrective or erroneous. Exclude the other manuscript labels. Within each recording and jump direction, form as many pairs as possible without replacement while minimising the summed absolute gaps in reaction time and movement-to-jump delay. Retain PRE_01 continuous 1–20 Hz no-FORCe filtering and the original [−200, 0) ms movement baseline. Plot [−500, +500) ms after the logged jump and use the five ERP_02 jump-aligned amplitude windows. Pool pairs across sessions within each participant, then weight contributing participants equally for the cohort summaries. Report pilots separately. The comparison is descriptive.
 
 [Results note](../../../output/ERP_event_related_potentials/ERP_03_corrective_trajectories/RESULTS.md) · [Interactive report](../../../output/ERP_event_related_potentials/report/index.html)
+
+## ERP_04
+
+**Observed target entry and close approach.** Compare jump-aligned waveforms using the provisional geometric labels from AUD_02. Use five contrasts.
+
+| Contrast | Reference | Comparison |
+|---|---|---|
+| Observed hit | D no hit detected | D entered the 40 px circle anywhere in the eligible log |
+| Common observation | D no hit by 400 ms | D hit by 400 ms |
+| Close approach | D no approach within 75 px | D reached within 75 px |
+| Radius sensitivity | D no approach within 100 px | D reached within 100 px |
+| Matched hits | ND hit after its paired pseudo-jump | D hit after the target jump |
+
+The 400 ms contrast requires both groups to have logged samples through 400 ms after the jump. Later hits count in the no-hit-by-400 ms group for that contrast. For the within-D contrasts, maximise pairs without replacement within recording and jump side, then minimise summed absolute reaction-time and movement-to-jump delay gaps. For matched D and ND hits, pair within recording on reaction time and give the ND trial the same movement-to-jump delay as its D pair. Require ND entry at or after that pseudo-jump.
+
+| Step | Script | Operation |
+|---|---|---|
+| 1 | [compare_observed_outcomes.py](ERP_04_observed_target_entry/compare_observed_outcomes.py) | Join AUD_01 marker timing, AUD_02 outcome labels and DEC_02 trial IDs. Match pairs and export coverage. |
+| 2 | [extract_outcome_waveforms.m](ERP_04_observed_target_entry/extract_outcome_waveforms.m) | Extract paired traces from the saved PRE_01 no-FORCe epochs. |
+| 3 | [compare_observed_outcomes.py](ERP_04_observed_target_entry/compare_observed_outcomes.py) | Export eight-channel figures, browser waveforms and descriptive window amplitudes. |
+| 4 | [build_web_reports.py](../../helpers/build_web_reports.py) | Build the interactive report. |
+
+Run from the repository root with the AUD_01 and AUD_02 tables, DEC_02 trial IDs, ERP_02 windows and PRE_01 EEG available.
+
+~~~text
+python Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry/compare_observed_outcomes.py prepare
+~~~
+
+~~~matlab
+addpath('Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry')
+extract_outcome_waveforms
+~~~
+
+~~~text
+python Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry/compare_observed_outcomes.py summarise
+python Code/helpers/build_web_reports.py --category ERP_event_related_potentials
+~~~
+
+Use the original PRE_01 1–20 Hz signal and [−200, 0) ms movement baseline. Plot [−500, +500) ms about the jump or pseudo-jump and reuse the five ERP_02 amplitude windows. Pool pairs across sessions within each participant, then weight contributing participants equally. Keep the pilots separate. The comparison describes observed entry and proximity. The radius and task scoring remain provisional, and shorter logs limit the interpretation of no observed hit. For the matched D-hit versus ND-hit contrast, the exploratory follow-up uses two-sided tests of one pooled difference per non-pilot participant. Report marginal 95% confidence intervals and Holm adjustment across the five ERP_04 windows. This family is separate from the eight ERP_01 tests.
+
+[Results note](../../../output/ERP_event_related_potentials/ERP_04_observed_target_entry/RESULTS.md) · [Interactive report](../../../output/ERP_event_related_potentials/report/index.html#savedFigures)
+
+The interactive report has direct sections for cohort window tests and distance associations. In the waveform gallery, the ERP morphology selector shades the listed channels and time range on compatible event alignments. Candidate feedback windows are listed for reference until a verified outcome cue is available. The morphology overlays are independent of the statistical tests.

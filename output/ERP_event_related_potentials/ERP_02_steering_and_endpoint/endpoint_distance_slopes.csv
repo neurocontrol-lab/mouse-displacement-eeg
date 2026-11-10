@@ -1,251 +1,376 @@
 subject,cohort,trials,distance,component_window,electrodes,start_ms,end_ms_exclusive,slope_uv_per_100px
-ara13,validation,446,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.3141777987146109
-ara13,validation,446,endpoint_distance_px,Pe-like,CP1,200,500,-0.48729231284335883
-ara13,validation,446,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.107574964785958
-ara13,validation,446,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.02316000376436372
-ara13,validation,446,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.43903513920495946
+ara13,validation,446,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-0.41670660242108226
+ara13,validation,446,full_log_min_distance_px,Pe-like,CP1,200,500,-0.20579824157410367
+ara13,validation,446,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9720676194277243
+ara13,validation,446,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.025885562389067914
+ara13,validation,446,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.01775985020958739
 ara13,validation,446,closest_distance_px,ERN-like,Cz/FCz,50,100,0.3856402273096777
 ara13,validation,446,closest_distance_px,Pe-like,CP1,200,500,0.04367917895295005
 ara13,validation,446,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.6804353284831759
 ara13,validation,446,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.4163629626158534
 ara13,validation,446,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.12606021294988712
-bal08,validation,419,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.9114647385869314
-bal08,validation,419,endpoint_distance_px,Pe-like,CP1,200,500,0.21854463771148933
-bal08,validation,419,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.1547010156906323
-bal08,validation,419,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.35797577392822366
-bal08,validation,419,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.8447024884870706
+ara13,validation,446,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.3141777987146109
+ara13,validation,446,endpoint_distance_px,Pe-like,CP1,200,500,-0.48729231284335883
+ara13,validation,446,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.107574964785958
+ara13,validation,446,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.02316000376436372
+ara13,validation,446,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.43903513920495946
+bal08,validation,419,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.035132541376191005
+bal08,validation,419,full_log_min_distance_px,Pe-like,CP1,200,500,1.4294529658976067
+bal08,validation,419,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,2.4617266499349224
+bal08,validation,419,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,2.221524722871267
+bal08,validation,419,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.9853216845151027
 bal08,validation,419,closest_distance_px,ERN-like,Cz/FCz,50,100,0.08593400038704681
 bal08,validation,419,closest_distance_px,Pe-like,CP1,200,500,0.22849972617513942
 bal08,validation,419,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.26594114029474075
 bal08,validation,419,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.41197908533800004
 bal08,validation,419,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.43433574265027275
-bpe06,validation,371,endpoint_distance_px,ERN-like,Cz/FCz,50,100,1.3096193767838595
-bpe06,validation,371,endpoint_distance_px,Pe-like,CP1,200,500,-0.5423206292144156
-bpe06,validation,371,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.5275463716882034
-bpe06,validation,371,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.26865941031626406
-bpe06,validation,371,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.6790886588147061
+bal08,validation,419,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.9114647385869314
+bal08,validation,419,endpoint_distance_px,Pe-like,CP1,200,500,0.21854463771148933
+bal08,validation,419,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.1547010156906323
+bal08,validation,419,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.35797577392822366
+bal08,validation,419,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.8447024884870706
+bpe06,validation,371,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-0.20949740931513655
+bpe06,validation,371,full_log_min_distance_px,Pe-like,CP1,200,500,-1.291187680172531
+bpe06,validation,371,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-1.9907201112773032
+bpe06,validation,371,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-1.7547255470466492
+bpe06,validation,371,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-1.54202674454105
 bpe06,validation,371,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.3972025651477967
 bpe06,validation,371,closest_distance_px,Pe-like,CP1,200,500,-1.1903540582375118
 bpe06,validation,371,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-1.8103443339767993
 bpe06,validation,371,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-2.023160729200768
 bpe06,validation,371,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-1.4989743793130361
-bro19,validation,253,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.6197285460109163
-bro19,validation,253,endpoint_distance_px,Pe-like,CP1,200,500,-2.0144569600213633
-bro19,validation,253,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-2.338255807522879
-bro19,validation,253,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-2.4606457048359363
-bro19,validation,253,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-2.2606132542141526
+bpe06,validation,371,endpoint_distance_px,ERN-like,Cz/FCz,50,100,1.3096193767838595
+bpe06,validation,371,endpoint_distance_px,Pe-like,CP1,200,500,-0.5423206292144156
+bpe06,validation,371,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.5275463716882034
+bpe06,validation,371,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.26865941031626406
+bpe06,validation,371,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.6790886588147061
+bro19,validation,253,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.34188306495723214
+bro19,validation,253,full_log_min_distance_px,Pe-like,CP1,200,500,-3.13300668876864
+bro19,validation,253,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-3.497593218171563
+bro19,validation,253,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-3.029732974576648
+bro19,validation,253,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-3.2072211109246154
 bro19,validation,253,closest_distance_px,ERN-like,Cz/FCz,50,100,0.2440092223428802
 bro19,validation,253,closest_distance_px,Pe-like,CP1,200,500,-2.897640787922689
 bro19,validation,253,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-2.9569342144056012
 bro19,validation,253,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-3.361798546301801
 bro19,validation,253,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-2.6898079614819475
-cna07,validation,293,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.7418386886629866
-cna07,validation,293,endpoint_distance_px,Pe-like,CP1,200,500,0.6482793655685247
-cna07,validation,293,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.31702710558039826
-cna07,validation,293,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.5905547342556445
-cna07,validation,293,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.2644371193698189
+bro19,validation,253,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.6197285460109163
+bro19,validation,253,endpoint_distance_px,Pe-like,CP1,200,500,-2.0144569600213633
+bro19,validation,253,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-2.338255807522879
+bro19,validation,253,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-2.4606457048359363
+bro19,validation,253,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-2.2606132542141526
+cna07,validation,293,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-0.5481266070205787
+cna07,validation,293,full_log_min_distance_px,Pe-like,CP1,200,500,0.33602290161782633
+cna07,validation,293,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.3642367038117069
+cna07,validation,293,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.4120665497766547
+cna07,validation,293,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.2911285636992178
 cna07,validation,293,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.5319432593491039
 cna07,validation,293,closest_distance_px,Pe-like,CP1,200,500,0.29063292988250655
 cna07,validation,293,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.42450219710496767
 cna07,validation,293,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.44895028374647816
 cna07,validation,293,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.312809584574797
-cve01,validation,441,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.8744156468910074
-cve01,validation,441,endpoint_distance_px,Pe-like,CP1,200,500,-0.7509207140182967
-cve01,validation,441,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.8311606397577709
-cve01,validation,441,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.05680079959712669
-cve01,validation,441,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.9463967256488083
+cna07,validation,293,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.7418386886629866
+cna07,validation,293,endpoint_distance_px,Pe-like,CP1,200,500,0.6482793655685247
+cna07,validation,293,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.31702710558039826
+cna07,validation,293,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.5905547342556445
+cna07,validation,293,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.2644371193698189
+cve01,validation,441,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.17355469440403526
+cve01,validation,441,full_log_min_distance_px,Pe-like,CP1,200,500,-0.1884368961806004
+cve01,validation,441,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.7208844542002921
+cve01,validation,441,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.36925651660356
+cve01,validation,441,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.21328006946542225
 cve01,validation,441,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.08460375587043283
 cve01,validation,441,closest_distance_px,Pe-like,CP1,200,500,-0.3926690059745231
 cve01,validation,441,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.17071857894686152
 cve01,validation,441,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.46459993499141555
 cve01,validation,441,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.17042257452721418
-den12,validation,413,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.9653581102899224
-den12,validation,413,endpoint_distance_px,Pe-like,CP1,200,500,-0.39465613561213153
-den12,validation,413,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.1776246786106152
-den12,validation,413,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.683036712324666
-den12,validation,413,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.14875321627089771
+cve01,validation,441,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.8744156468910074
+cve01,validation,441,endpoint_distance_px,Pe-like,CP1,200,500,-0.7509207140182967
+cve01,validation,441,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.8311606397577709
+cve01,validation,441,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.05680079959712669
+cve01,validation,441,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.9463967256488083
+den12,validation,413,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.6946271285688445
+den12,validation,413,full_log_min_distance_px,Pe-like,CP1,200,500,-0.9857552318708087
+den12,validation,413,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-1.2403697401432492
+den12,validation,413,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-1.4794600299127623
+den12,validation,413,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.9252021819608794
 den12,validation,413,closest_distance_px,ERN-like,Cz/FCz,50,100,0.23090608224625947
 den12,validation,413,closest_distance_px,Pe-like,CP1,200,500,-0.18884509445137512
 den12,validation,413,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.24924635635597275
 den12,validation,413,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.4000622337266706
 den12,validation,413,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.0832286391775549
-eab31,validation,473,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.145826578232959
-eab31,validation,473,endpoint_distance_px,Pe-like,CP1,200,500,0.0603426653225227
-eab31,validation,473,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.022262589740207363
-eab31,validation,473,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.3292679603984315
-eab31,validation,473,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.22550732540698648
+den12,validation,413,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.9653581102899224
+den12,validation,413,endpoint_distance_px,Pe-like,CP1,200,500,-0.39465613561213153
+den12,validation,413,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.1776246786106152
+den12,validation,413,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.683036712324666
+den12,validation,413,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.14875321627089771
+eab31,validation,473,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.5242375222346956
+eab31,validation,473,full_log_min_distance_px,Pe-like,CP1,200,500,0.5756836622102737
+eab31,validation,473,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.2484272730878334
+eab31,validation,473,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.706279251613624
+eab31,validation,473,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.5337158305196186
 eab31,validation,473,closest_distance_px,ERN-like,Cz/FCz,50,100,0.06852462081944428
 eab31,validation,473,closest_distance_px,Pe-like,CP1,200,500,0.07394149588174312
 eab31,validation,473,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.24976166201397101
 eab31,validation,473,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.00901553975319063
 eab31,validation,473,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.03574155310316659
-emo24,validation,291,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.5547545382334966
-emo24,validation,291,endpoint_distance_px,Pe-like,CP1,200,500,0.07608591952760609
-emo24,validation,291,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.5956520025959312
-emo24,validation,291,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.17708412365484003
-emo24,validation,291,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.3492918531802905
+eab31,validation,473,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.145826578232959
+eab31,validation,473,endpoint_distance_px,Pe-like,CP1,200,500,0.0603426653225227
+eab31,validation,473,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.022262589740207363
+eab31,validation,473,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.3292679603984315
+eab31,validation,473,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.22550732540698648
+emo24,validation,291,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.6262310863155385
+emo24,validation,291,full_log_min_distance_px,Pe-like,CP1,200,500,1.095104816404064
+emo24,validation,291,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.5916632675505632
+emo24,validation,291,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.20427770782691482
+emo24,validation,291,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.8720198489681686
 emo24,validation,291,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.05782135821143897
 emo24,validation,291,closest_distance_px,Pe-like,CP1,200,500,-0.04770652080322975
 emo24,validation,291,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.2445320775633411
 emo24,validation,291,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.36936741803398915
 emo24,validation,291,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.14214183139529346
-fbo09,validation,426,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.6945592151844221
-fbo09,validation,426,endpoint_distance_px,Pe-like,CP1,200,500,0.17652969027619117
-fbo09,validation,426,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.06804268526765855
-fbo09,validation,426,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.21158802437351565
-fbo09,validation,426,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.0068349057543518575
+emo24,validation,291,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.5547545382334966
+emo24,validation,291,endpoint_distance_px,Pe-like,CP1,200,500,0.07608591952760609
+emo24,validation,291,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.5956520025959312
+emo24,validation,291,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.17708412365484003
+emo24,validation,291,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.3492918531802905
+fbo09,validation,426,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.2842829315632804
+fbo09,validation,426,full_log_min_distance_px,Pe-like,CP1,200,500,-0.03671891326665492
+fbo09,validation,426,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.12859313630962324
+fbo09,validation,426,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.24122096363027448
+fbo09,validation,426,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.08925821883862853
 fbo09,validation,426,closest_distance_px,ERN-like,Cz/FCz,50,100,0.07537923744256064
 fbo09,validation,426,closest_distance_px,Pe-like,CP1,200,500,-0.004295174548867142
 fbo09,validation,426,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.1880138799876006
 fbo09,validation,426,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.4671306634063557
 fbo09,validation,426,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.11308020860736806
-gba12,validation,453,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.08157694814914945
-gba12,validation,453,endpoint_distance_px,Pe-like,CP1,200,500,-0.22868634250221997
-gba12,validation,453,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.514104412655919
-gba12,validation,453,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-1.144874395803597
-gba12,validation,453,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.6924159853293319
+fbo09,validation,426,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.6945592151844221
+fbo09,validation,426,endpoint_distance_px,Pe-like,CP1,200,500,0.17652969027619117
+fbo09,validation,426,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.06804268526765855
+fbo09,validation,426,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.21158802437351565
+fbo09,validation,426,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.0068349057543518575
+gba12,validation,453,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.5337005332648289
+gba12,validation,453,full_log_min_distance_px,Pe-like,CP1,200,500,-0.17130934383997704
+gba12,validation,453,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.8180955198510068
+gba12,validation,453,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.5729203045322065
+gba12,validation,453,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5131369246835199
 gba12,validation,453,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.5457237002890484
 gba12,validation,453,closest_distance_px,Pe-like,CP1,200,500,-0.015741273905188088
 gba12,validation,453,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.3452038250814765
 gba12,validation,453,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.30381680768473074
 gba12,validation,453,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.40756932497916737
-gcr27,validation,431,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.1045491018700069
-gcr27,validation,431,endpoint_distance_px,Pe-like,CP1,200,500,0.15970942192272242
-gcr27,validation,431,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.04790347560737761
-gcr27,validation,431,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.1045045151371522
-gcr27,validation,431,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.5092561681840144
+gba12,validation,453,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.08157694814914945
+gba12,validation,453,endpoint_distance_px,Pe-like,CP1,200,500,-0.22868634250221997
+gba12,validation,453,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.514104412655919
+gba12,validation,453,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-1.144874395803597
+gba12,validation,453,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.6924159853293319
+gcr27,validation,431,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-1.1344663404046318
+gcr27,validation,431,full_log_min_distance_px,Pe-like,CP1,200,500,1.1439233886146978
+gcr27,validation,431,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.9923915026333472
+gcr27,validation,431,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,2.872924908131827
+gcr27,validation,431,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,1.7360164324787035
 gcr27,validation,431,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.708979602072936
 gcr27,validation,431,closest_distance_px,Pe-like,CP1,200,500,-0.0903062915160175
 gcr27,validation,431,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.258967475464957
 gcr27,validation,431,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.2354438279943543
 gcr27,validation,431,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.2110369709058152
-lbo12,validation,402,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.3488274919745497
-lbo12,validation,402,endpoint_distance_px,Pe-like,CP1,200,500,-0.37857614133539136
-lbo12,validation,402,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9290626463485806
-lbo12,validation,402,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.789009041339478
-lbo12,validation,402,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.27128491090185763
+gcr27,validation,431,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.1045491018700069
+gcr27,validation,431,endpoint_distance_px,Pe-like,CP1,200,500,0.15970942192272242
+gcr27,validation,431,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.04790347560737761
+gcr27,validation,431,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.1045045151371522
+gcr27,validation,431,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.5092561681840144
+lbo12,validation,402,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-0.1036077226280902
+lbo12,validation,402,full_log_min_distance_px,Pe-like,CP1,200,500,-0.39780456265696035
+lbo12,validation,402,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.30502546291622584
+lbo12,validation,402,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.5712098109318484
+lbo12,validation,402,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.41450367966418017
 lbo12,validation,402,closest_distance_px,ERN-like,Cz/FCz,50,100,0.23957981457027164
 lbo12,validation,402,closest_distance_px,Pe-like,CP1,200,500,-0.23257800826064845
 lbo12,validation,402,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.6430415941460526
 lbo12,validation,402,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.34796237202393604
 lbo12,validation,402,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.15165123807987033
-ldu23,validation,363,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.14425879445063505
-ldu23,validation,363,endpoint_distance_px,Pe-like,CP1,200,500,0.31525699507868904
-ldu23,validation,363,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.3839787749717517
-ldu23,validation,363,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.3404289528206418
-ldu23,validation,363,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.4371426204877299
+lbo12,validation,402,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.3488274919745497
+lbo12,validation,402,endpoint_distance_px,Pe-like,CP1,200,500,-0.37857614133539136
+lbo12,validation,402,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9290626463485806
+lbo12,validation,402,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.789009041339478
+lbo12,validation,402,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.27128491090185763
+ldu23,validation,363,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,1.9206103569822466
+ldu23,validation,363,full_log_min_distance_px,Pe-like,CP1,200,500,0.280357261488418
+ldu23,validation,363,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.9822988447115493
+ldu23,validation,363,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,1.4419269298411452
+ldu23,validation,363,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.7786987251030041
 ldu23,validation,363,closest_distance_px,ERN-like,Cz/FCz,50,100,1.722946094265735
 ldu23,validation,363,closest_distance_px,Pe-like,CP1,200,500,0.2107415910397901
 ldu23,validation,363,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.1636208819841153
 ldu23,validation,363,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.8778397287401478
 ldu23,validation,363,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.6395228234973899
-meb17,validation,322,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.2674292724186879
-meb17,validation,322,endpoint_distance_px,Pe-like,CP1,200,500,-0.532010732792876
-meb17,validation,322,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.18611474186597482
-meb17,validation,322,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.1380696539343434
-meb17,validation,322,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.49381764799560623
+ldu23,validation,363,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.14425879445063505
+ldu23,validation,363,endpoint_distance_px,Pe-like,CP1,200,500,0.31525699507868904
+ldu23,validation,363,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.3839787749717517
+ldu23,validation,363,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.3404289528206418
+ldu23,validation,363,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.4371426204877299
+meb17,validation,322,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.37968656954976543
+meb17,validation,322,full_log_min_distance_px,Pe-like,CP1,200,500,-0.7857177899838141
+meb17,validation,322,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9064672279873579
+meb17,validation,322,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-1.0571702027688183
+meb17,validation,322,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-1.0157094085613871
 meb17,validation,322,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.494293616752646
 meb17,validation,322,closest_distance_px,Pe-like,CP1,200,500,-1.2009433715585673
 meb17,validation,322,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-1.0713513926974578
 meb17,validation,322,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.9341592496232545
 meb17,validation,322,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-1.1075558244788135
-mka24,validation,470,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.7406533184736416
-mka24,validation,470,endpoint_distance_px,Pe-like,CP1,200,500,0.10008490914538672
-mka24,validation,470,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.325748188585596
-mka24,validation,470,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.5169480707016278
-mka24,validation,470,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.17499946446764755
+meb17,validation,322,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.2674292724186879
+meb17,validation,322,endpoint_distance_px,Pe-like,CP1,200,500,-0.532010732792876
+meb17,validation,322,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.18611474186597482
+meb17,validation,322,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.1380696539343434
+meb17,validation,322,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.49381764799560623
+mka24,validation,470,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-1.0990485338615865
+mka24,validation,470,full_log_min_distance_px,Pe-like,CP1,200,500,-0.4229914133064562
+mka24,validation,470,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-1.6636223259650469
+mka24,validation,470,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.3446106154159257
+mka24,validation,470,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.40427169261120827
 mka24,validation,470,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.7541051140724344
 mka24,validation,470,closest_distance_px,Pe-like,CP1,200,500,-0.2341800125153752
 mka24,validation,470,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.6661385036975231
 mka24,validation,470,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.020943103632711426
 mka24,validation,470,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.10410329430343879
-mle01,pilot,398,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.5026902990963255
-mle01,pilot,398,endpoint_distance_px,Pe-like,CP1,200,500,-0.6987763415649694
-mle01,pilot,398,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.7877707158880008
-mle01,pilot,398,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.7152076375032599
-mle01,pilot,398,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5948322750392251
+mka24,validation,470,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.7406533184736416
+mka24,validation,470,endpoint_distance_px,Pe-like,CP1,200,500,0.10008490914538672
+mka24,validation,470,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-1.325748188585596
+mka24,validation,470,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.5169480707016278
+mka24,validation,470,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.17499946446764755
+mle01,pilot,398,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.7695253378185085
+mle01,pilot,398,full_log_min_distance_px,Pe-like,CP1,200,500,-0.8726818855276951
+mle01,pilot,398,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.24964858135409163
+mle01,pilot,398,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.3436741045646357
+mle01,pilot,398,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5375201070721458
 mle01,pilot,398,closest_distance_px,ERN-like,Cz/FCz,50,100,0.39769353031891114
 mle01,pilot,398,closest_distance_px,Pe-like,CP1,200,500,-0.21022063925443135
 mle01,pilot,398,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.03978533292877615
 mle01,pilot,398,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.3685626389139931
 mle01,pilot,398,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.2744251184614634
-nfu22,validation,479,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.40763044779406243
-nfu22,validation,479,endpoint_distance_px,Pe-like,CP1,200,500,0.5145631026315431
-nfu22,validation,479,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.8591097213727947
-nfu22,validation,479,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.6048496142458201
-nfu22,validation,479,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.09257473184563271
+mle01,pilot,398,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.5026902990963255
+mle01,pilot,398,endpoint_distance_px,Pe-like,CP1,200,500,-0.6987763415649694
+mle01,pilot,398,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.7877707158880008
+mle01,pilot,398,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.7152076375032599
+mle01,pilot,398,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5948322750392251
+nfu22,validation,479,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-1.32124068185347
+nfu22,validation,479,full_log_min_distance_px,Pe-like,CP1,200,500,0.4741313821910113
+nfu22,validation,479,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.14384625495177328
+nfu22,validation,479,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.338944955012607
+nfu22,validation,479,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.28964714174278566
 nfu22,validation,479,closest_distance_px,ERN-like,Cz/FCz,50,100,-0.7571844986995004
 nfu22,validation,479,closest_distance_px,Pe-like,CP1,200,500,0.3061957339947266
 nfu22,validation,479,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.18358915927031885
 nfu22,validation,479,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.25209020908765395
 nfu22,validation,479,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.026348164053709624
-nsh23,validation,475,endpoint_distance_px,ERN-like,Cz/FCz,50,100,1.543973428123078
-nsh23,validation,475,endpoint_distance_px,Pe-like,CP1,200,500,1.0756987191101661
-nsh23,validation,475,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.1608822871779606
-nsh23,validation,475,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.6444364880442406
-nsh23,validation,475,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.8032022859855584
+nfu22,validation,479,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.40763044779406243
+nfu22,validation,479,endpoint_distance_px,Pe-like,CP1,200,500,0.5145631026315431
+nfu22,validation,479,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.8591097213727947
+nfu22,validation,479,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.6048496142458201
+nfu22,validation,479,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.09257473184563271
+nsh23,validation,475,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.600941733854962
+nsh23,validation,475,full_log_min_distance_px,Pe-like,CP1,200,500,0.9869063817449392
+nsh23,validation,475,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.4011167747918897
+nsh23,validation,475,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,1.0169181834963934
+nsh23,validation,475,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.3090833635451478
 nsh23,validation,475,closest_distance_px,ERN-like,Cz/FCz,50,100,0.4641099399231826
 nsh23,validation,475,closest_distance_px,Pe-like,CP1,200,500,0.506938891535975
 nsh23,validation,475,closest_distance_px,Interaction negativity,Cz/FCz,200,280,0.04550390637979553
 nsh23,validation,475,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.589057855742309
 nsh23,validation,475,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.3964219715325243
-rle13,validation,264,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.1727870770433526
-rle13,validation,264,endpoint_distance_px,Pe-like,CP1,200,500,-0.320750859537444
-rle13,validation,264,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.5576468455409468
-rle13,validation,264,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.0923649174312038
-rle13,validation,264,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.29792893848432367
+nsh23,validation,475,endpoint_distance_px,ERN-like,Cz/FCz,50,100,1.543973428123078
+nsh23,validation,475,endpoint_distance_px,Pe-like,CP1,200,500,1.0756987191101661
+nsh23,validation,475,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.1608822871779606
+nsh23,validation,475,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.6444364880442406
+nsh23,validation,475,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.8032022859855584
+rle13,validation,264,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-1.2093594995867856
+rle13,validation,264,full_log_min_distance_px,Pe-like,CP1,200,500,-0.4064255956724991
+rle13,validation,264,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.3069210477908107
+rle13,validation,264,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,0.331541976884883
+rle13,validation,264,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.28307040657704857
 rle13,validation,264,closest_distance_px,ERN-like,Cz/FCz,50,100,-1.1444161901905503
 rle13,validation,264,closest_distance_px,Pe-like,CP1,200,500,-0.27832302817116716
 rle13,validation,264,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.08744979421032839
 rle13,validation,264,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.3179147938844439
 rle13,validation,264,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.20630094179841782
-sga12,validation,379,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.7729512340274993
-sga12,validation,379,endpoint_distance_px,Pe-like,CP1,200,500,0.36011823355476863
-sga12,validation,379,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.3818420239983608
-sga12,validation,379,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.18043103829115095
-sga12,validation,379,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.055933855278958056
+rle13,validation,264,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.1727870770433526
+rle13,validation,264,endpoint_distance_px,Pe-like,CP1,200,500,-0.320750859537444
+rle13,validation,264,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.5576468455409468
+rle13,validation,264,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,1.0923649174312038
+rle13,validation,264,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.29792893848432367
+sga12,validation,379,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.1935357157423194
+sga12,validation,379,full_log_min_distance_px,Pe-like,CP1,200,500,1.9137021308353421
+sga12,validation,379,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,2.059415287649194
+sga12,validation,379,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,1.2130366813410922
+sga12,validation,379,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,1.9155716994085346
 sga12,validation,379,closest_distance_px,ERN-like,Cz/FCz,50,100,0.9118407678854276
 sga12,validation,379,closest_distance_px,Pe-like,CP1,200,500,0.09634329213588735
 sga12,validation,379,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.19684892236872245
 sga12,validation,379,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.1560826165493456
 sga12,validation,379,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.10256098651276979
-spe30,pilot,462,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.2756385683307199
-spe30,pilot,462,endpoint_distance_px,Pe-like,CP1,200,500,0.07296215594338681
-spe30,pilot,462,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.7305555386326873
-spe30,pilot,462,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.01798705427099756
-spe30,pilot,462,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.11595319660566213
+sga12,validation,379,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.7729512340274993
+sga12,validation,379,endpoint_distance_px,Pe-like,CP1,200,500,0.36011823355476863
+sga12,validation,379,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,0.3818420239983608
+sga12,validation,379,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.18043103829115095
+sga12,validation,379,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.055933855278958056
+spe30,pilot,462,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,-1.357500723439826
+spe30,pilot,462,full_log_min_distance_px,Pe-like,CP1,200,500,0.6839433389415214
+spe30,pilot,462,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-0.2743254139115575
+spe30,pilot,462,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-0.028786785515054748
+spe30,pilot,462,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.45515039261831847
 spe30,pilot,462,closest_distance_px,ERN-like,Cz/FCz,50,100,-1.357503246544603
 spe30,pilot,462,closest_distance_px,Pe-like,CP1,200,500,0.6839472655153156
 spe30,pilot,462,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.2743234857980291
 spe30,pilot,462,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.02878589912758126
 spe30,pilot,462,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.4551526614586305
-sto20,validation,395,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.18113092182576
-sto20,validation,395,endpoint_distance_px,Pe-like,CP1,200,500,-0.5797922409997059
-sto20,validation,395,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9454722911800685
-sto20,validation,395,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.05150272048517346
-sto20,validation,395,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5329881939360962
+spe30,pilot,462,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-0.2756385683307199
+spe30,pilot,462,endpoint_distance_px,Pe-like,CP1,200,500,0.07296215594338681
+spe30,pilot,462,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.7305555386326873
+spe30,pilot,462,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,0.01798705427099756
+spe30,pilot,462,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.11595319660566213
+sto20,validation,395,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,1.0217269871144594
+sto20,validation,395,full_log_min_distance_px,Pe-like,CP1,200,500,0.18847255923885572
+sto20,validation,395,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,0.7803257986838775
+sto20,validation,395,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,1.4527739885833146
+sto20,validation,395,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,0.7014081945381591
 sto20,validation,395,closest_distance_px,ERN-like,Cz/FCz,50,100,0.014729392258382457
 sto20,validation,395,closest_distance_px,Pe-like,CP1,200,500,-0.19624696629826857
 sto20,validation,395,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.488835581431558
 sto20,validation,395,closest_distance_px,Interaction positivity,Cz/FCz,280,360,0.06285722603400745
 sto20,validation,395,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.13781179726383183
-vco27,validation,209,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.5565398708715942
-vco27,validation,209,endpoint_distance_px,Pe-like,CP1,200,500,-0.6150964713692223
-vco27,validation,209,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.8251564619696101
-vco27,validation,209,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.06340714970912471
-vco27,validation,209,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.4393097740555143
+sto20,validation,395,endpoint_distance_px,ERN-like,Cz/FCz,50,100,-1.18113092182576
+sto20,validation,395,endpoint_distance_px,Pe-like,CP1,200,500,-0.5797922409997059
+sto20,validation,395,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.9454722911800685
+sto20,validation,395,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.05150272048517346
+sto20,validation,395,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.5329881939360962
+vco27,validation,209,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.47241941827971085
+vco27,validation,209,full_log_min_distance_px,Pe-like,CP1,200,500,-3.709065007651461
+vco27,validation,209,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,-2.250614222098128
+vco27,validation,209,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,-1.3049399046125012
+vco27,validation,209,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-1.7853324282834218
 vco27,validation,209,closest_distance_px,ERN-like,Cz/FCz,50,100,0.17526121088950428
 vco27,validation,209,closest_distance_px,Pe-like,CP1,200,500,-0.708617631304279
 vco27,validation,209,closest_distance_px,Interaction negativity,Cz/FCz,200,280,-0.21881291578430445
 vco27,validation,209,closest_distance_px,Interaction positivity,Cz/FCz,280,360,-0.41914223025738645
 vco27,validation,209,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.4941931669212974
-yle21,validation,300,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.004139402832117671
-yle21,validation,300,endpoint_distance_px,Pe-like,CP1,200,500,1.436660279534472
-yle21,validation,300,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,2.9967325863569223
-yle21,validation,300,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,6.463988570523262
-yle21,validation,300,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,3.2072252028652417
+vco27,validation,209,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.5565398708715942
+vco27,validation,209,endpoint_distance_px,Pe-like,CP1,200,500,-0.6150964713692223
+vco27,validation,209,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,-0.8251564619696101
+vco27,validation,209,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,-0.06340714970912471
+vco27,validation,209,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,-0.4393097740555143
+yle21,validation,300,full_log_min_distance_px,ERN-like,Cz/FCz,50,100,0.39384490301406233
+yle21,validation,300,full_log_min_distance_px,Pe-like,CP1,200,500,1.2802999018458248
+yle21,validation,300,full_log_min_distance_px,Interaction negativity,Cz/FCz,200,280,2.226261123570712
+yle21,validation,300,full_log_min_distance_px,Interaction positivity,Cz/FCz,280,360,7.22903297001266
+yle21,validation,300,full_log_min_distance_px,Posterior positivity,P3/PO3/PO7,200,400,3.7772962402408625
 yle21,validation,300,closest_distance_px,ERN-like,Cz/FCz,50,100,0.11516466219078399
 yle21,validation,300,closest_distance_px,Pe-like,CP1,200,500,1.18690013005437
 yle21,validation,300,closest_distance_px,Interaction negativity,Cz/FCz,200,280,2.2510074579565766
 yle21,validation,300,closest_distance_px,Interaction positivity,Cz/FCz,280,360,6.328846162533379
 yle21,validation,300,closest_distance_px,Posterior positivity,P3/PO3/PO7,200,400,3.0876205813581072
+yle21,validation,300,endpoint_distance_px,ERN-like,Cz/FCz,50,100,0.004139402832117671
+yle21,validation,300,endpoint_distance_px,Pe-like,CP1,200,500,1.436660279534472
+yle21,validation,300,endpoint_distance_px,Interaction negativity,Cz/FCz,200,280,2.9967325863569223
+yle21,validation,300,endpoint_distance_px,Interaction positivity,Cz/FCz,280,360,6.463988570523262
+yle21,validation,300,endpoint_distance_px,Posterior positivity,P3/PO3/PO7,200,400,3.2072252028652417

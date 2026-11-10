@@ -194,20 +194,22 @@ def rounded(value, digits=3):
     return round(float(value), digits) if value is not None and np.isfinite(value) else None
 
 
-def example_trace(trial, record, endpoint, outward):
+def example_trace(trial, record, endpoint, outward, *, display_end=None, first_hit=None):
     time, x, y = trial.samples.T
     speed = lateral_speed(trial)
     move, jump = trial.movement, trial.jump
     # Include the pre-movement lead-in and the exact event indices in the displayed path.
     start = int(np.searchsorted(time, time[move]-.100))
     end = max(endpoint, outward.end) if endpoint is not None else outward.end
+    if display_end is not None:
+        end = display_end
     steering = outward.steering
     selected = set(range(start, end+1, 3))
-    selected.update(i for i in (move, jump, steering, endpoint, outward.end, outward.closest, end) if i is not None)
+    selected.update(i for i in (move, jump, steering, endpoint, outward.end, outward.closest, first_hit, end) if i is not None)
     points = [[rounded((time[i]-time[move])*1000), rounded(x[i], 1), rounded(y[i], 1), rounded(speed[i], 1)]
               for i in sorted(selected)]
-    return dict(
-        run=record["run"], trial=record["trial"], points=points,
+    trace = dict(
+        run=record["run"], trial=int(record["trial"]), points=points,
         initial_target=list(trial.initial_target), final_target=list(trial.final_target),
         movement_xy=[float(x[move]), float(y[move])],
         jump_xy=[float(x[jump]), float(y[jump])] if jump is not None else None,
@@ -216,6 +218,9 @@ def example_trace(trial, record, endpoint, outward):
         outward_end_xy=[float(x[outward.end]), float(y[outward.end])],
         closest_xy=[float(x[outward.closest]), float(y[outward.closest])],
     )
+    if first_hit is not None:
+        trace["first_hit_xy"] = [float(x[first_hit]), float(y[first_hit])]
+    return trace
 
 
 def examples_from(groups):
@@ -313,7 +318,7 @@ def audit():
             geometric_outcome="unverified",
         )
         trial_rows.append(record)
-        group = subject, session, record["condition"], manuscript_label, outward.window_status, is_accepted
+        group = subject, session, record["condition"], outward.window_status, is_accepted
         groups[group].append((trial, record, endpoint, outward))
         totals = by_session[subject, session, record["condition"]]
         totals.update(["event_valid", f"behaviour_{link}", f"endpoint_{endpoint_status}", f"steering_{status}",
