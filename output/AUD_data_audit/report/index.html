@@ -26,14 +26,16 @@ nav{display:flex;gap:18px;flex-wrap:wrap}a{color:#075da8}section,.card{backgroun
 <div class="controls">
 <label>Participant<select id="timingSubject"></select></label>
 <label>Marker<select id="timingMarker"><option value="500">500 · Target jump</option><option value="400">400 · Movement onset</option></select></label>
-<label>Cutoff<select id="timingScope"><option value="per_run">Fitted per run</option><option value="shared">Shared fit</option><option value="fixed">Fixed benchmark</option></select></label>
 </div>
 <div class="tablewrap"><table id="timingObserved" class="audit-table"></table></div>
-<h3>Candidate first crossings</h3>
+<details>
+<summary>Candidate first crossings</summary>
+<div class="controls"><label>Cutoff<select id="timingScope"><option value="per_run">Fitted per run</option><option value="shared">Shared fit</option><option value="fixed">Fixed benchmark</option></select></label></div>
 <p class="note">Fitted cutoffs are evaluated on held-out trials within each recording. The ±6 ms and one-sample columns use different tolerances because log intervals vary slightly.</p>
 <p id="timingSharedNote" class="note" hidden>Each fold uses one cutoff across all participants, sessions, and runs. If the fitted values differ, both are shown in fold order. Values are rounded to three decimal places. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
 <p id="timingFixedNote" class="note" hidden></p>
 <div class="tablewrap"><table id="timingComparison" class="audit-table"></table></div>
+</details>
 </section>
 <section id="trajectories">
 <div class="audit-heading"><h2>AUD_02 · Mouse trajectories and reach outcomes</h2><div><a href="../AUD_02_mouse_trajectories/RESULTS.md">Results note</a> · <a href="../../../Code/analyses/AUD_data_audit/README.md#aud_02">Methods</a></div></div>
