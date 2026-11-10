@@ -1,0 +1,2 @@
+electrodes,start_ms,end_ms_exclusive,participants,matched_pairs,mean_difference_uv,ci95_low_uV,ci95_high_uV,p
+P3/PO3/PO7,80,150,22,2273,-1.5986972892866924,-2.7290173370448922,-0.4683772415284928,0.007797531284982244

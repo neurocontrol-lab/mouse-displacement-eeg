@@ -1,4 +1,11 @@
 {
+    function setCell(cell, content) {
+        for (const [i, line] of [].concat(content).entries()) {
+            if (i) cell.append(document.createElement('br'));
+            cell.append(String(line));
+        }
+    }
+
     function fillTable(id, headings, values, emphasized = []) {
         const table = byId(id);
         const head = document.createElement('thead');
@@ -6,14 +13,14 @@
         for (const name of headings) {
             const cell = document.createElement('th');
             cell.scope = 'col';
-            cell.textContent = name;
+            setCell(cell, name);
             header.append(cell);
         }
         const body = document.createElement('tbody');
         values.forEach((fields, i) => {
             const row = body.insertRow();
             if (emphasized[i]) row.className = 'erp-supported';
-            for (const field of fields) row.insertCell().textContent = field;
+            for (const field of fields) setCell(row.insertCell(), field);
         });
         table.replaceChildren(head, body);
     }
@@ -96,6 +103,27 @@
         updateTests();
     }
 
+    const hitClusterPlot = D.figures.find(f => f.name === 'matched_hit_clusters');
+    const clusters = getRows('ERP_04 matched-hit clusters').filter(r => Number(r.p_cluster) < .05);
+    const clusterSessions = getRows('ERP_04 matched-hit cluster session estimates');
+    const [n100] = getRows('ERP_04 posterior N100 check');
+    if (hitClusterPlot && n100) {
+        byId('erp-hit-timing').hidden = false;
+        byId('erpHitClusterPlot').src = hitClusterPlot.src;
+        byId('erpHitTimingScope').textContent = 'D hits versus matched ND hits at 40 px. '
+            + n100.participants + ' non-pilot participants and ' + Number(n100.matched_pairs).toLocaleString()
+            + ' pairs. The two-sided permutation test jointly corrects across 0–500 ms, both electrode groups and both polarities.';
+        fillTable('erpHitClusterValues', ['Electrodes','Polarity','Observed interval','Mean D − ND (µV)','Corrected cluster p'],
+            clusters.map(r => [r.electrodes,r.polarity,interval(r.start_ms,r.end_ms_exclusive),
+                signed(r.mean_difference_uv),Number(r.p_cluster).toFixed(4)]));
+        fillTable('erpHitClusterSessions', ['Electrodes','Pooled interval','Session','Participants','Pairs','Mean D − ND (µV)'],
+            clusterSessions.map(r => [r.electrodes,interval(r.start_ms,r.end_ms_exclusive),r.session,
+                r.participants,Number(r.matched_pairs).toLocaleString(),signed(r.mean_difference_uv)]));
+        byId('erpHitN100').textContent = n100.electrodes + ', ' + interval(n100.start_ms,n100.end_ms_exclusive)
+            + ' after the jump. Mean D − ND ' + signed(n100.mean_difference_uv) + ' µV (marginal 95% CI '
+            + signed(n100.ci95_low_uV) + ' to ' + signed(n100.ci95_high_uV) + ' µV, p = ' + Number(n100.p).toFixed(4) + ').';
+    }
+
     const distancePlot = D.figures.find(f => f.name === 'distance_associations');
     const slopes = getRows('ERP_02 distance slope summary');
     const measures = [
@@ -105,19 +133,36 @@
     ];
     if (distancePlot && slopes.length) {
         byId('erp-distance').hidden = false;
-        byId('erpDistancePlot').src = distancePlot.src;
-        const rows = measures.flatMap(([id,name,definition]) => {
-            const values = slopes.filter(r => r.distance === id);
-            if (!values.length) return [];
-            const peak = values.reduce((a,b) => Math.abs(b.median_slope_uv_per_100px) >
-                Math.abs(a.median_slope_uv_per_100px) ? b : a);
-            const central = values.find(r => r.electrodes === 'Cz/FCz'
-                && Number(r.start_ms) === 200 && Number(r.end_ms_exclusive) === 280);
-            const strongest = peak.component_window+' · '+peak.electrodes+' · '+interval(peak.start_ms,peak.end_ms_exclusive);
-            return [[name,definition,strongest,signed(peak.median_slope_uv_per_100px),
-                central ? signed(central.median_slope_uv_per_100px) : '—']];
-        });
-        fillTable('erpDistanceValues', ['Panel','Distance definition','Strongest ERP window',
-            'Median slope (µV/100 px)','Interaction negativity window · Cz/FCz, 200–280 ms (µV/100 px)'], rows);
+        const selection = byId('erpDistanceSelection');
+        const plots = D.erpDistancePlots ?? {};
+        for (const [id, name] of [['hit_detected','D · observed hit'], ['no_hit_detected','D · no hit detected']]) {
+            if (plots[id] && slopes.some(row => row.selection === id)) selection.add(new Option(name, id));
+        }
+        function updateDistance() {
+            const selected = slopes.filter(row => (row.selection ?? 'all') === selection.value);
+            byId('erpDistancePlot').src = plots[selection.value] ?? distancePlot.src;
+            const trials = Number(selected[0].eligible_trials ?? 9628).toLocaleString();
+            const participants = Math.max(...selected.map(row => Number(row.participants)));
+            const rangeNote = selection.value === 'hit_detected'
+                ? ' The full-log distance in hits is bounded by 40 px. The 100 px unit scales the fitted slope.' : '';
+            byId('erpDistanceScope').textContent = trials + ' eligible D trials · Up to ' + participants
+                + ' non-pilot participants with estimable slopes.' + rangeNote;
+            const rows = measures.flatMap(([id,name,definition]) => {
+                const values = selected.filter(r => r.distance === id);
+                if (!values.length) return [];
+                const peak = values.reduce((a,b) => Math.abs(b.median_slope_uv_per_100px) >
+                    Math.abs(a.median_slope_uv_per_100px) ? b : a);
+                const central = values.find(r => r.electrodes === 'Cz/FCz'
+                    && Number(r.start_ms) === 200 && Number(r.end_ms_exclusive) === 280);
+                const strongest = [peak.component_window, peak.electrodes+' · '+interval(peak.start_ms,peak.end_ms_exclusive)];
+                return [[name,definition,strongest,signed(peak.median_slope_uv_per_100px),
+                    central ? signed(central.median_slope_uv_per_100px) : '—']];
+            });
+            fillTable('erpDistanceValues', ['Panel','Distance definition','Strongest ERP window',
+                ['Median slope', '(µV/100 px)'],
+                ['Interaction negativity', 'Cz/FCz · 200–280 ms', '(µV/100 px)']], rows);
+        }
+        selection.addEventListener('change', updateDistance);
+        updateDistance();
     }
 }

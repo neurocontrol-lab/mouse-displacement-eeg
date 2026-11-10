@@ -19,3 +19,19 @@ Across the five existing windows, two reached Holm-adjusted p < .05 in the match
 [Cohort window tests in the report](../report/index.html#erp-window-tests) · [All five test results](matched_hit_window_tests.csv)
 
 [Interactive report](../report/index.html#savedFigures) · [Group window estimates](group_summary.csv) · [Participant and session estimates](participant_amplitudes.csv) · [Trial coverage](coverage.csv) · [Matched trial IDs](matched_pairs.csv) · [Methods](../../../Code/analyses/ERP_event_related_potentials/README.md#erp_04)
+
+## Matched-hit timing follow-up
+
+The 0–500 ms search used one difference waveform per non-pilot participant (22 participants, 2,273 matched pairs). The two-sided cluster permutation test corrected jointly over time, both electrode groups and both polarities.
+
+| Electrode group | Observed cluster (ms) | Mean D − ND (µV) | Corrected cluster p | Pre / post / retest (µV) |
+|---|---|---:|---:|---|
+| P3/PO3/PO7 | [220, 360) | +2.24 | .00175 | +1.56 / +2.58 / +1.87 |
+| Cz/FCz | [366, 500) | −2.63 | .00720 | −1.18 / −1.97 / −3.49 |
+| Cz/FCz | [210, 312) | +2.76 | .01080 | +1.95 / +2.74 / +2.25 |
+
+The late central cluster reached the end of the search interval. Its duration beyond 500 ms is undetermined. The session means use the same pooled intervals and had the same polarity in all three sessions. Pre contributed 19 participants and post and retest contributed 22 each. These are descriptive recurrence checks.
+
+The separate **posterior N100-like window** at P3/PO3/PO7 from 80 to 150 ms was **−1.60 µV** (marginal 95% CI −2.73 to −0.47, nominal p = .0078). This fixed-window result complements the later P3-like positivity.
+
+[Cluster and N100 report](../report/index.html#erp-hit-timing) · [All observed clusters](matched_hit_clusters.csv) · [Session means](matched_hit_cluster_sessions.csv) · [N100 estimate](matched_hit_n100.csv)

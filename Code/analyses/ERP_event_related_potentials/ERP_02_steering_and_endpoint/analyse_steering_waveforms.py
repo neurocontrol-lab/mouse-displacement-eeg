@@ -151,12 +151,29 @@ def describe_pairs(out, d, windows, cohorts):
     return result
 
 
-def endpoint_associations(out, trial_rows, features, windows):
+DISTANCE_SELECTIONS = {
+    "all": "All eligible displaced trials",
+    "hit_detected": "Displaced · observed hit",
+    "no_hit_detected": "Displaced · no hit detected",
+}
+
+
+def add_observed_distances(trial_rows):
+    observed = {(r["run"], r["trial"]): r for r in rows(
+        result_path("AUD_02") / "target_boundary/observed_hit_trials.csv.gz"
+    ) if r["condition"] == "D"}
+    assert len(observed) == len(trial_rows)
+    for trial in trial_rows:
+        outcome = observed[trial["run"], trial["trial"]]
+        trial["full_log_min_distance_px"] = float(outcome["full_log_min_distance_px"])
+        trial["observed_hit"] = outcome["outcome"]
+
+
+def fit_distance_slopes(trial_rows, features, windows):
     """Separate within-run, within-side distance slopes, adjusted for RT and jump delay."""
     eligible = defaultdict(list)
     for i,r in enumerate(trial_rows):
-        if r["distance_eligible"] == "1":
-            eligible[r["subject"]].append(i)
+        eligible[r["subject"]].append(i)
     results = []
     for subject, indices in sorted(eligible.items()):
         group=[trial_rows[i] for i in indices]
@@ -179,36 +196,47 @@ def endpoint_associations(out, trial_rows, features, windows):
             for w,window in enumerate(windows):
                 results.append(dict(subject=subject,cohort=group[0]["cohort"],trials=len(group),
                                     distance=key,**window_metadata(window), slope_uv_per_100px=coef[0,w]))
-    write(out/"endpoint_distance_slopes.csv",results)
-    summary = []
-    for key in DISTANCES:
-        for win in windows:
-            values=np.array([r["slope_uv_per_100px"] for r in results
-                             if r["distance"]==key and r["component_window"]==win["component_window"]
-                             and r["cohort"]!="pilot"])
-            summary.append(dict(distance=key,**window_metadata(win),participants=len(values),
-                                mean_slope_uv_per_100px=values.mean(),median_slope_uv_per_100px=np.median(values),
-                                p10_slope_uv_per_100px=np.percentile(values,10),
-                                p90_slope_uv_per_100px=np.percentile(values,90)))
-    write(out/"endpoint_distance_summary.csv",summary)
+    return results
 
-    fig, axes=plt.subplots(1,3,figsize=(14.5,4.7),sharex=True,sharey=True)
-    names=[w["component_window"] for w in windows]
-    for ax, (key, label) in zip(axes, DISTANCES.items()):
-        ax.axvline(0,color=".55",lw=.8,ls=":")
-        for j,name in enumerate(names):
-            values=[r["slope_uv_per_100px"] for r in results
-                    if r["distance"]==key and r["component_window"]==name and r["cohort"]!="pilot"]
-            ax.scatter(values,np.full(len(values),j),s=17,alpha=.65,color="#1864a4")
-            ax.scatter(np.median(values),j,s=40,color="#27232b",marker="D",zorder=3)
-        ax.set(yticks=np.arange(len(names)),yticklabels=names,title=label)
-        ax.spines[["top","right"]].set_visible(False)
-    fig.suptitle("Descriptive distance slopes across non-pilot participants · diamonds show medians")
-    fig.supxlabel("Amplitude change (µV per 100 px farther from target)")
-    fig.tight_layout()
-    fig.savefig(out/"distance_associations.png",dpi=150)
-    plt.close(fig)
-    return summary
+
+def endpoint_associations(out, trial_rows, features, windows):
+    results = []
+    summary = []
+    for selection, label in DISTANCE_SELECTIONS.items():
+        indices = [i for i, trial in enumerate(trial_rows) if trial["distance_eligible"] == "1"
+                   and (selection == "all" or trial["observed_hit"] == selection)]
+        fitted = fit_distance_slopes([trial_rows[i] for i in indices], features[indices], windows)
+        results.extend(dict(selection=selection, **row) for row in fitted)
+
+        fig, axes = plt.subplots(1, 3, figsize=(14.5, 4.7), sharex=True, sharey=True)
+        names = [window["component_window"] for window in windows]
+        for ax, (key, distance_label) in zip(axes, DISTANCES.items()):
+            ax.axvline(0, color=".55", lw=.8, ls=":")
+            for j, window in enumerate(windows):
+                values = [row["slope_uv_per_100px"] for row in fitted if row["distance"] == key
+                          and row["component_window"] == names[j] and row["cohort"] != "pilot"]
+                if not values:
+                    continue
+                median = np.median(values)
+                p10, p90 = np.percentile(values, [10, 90])
+                summary.append(dict(selection=selection, eligible_trials=len(indices),
+                                    distance=key, **window_metadata(window), participants=len(values),
+                                    mean_slope_uv_per_100px=np.mean(values), median_slope_uv_per_100px=median,
+                                    p10_slope_uv_per_100px=p10, p90_slope_uv_per_100px=p90))
+                ax.scatter(values, np.full(len(values), j), s=17, alpha=.65, color="#1864a4")
+                ax.scatter(median, j, s=40, color="#27232b", marker="D", zorder=3)
+            ax.set(yticks=np.arange(len(names)), yticklabels=names, title=distance_label)
+            ax.spines[["top", "right"]].set_visible(False)
+        fig.suptitle(f"{label} · non-pilot slopes and medians")
+        fig.supxlabel("Amplitude change (µV per 100 px farther from target)")
+        fig.tight_layout()
+        suffix = "" if selection == "all" else "_" + selection
+        fig.savefig(out / f"distance_associations{suffix}.png", dpi=150)
+        plt.close(fig)
+
+    write(out / "endpoint_distance_slopes.csv", results)
+    write(out / "endpoint_distance_summary.csv", summary)
+    return [row for row in summary if row["selection"] == "all"]
 
 
 def save_report_means(out, data, cohorts, detected):
@@ -252,12 +280,7 @@ def main():
     delay_quantiles=plot_alignment(out,d,d["channels"],nonpilot,detected)
     save_report_means(out, d, cohorts, detected)
     contrasts=describe_pairs(out,d,windows,cohorts)
-    observed = rows(result_path("AUD_02") / "target_boundary/observed_hit_trials.csv.gz")
-    minima = {(r["run"], r["trial"]): float(r["full_log_min_distance_px"])
-              for r in observed if r["condition"] == "D"}
-    assert len(minima) == len(trial_rows)
-    for row in trial_rows:
-        row["full_log_min_distance_px"] = minima[row["run"], row["trial"]]
+    add_observed_distances(trial_rows)
     slopes=endpoint_associations(out,trial_rows,d["features"],windows)
     with gzip.open(out/"trial_window_amplitudes.csv.gz","wt",encoding="utf-8",newline="") as f:
         writer=csv.writer(f)

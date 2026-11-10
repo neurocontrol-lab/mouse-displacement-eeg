@@ -455,6 +455,11 @@ def build(category, spec):
         }
     if erp:
         data["erpGalleryWindows"] = erp_web_report.gallery_windows()
+        data["erpDistancePlots"] = {}
+        for selection in ("hit_detected", "no_hit_detected"):
+            plot = result_path("ERP_02") / f"distance_associations_{selection}.png"
+            if plot.is_file():
+                data["erpDistancePlots"][selection] = "data:image/png;base64," + base64.b64encode(plot.read_bytes()).decode()
         data["erp"] = json.loads(
             (result_path("ERP_01") / "waveform_means.json").read_text(encoding="utf-8")
         )

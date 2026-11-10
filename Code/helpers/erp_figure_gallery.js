@@ -157,6 +157,7 @@ function setupERPFigureGallery(waveformView, panel) {
     const relevantFindings = {
         outcome_d_nd_hit: ['#erp-window-tests','See the matched-hit estimates and Holm-adjusted p-values'],
         distance_associations: ['#erp-distance','See the cohort distance definitions and strongest slopes'],
+        matched_hit_clusters: ['#erp-hit-timing','See the cluster p-values, session estimates and N100 result'],
     };
     let revision = 0;
     async function showSelection() {

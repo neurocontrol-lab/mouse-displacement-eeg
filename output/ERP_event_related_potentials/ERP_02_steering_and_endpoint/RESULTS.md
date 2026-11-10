@@ -20,6 +20,8 @@ All **7,722** accepted D trials with a detected onset supported the full steerin
 
 All three distances were compared on **9,628** accepted D trials with a verified manuscript endpoint in the observed outward segment. The primary distance is the minimum over the full eligible log, including approaches after the estimated outward end. The other panels use the outward-only minimum and manuscript endpoint.
 
+The report also shows the same slope model fitted on **2,358 observed-hit D trials** or **7,270 D trials with no hit detected**, using the provisional 40 px target circle. These filters use the same eligibility rules for all three distance definitions. The corresponding fits include 21 and 23 non-pilot participants, respectively. Full-log distances among hits are bounded by 40 px, so the per-100-px unit expresses the scale of the fitted slope.
+
 In the 200–280 ms Cz/FCz window, the non-pilot median slopes were **+0.13 µV per 100 px** for the full log, **−0.22** for the outward segment and **−0.07** for the manuscript endpoint. The full-log mean slope was −0.10 µV per 100 px. Signs varied across participants, and the direction of the median depended on the distance definition. The largest absolute full-log median was +0.33 µV per 100 px in the 280–360 ms Cz/FCz window. A negative slope means higher voltage on closer reaches.
 
 [Distance associations in the report](../report/index.html#erp-distance) · [Participant slope plot](distance_associations.png) · [Participant slopes](endpoint_distance_slopes.csv) · [Non-pilot summary](endpoint_distance_summary.csv) · [Trial amplitudes](trial_window_amplitudes.csv.gz) · [Windows](windows.json)

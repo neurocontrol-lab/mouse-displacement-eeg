@@ -134,7 +134,8 @@ The 400 ms contrast requires both groups to have logged samples through 400 ms a
 | 1 | [compare_observed_outcomes.py](ERP_04_observed_target_entry/compare_observed_outcomes.py) | Join AUD_01 marker timing, AUD_02 outcome labels and DEC_02 trial IDs. Match pairs and export coverage. |
 | 2 | [extract_outcome_waveforms.m](ERP_04_observed_target_entry/extract_outcome_waveforms.m) | Extract paired traces from the saved PRE_01 no-FORCe epochs. |
 | 3 | [compare_observed_outcomes.py](ERP_04_observed_target_entry/compare_observed_outcomes.py) | Export eight-channel figures, browser waveforms and descriptive window amplitudes. |
-| 4 | [build_web_reports.py](../../helpers/build_web_reports.py) | Build the interactive report. |
+| 4 | [analyse_matched_hit_timing.py](ERP_04_observed_target_entry/analyse_matched_hit_timing.py) | Test pooled central and posterior time clusters and the fixed posterior N100 window. |
+| 5 | [build_web_reports.py](../../helpers/build_web_reports.py) | Build the interactive report. |
 
 Run from the repository root with the AUD_01 and AUD_02 tables, DEC_02 trial IDs, ERP_02 windows and PRE_01 EEG available.
 
@@ -149,6 +150,7 @@ extract_outcome_waveforms
 
 ~~~text
 python Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry/compare_observed_outcomes.py summarise
+python Code/analyses/ERP_event_related_potentials/ERP_04_observed_target_entry/analyse_matched_hit_timing.py
 python Code/helpers/build_web_reports.py --category ERP_event_related_potentials
 ~~~
 
@@ -156,4 +158,8 @@ Use the original PRE_01 1–20 Hz signal and [−200, 0) ms movement baseline. P
 
 [Results note](../../../output/ERP_event_related_potentials/ERP_04_observed_target_entry/RESULTS.md) · [Interactive report](../../../output/ERP_event_related_potentials/report/index.html#savedFigures)
 
-The interactive report has direct sections for cohort window tests and distance associations. In the waveform gallery, the ERP morphology selector shades the listed channels and time range on compatible event alignments. Candidate feedback windows are listed for reference until a verified outcome cue is available. The morphology overlays are independent of the statistical tests.
+The interactive report has direct sections for cohort window tests and distance associations. The distance section can show all eligible displaced trials or split them by observed entry into the provisional 40 px target circle. In **Explore the matched waveforms**, select ERP_04 to show D hits versus matched ND hits at the jump or pseudo-jump. The timing controls show the supported pooled non-pilot clusters and the separate exploratory posterior N100 window. In the waveform gallery, the ERP morphology selector shades the listed channels and time range on compatible event alignments. Candidate feedback windows are listed for reference until a verified outcome cue is available. The morphology overlays are independent of the statistical tests.
+
+**Matched-hit timing follow-up.** Pool the 40 px D-hit minus ND-hit pairs within each non-pilot participant. Average Cz/FCz and P3/PO3/PO7 separately and search [0, 500) ms after the jump or pseudo-jump. Form same-sign temporal clusters within each region using the two-sided uncorrected .05 t threshold. Use the sum of absolute t values for each cluster. For each of 19,999 random sign flips (seed 2026), apply one sign per participant jointly to both regions and all times, then retain the maximum mass across both regions and polarities. The corrected p-value includes the observed assignment. The sign-flip null assumes symmetry of participant differences. Use the pooled cluster windows for descriptive pre, post and retest estimates. The interval edges depend on the search and cluster-forming threshold.
+
+Test the posterior N100-like morphology at P3/PO3/PO7 from [80, 150) ms in a separate two-sided fixed-window check. Report the mean difference, marginal 95% interval and nominal p-value.

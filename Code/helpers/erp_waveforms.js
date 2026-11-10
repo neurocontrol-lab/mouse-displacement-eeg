@@ -1,5 +1,11 @@
 {
     const report = D.erp;
+    const contrast = byId('erpContrast');
+    const hitKey = 'outcome_d_nd_hit';
+    const matchedHits = () => contrast.value === 'hits';
+    if (D.erpOutcomes?.waveforms[hitKey]) {
+        contrast.add(new Option('D hits vs matched ND hits · ERP_04', 'hits'));
+    }
     const scope = byId('erpSubject');
     const session = byId('erpSession');
     const alignment = byId('erpAlignment');
@@ -24,8 +30,27 @@
     report.sessions.forEach(s => session.add(new Option(s, s)));
 
     const tests = D.tables.find(table => table.title === 'Non-pilot group tests').rows;
+    const timingRows = title => D.tables.find(table => table.title === title)?.rows ?? [];
+    const clusterColors = {'Cz/FCz positive': '#b5ddf4', 'Cz/FCz negative': '#e1c6ef',
+        'P3/PO3/PO7 positive': '#bde2c4'};
+    const hitWindows = timingRows('ERP_04 matched-hit clusters')
+        .filter(row => Number(row.p_cluster) < .05)
+        .map(row => ({...row, color: clusterColors[row.electrodes+' '+row.polarity] ?? '#d8eaf7',
+            label: row.electrodes+' '+row.polarity+' cluster'}));
+    const [n100] = timingRows('ERP_04 posterior N100 check');
+    if (n100) hitWindows.push({...n100, color:'#f5d899', label:'Posterior N100 window (exploratory)'});
+    const timingLabel = w => w.label+' · '+w.start_ms+'–'+w.end_ms_exclusive+' ms';
+
     function windowOptions() {
         highlight.replaceChildren(new Option('None', ''));
+        if (matchedHits()) {
+            if (hitWindows.length) {
+                highlight.add(new Option('All ERP_04 timing overlays', 'all'));
+                hitWindows.forEach((w, i) => highlight.add(new Option(timingLabel(w), i)));
+                highlight.value = 'all';
+            }
+            return;
+        }
         tests.forEach((test, i) => {
             if (test.alignment === alignment.value) {
                 highlight.add(new Option(
@@ -131,12 +156,13 @@
             marks += '<rect x="' + x(lo) + '" y="' + top + '" width="' + (x(hi) - x(lo))
                 + '" height="' + (bottom - top) + '" fill="#ffedcb"/>';
         }
-        if (window && channel.split(' / ').every(ch => window.electrodes.split('/').includes(ch))) {
-            const start = Math.max(window.start_ms, desc.first_ms);
-            const stop = Math.min(window.end_ms_exclusive, end);
+        for (const shade of [].concat(window ?? [])) {
+            if (!channel.split(' / ').every(ch => shade.electrodes.split('/').includes(ch))) continue;
+            const start = Math.max(shade.start_ms, desc.first_ms);
+            const stop = Math.min(shade.end_ms_exclusive, end);
             if (stop > start) {
                 marks += '<rect class="erp-window-shade" x="' + x(start) + '" y="' + top + '" width="'
-                    + (x(stop) - x(start)) + '" height="' + (bottom - top) + '" fill="#d8eaf7"/>';
+                    + (x(stop) - x(start)) + '" height="' + (bottom - top) + '" fill="' + (shade.color ?? '#d8eaf7') + '"/>';
             }
         }
         for (let t = Math.ceil(desc.first_ms / 200) * 200; t <= end; t += 200) {
@@ -181,8 +207,24 @@
     let revision = 0;
     async function render() {
         const current = ++revision;
-        const key = alignment.value;
-        const subset = Number(delay.value);
+        const hits = matchedHits();
+        const data = hits ? D.erpOutcomes : report;
+        const key = hits ? hitKey : alignment.value;
+        const subset = hits ? 0 : Number(delay.value);
+        const names = hits ? [...data.labels[key], 'D − ND'] : ['ND', 'D', 'D − ND'];
+        const eventLabel = hits ? 'Target jump / pseudo-jump' : alignment.selectedOptions[0].textContent;
+        const windows = hits && highlight.value === 'all' ? hitWindows
+            : highlight.value === '' ? [] : [(hits ? hitWindows : tests)[Number(highlight.value)]];
+        const overlayLegend = byId('erpOverlayLegend');
+        overlayLegend.hidden = !hits || !windows.length;
+        overlayLegend.replaceChildren(...(hits ? windows.map(w => {
+            const item = document.createElement('span');
+            const key = document.createElement('span');
+            key.className = 'erp-overlay-key';
+            key.style.background = w.color;
+            item.append(key, timingLabel(w));
+            return item;
+        }) : []));
         const visible = toggles.filter(t => t.checked).map(t => Number(t.value));
         grid.replaceChildren();
         if (!visible.length) {
@@ -192,7 +234,7 @@
         countsNote.textContent = 'Loading waveforms…';
         try {
             const {desc, channels, traces, pairs, participants} = await waveformView(
-                report, key, scope.value, session.value, subset
+                data, key, scope.value, session.value, subset
             );
             if (current !== revision) return;
             if (!pairs) {
@@ -206,8 +248,8 @@
                 + ' pairs (each class n=' + pairs.toLocaleString() + ').';
             // Keep the scale stable when toggling curves on the same selection.
             const extent = Math.max(1, Math.ceil(Math.max(...traces.flat(2).map(Math.abs)) * 1.06));
-            const window = highlight.value === '' ? null : tests[Number(highlight.value)];
-            grid.replaceChildren(...channels.map((ch, i) => panel(ch, desc, traces[i], extent, window, visible)));
+            grid.replaceChildren(...channels.map((ch, i) =>
+                panel(ch, desc, traces[i], extent, windows, visible, {names, eventLabel})));
         } catch (error) {
             if (current === revision) {
                 countsNote.textContent = 'Could not read the embedded waveforms. The saved figures and tables are available below.';
@@ -218,6 +260,17 @@
 
     for (const control of [scope, session, delay, highlight, ...toggles]) control.addEventListener('change', render);
     alignment.addEventListener('change', () => { windowOptions(); render(); });
+    contrast.addEventListener('change', () => {
+        const hits = matchedHits();
+        byId('erpAlignmentField').hidden = hits;
+        byId('erpDelayField').hidden = hits;
+        byId('erpAllWaveScope').hidden = hits;
+        byId('erpHitWaveScope').hidden = !hits;
+        toggles[0].nextElementSibling.textContent = hits ? 'Non-displaced hit' : 'Non-displaced';
+        toggles[1].nextElementSibling.textContent = hits ? 'Displaced hit' : 'Displaced';
+        windowOptions();
+        render();
+    });
     windowOptions();
     render();
     setupERPFigureGallery(waveformView, panel);
