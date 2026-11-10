@@ -42,22 +42,38 @@
     const timingLabel = w => w.label+' · '+w.start_ms+'–'+w.end_ms_exclusive+' ms';
 
     function windowOptions() {
+        const hits = matchedHits();
+        const previous = highlight.value;
         highlight.replaceChildren(new Option('None', ''));
-        if (matchedHits()) {
-            if (hitWindows.length) {
-                highlight.add(new Option('All ERP_04 timing overlays', 'all'));
-                hitWindows.forEach((w, i) => highlight.add(new Option(timingLabel(w), i)));
-                highlight.value = 'all';
-            }
-            return;
+        const results = document.createElement('optgroup');
+        results.label = hits ? 'ERP_04 timing results' : 'ERP_01 fixed-window tests';
+        if (hits && hitWindows.length) {
+            results.append(new Option('All ERP_04 timing overlays', 'all'));
+            hitWindows.forEach((w, i) => results.append(new Option(timingLabel(w), 'test:'+i)));
+        } else if (!hits) {
+            tests.forEach((test, i) => {
+                if (test.alignment === alignment.value) {
+                    results.append(new Option(timingLabel({...test, label: test.component_window}), 'test:'+i));
+                }
+            });
         }
-        tests.forEach((test, i) => {
-            if (test.alignment === alignment.value) {
-                highlight.add(new Option(
-                    test.component_window + ' (' + test.start_ms + '–' + test.end_ms_exclusive + ' ms)', i
-                ));
+        if (results.children.length) highlight.append(results);
+
+        const references = document.createElement('optgroup');
+        references.label = 'ERP morphology references';
+        const event = hits ? 'jump' : alignment.value;
+        D.erpGalleryWindows.forEach((w, i) => {
+            if (w.alignments.includes(event) || w.alignments.includes('feedback')) {
+                references.append(new Option(timingLabel({...w, label: w.component_window}), 'reference:'+i));
             }
         });
+        if (references.children.length) highlight.append(references);
+
+        const sameContrast = highlight.dataset.contrast === contrast.value;
+        highlight.value = (sameContrast || previous.startsWith('reference:'))
+            && [...highlight.options].some(option => option.value === previous)
+            ? previous : hits && hitWindows.length ? 'all' : '';
+        highlight.dataset.contrast = contrast.value;
     }
 
     const decoded = new Map();
@@ -213,18 +229,31 @@
         const subset = hits ? 0 : Number(delay.value);
         const names = hits ? [...data.labels[key], 'D − ND'] : ['ND', 'D', 'D − ND'];
         const eventLabel = hits ? 'Target jump / pseudo-jump' : alignment.selectedOptions[0].textContent;
-        const windows = hits && highlight.value === 'all' ? hitWindows
-            : highlight.value === '' ? [] : [(hits ? hitWindows : tests)[Number(highlight.value)]];
+        const [kind, index] = highlight.value.split(':');
+        const reference = kind === 'reference' ? D.erpGalleryWindows[Number(index)] : null;
+        const feedback = reference?.alignments.includes('feedback');
+        const windows = kind === 'all' ? hitWindows
+            : kind === 'test' ? [(hits ? hitWindows : tests)[Number(index)]]
+            : reference && !feedback ? [reference] : [];
         const overlayLegend = byId('erpOverlayLegend');
-        overlayLegend.hidden = !hits || !windows.length;
-        overlayLegend.replaceChildren(...(hits ? windows.map(w => {
-            const item = document.createElement('span');
-            const key = document.createElement('span');
-            key.className = 'erp-overlay-key';
-            key.style.background = w.color;
-            item.append(key, timingLabel(w));
-            return item;
-        }) : []));
+        overlayLegend.hidden = !windows.length && !feedback;
+        overlayLegend.replaceChildren();
+        if (reference) {
+            overlayLegend.textContent = feedback
+                ? reference.component_window + ' requires a verified outcome cue. No such cue is available for alignment.'
+                : timingLabel({...reference, label: reference.component_window}) + ' · '
+                    + reference.electrodes + ' · ' + (reference.expected_sign < 0 ? 'negative' : 'positive')
+                    + ' reference polarity. Blue shading marks the comparison window.';
+        } else {
+            for (const w of windows) {
+                const item = document.createElement('span');
+                const swatch = document.createElement('span');
+                swatch.className = 'erp-overlay-key';
+                swatch.style.background = w.color ?? '#d8eaf7';
+                item.append(swatch, timingLabel({...w, label: w.label ?? w.component_window}));
+                overlayLegend.append(item);
+            }
+        }
         const visible = toggles.filter(t => t.checked).map(t => Number(t.value));
         grid.replaceChildren();
         if (!visible.length) {
@@ -252,7 +281,7 @@
                 panel(ch, desc, traces[i], extent, windows, visible, {names, eventLabel})));
         } catch (error) {
             if (current === revision) {
-                countsNote.textContent = 'Could not read the embedded waveforms. The saved figures and tables are available below.';
+                countsNote.textContent = 'Could not read the embedded waveforms. The additional comparisons and numerical tables are available below.';
                 console.error(error);
             }
         }
@@ -271,7 +300,7 @@
         windowOptions();
         render();
     });
-    windowOptions();
-    render();
+    if (D.erpOutcomes?.waveforms[hitKey]) contrast.value = 'hits';
+    contrast.dispatchEvent(new Event('change'));
     setupERPFigureGallery(waveformView, panel);
 }

@@ -551,30 +551,49 @@ def build(category, spec):
         "Input flags indicate suspected contamination; they do not identify EOG/EMG sources definitively. Classifier differences do not establish an ErrP. Full methods, processing contrasts and limitations are in the PDF and experiment READMEs."
     )
     pdf = f'<a href="{spec["pdf"]}">Formal PDF note</a> · ' if spec.get("pdf") else ""
-    erp_section = erp_web_report.FINDINGS_SECTION + erp_web_report.WAVE_SECTION if erp else ""
     erp_nav = erp_web_report.FINDINGS_NAV if erp else ""
     gallery_window = erp_web_report.GALLERY_WINDOW if erp else ""
     gallery_notes = erp_web_report.GALLERY_NOTES if erp else ""
     erp_style = erp_web_report.STYLE if erp else ""
     erp_script = ""
     erp_gallery = ""
+    repeatability = ""
     if erp:
         erp_gallery = '<div id="erpFilteredFigure" hidden></div>'
         erp_script = "\n".join(Path(__file__).with_name(name).read_text(encoding="utf-8")
                                for name in ("erp_waveforms.js", "erp_figure_gallery.js", "erp_findings.js"))
         table_scope = erp_web_report.TEST_SCOPE
         if any(table["title"] == "Recording amplitudes" for table in tables):
-            erp_section += erp_web_report.REPEATABILITY_SECTION
+            repeatability = erp_web_report.REPEATABILITY_SECTION
             erp_script += Path(__file__).with_name("erp_repeatability.js").read_text(encoding="utf-8")
+    gallery_controls = f'''<p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label>{gallery_window}</div><p id="figureDescription" class="note" aria-live="polite"></p>{gallery_notes}<figure><img id="plot" alt="Saved analysis figure">{erp_gallery}<figcaption id="plotcaption"></figcaption></figure>'''
+    numerical_tables = f'''{table_scope}{inference_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div>'''
+    method_links = f"<ul>{''.join(experiments)}</ul><p>{method_note}</p>"
+    if erp:
+        report_sections = (
+            erp_web_report.WAVE_SECTION.format(gallery=gallery_controls)
+            + erp_web_report.FINDINGS_SECTION
+            + f'<details id="erp-methods"><summary>Methods and detailed results</summary>'
+              f'<p>{scope}</p>{method_links}{repeatability}<section><h3>Numerical tables</h3>'
+              f'{numerical_tables}</section></details>'
+        )
+        gallery_section = table_section = ""
+    else:
+        report_sections = (
+            f'<section><h2>Scope and interpretation</h2><p>{scope}</p>'
+            f'<details><summary>Methods and experiment navigation</summary>{method_links}</details></section>'
+        )
+        gallery_section = f'<section id="savedFigures"><h2>Saved figures</h2>{gallery_controls}</section>'
+        table_section = f'<section><h2>Numerical summaries</h2>{numerical_tables}</section>'
     body = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(spec['title'])}</title><style>{STYLE}{erp_style}</style></head><body>
 <nav aria-label="Research reports">{related}</nav><h1>{html.escape(spec['title'])}</h1><p>{summary}</p>
 <p>{pdf}<a href="../../../EXPERIMENTS.md">Experiment registry</a>{supplement_links}</p>
 {erp_nav}
-<section><h2>Scope and interpretation</h2><p>{scope}</p><details><summary>Methods and experiment navigation</summary><ul>{''.join(experiments)}</ul><p>{method_note}</p></details></section>
-{erp_section}
+{report_sections}
 <section id="waveSection" hidden><h2>Participant/session eight-channel waveforms</h2><div class="controls"><label>Participant<select id="waveSubject"></select></label><label>Session<select id="waveSession"></select></label><label>Processing condition<select id="condition"><option value="1">1 · BP no-FORCe</option><option value="2">2 · BP FORCe (pilot only)</option><option value="3">3 · Split no-FORCe (pilot only)</option><option value="4">4 · Split FORCe (pilot only)</option></select></label><label>Trial selection<select id="selection"><option value="all">All accepted trials</option><option value="matched">Matched across four conditions (pilot only)</option></select></label><label>Overlay BP no-FORCe<input type="checkbox" id="overlay"></label><button id="downloadWave" type="button">Download figure (PNG)</button></div><h3 id="waveTitle"></h3><p id="counts" class="note"></p><p id="waveDetails" class="note"></p><p class="note">The cohort view uses accepted decoder-analysis trial IDs, including sessions ineligible for cross-validation, with quality eligibility across the complete three-second interval. Pilot conditions use that same interval; matching does not balance the two class counts. The historical two-second FORCe cohort run is separate and is not included here.</p><div id="waves" class="grid"></div></section>
-<section id="savedFigures"><h2>Saved figures</h2><p id="figureScope" class="note"></p><div class="controls"><label id="figureSubjectField">Participant<select id="subject"></select></label><label id="figureSessionField">Session<select id="session"></select></label><label>Figure<select id="figure"></select></label>{gallery_window}</div><p id="figureDescription" class="note" aria-live="polite"></p>{gallery_notes}<figure><img id="plot" alt="Saved analysis figure">{erp_gallery}<figcaption id="plotcaption"></figcaption></figure></section>
-<section><h2>Numerical summaries</h2>{table_scope}{inference_scope}<p class="note">Choose a table, then use its own filters below. These selections do not change the waveforms or saved figures.</p><div class="controls"><label>Table<select id="table"></select></label><label>Search rows<input id="search" placeholder="Search this table"></label></div><div id="tableFilters" class="controls"></div><p id="tablecount" class="note"></p><div class="tablewrap"><table><thead id="tablehead"></thead><tbody id="tablebody"></tbody></table></div></section><footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. Report controls display saved results and do not rerun analyses.</footer>
+{gallery_section}
+{table_section}
+<footer>Generated from existing aggregate outputs by Code/helpers/build_web_reports.py. HTML reports are portable; linked code/PDF files require their surrounding repository layout. Report controls display saved results and do not rerun analyses.</footer>
 <script id="report-data" type="application/json">{json.dumps(data,separators=(',',':'),ensure_ascii=False).replace('</','<\\/')}</script><script>{SCRIPT}{erp_script}</script></body></html>'''
     (destination / "index.html").write_text(body, encoding="utf-8")
     print(

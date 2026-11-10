@@ -95,9 +95,9 @@
     }
     if (choices.length) {
         byId('erpTestWaveform').onclick = () => {
-            const figure = byId('figure');
-            figure.value = selectedTests().exploratory ? 'outcome_d_nd_hit' : 'matched_waveforms';
-            figure.dispatchEvent(new Event('change'));
+            const contrast = byId('erpContrast');
+            contrast.value = selectedTests().exploratory ? 'hits' : 'all';
+            contrast.dispatchEvent(new Event('change'));
         };
         selector.onchange = updateTests;
         updateTests();
@@ -108,9 +108,10 @@
     const clusterSessions = getRows('ERP_04 matched-hit cluster session estimates');
     const [n100] = getRows('ERP_04 posterior N100 check');
     if (hitClusterPlot && n100) {
-        byId('erp-hit-timing').hidden = false;
+        byId('erpHitTimingResults').hidden = false;
         byId('erpHitClusterPlot').src = hitClusterPlot.src;
-        byId('erpHitTimingScope').textContent = 'D hits versus matched ND hits at 40 px. '
+        byId('erpHitTimingScope').textContent = 'A hit required observed entry into a circle with a 40 px radius around the final target center. '
+            + 'Time zero is the recorded target jump on D trials. On each matched ND trial, the pseudo-jump is placed at the paired D trial’s jump delay after movement onset. '
             + n100.participants + ' non-pilot participants and ' + Number(n100.matched_pairs).toLocaleString()
             + ' pairs. The two-sided permutation test jointly corrects across 0–500 ms, both electrode groups and both polarities.';
         fillTable('erpHitClusterValues', ['Electrodes','Polarity','Observed interval','Mean D − ND (µV)','Corrected cluster p'],
@@ -136,7 +137,7 @@
         const selection = byId('erpDistanceSelection');
         const plots = D.erpDistancePlots ?? {};
         for (const [id, name] of [['hit_detected','D · observed hit'], ['no_hit_detected','D · no hit detected']]) {
-            if (plots[id] && slopes.some(row => row.selection === id)) selection.add(new Option(name, id));
+            if (plots[id] && slopes.some(row => row.selection === id)) selection.add(new Option(name, id, false, id === 'hit_detected'));
         }
         function updateDistance() {
             const selected = slopes.filter(row => (row.selection ?? 'all') === selection.value);
@@ -147,6 +148,20 @@
                 ? ' The full-log distance in hits is bounded by 40 px. The 100 px unit scales the fitted slope.' : '';
             byId('erpDistanceScope').textContent = trials + ' eligible D trials · Up to ' + participants
                 + ' non-pilot participants with estimable slopes.' + rangeNote;
+            const interpretation = byId('erpDistanceInterpretation');
+            const hitSlope = selected.find(row => row.selection === 'hit_detected'
+                && row.distance === 'full_log_min_distance_px' && row.electrodes === 'Cz/FCz'
+                && Number(row.start_ms) === 280 && Number(row.end_ms_exclusive) === 360);
+            interpretation.hidden = !hitSlope;
+            if (hitSlope) {
+                const slope = Number(hitSlope.median_slope_uv_per_100px);
+                const change = Math.abs(slope / 10).toFixed(2);
+                const voltage = change === '0.00' ? 'approximately the same mean voltage'
+                    : change + ' µV ' + (slope > 0 ? 'lower' : 'higher') + ' mean voltage';
+                interpretation.textContent = 'Among observed hits, getting 10 px closer to the target center at closest approach '
+                    + 'was associated with ' + voltage + ' at Cz/FCz from 280–360 ms after the jump. '
+                    + 'This is the median within-participant slope for the full eligible log (' + signed(slope) + ' µV per 100 px).';
+            }
             const rows = measures.flatMap(([id,name,definition]) => {
                 const values = selected.filter(r => r.distance === id);
                 if (!values.length) return [];
@@ -166,3 +181,14 @@
         updateDistance();
     }
 }
+
+// Reveal the collapsible section linked by a report or experiment README.
+function openERPSection() {
+    const section = document.getElementById(window.location.hash.slice(1));
+    if (section?.matches('#erp-window-tests, #erp-methods') && !section.open) {
+        section.open = true;
+        section.scrollIntoView();
+    }
+}
+window.addEventListener('hashchange', openERPSection);
+openERPSection();

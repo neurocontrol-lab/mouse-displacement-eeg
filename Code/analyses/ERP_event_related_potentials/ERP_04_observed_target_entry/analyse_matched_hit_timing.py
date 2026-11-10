@@ -6,6 +6,7 @@ import sys
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 from scipy.io import loadmat
 from scipy.stats import t, ttest_1samp
@@ -16,6 +17,11 @@ from compare_observed_outcomes import read_rows, write_rows
 
 
 REGIONS = {"Cz/FCz": ("Cz", "FCz"), "P3/PO3/PO7": ("P3", "PO3", "PO7")}
+CLUSTER_COLORS = {
+    ("Cz/FCz", "positive"): "#b5ddf4",
+    ("Cz/FCz", "negative"): "#e1c6ef",
+    ("P3/PO3/PO7", "positive"): "#bde2c4",
+}
 N_RANDOM = 19999
 SEED = 2026
 SEARCH_MS = (0, 500)
@@ -134,13 +140,20 @@ def main():
             encoding="utf-8",
         )
 
-    fig, axes = plt.subplots(2, 2, figsize=(11, 6.4), sharex=True, sharey=True)
+    cluster_bands = []
+    for row in sorted(supported, key=lambda row: (row["electrodes"], row["start_ms"])):
+        region, polarity = row["electrodes"], row["polarity"]
+        interval = f'{row["start_ms"]}–{row["end_ms_exclusive"]} ms'
+        color = CLUSTER_COLORS.get((region, polarity), "#d8eaf7")
+        cluster_bands.append((row, Patch(color=color, label=f"{region} {polarity} · {interval}")))
+
+    fig, axes = plt.subplots(2, 2, figsize=(11, 6.8), sharex=True, sharey=True)
     for i, region in enumerate(REGIONS):
         for ax in axes[:, i]:
             ax.axhline(0, color=".7", lw=.8)
-            for row in supported:
+            for row, patch in cluster_bands:
                 if row["electrodes"] == region:
-                    ax.axvspan(row["start_ms"], row["end_ms_exclusive"], color="#d8eaf7", lw=0)
+                    ax.axvspan(row["start_ms"], row["end_ms_exclusive"], color=patch.get_facecolor(), lw=0)
             ax.set_xlim(*SEARCH_MS)
             ax.spines[["top", "right"]].set_visible(False)
         top, bottom = axes[:, i]
@@ -149,12 +162,15 @@ def main():
         top.plot(time, pooled[i].mean(axis=1), color="#20334b", lw=1.6)
         for (session, (values, _)), color in zip(sessions.items(), ("#1864a4", "#a35125", "#087f67")):
             bottom.plot(time, values[i].mean(axis=1), color=color, lw=1.4, label=session.capitalize())
-    fig.suptitle("Matched D hits minus ND hits · 40 px")
+    fig.suptitle("Matched D hits minus ND hits · 40 px target radius")
     fig.supylabel("Mean difference (µV)")
-    fig.supxlabel("Time from jump / pseudo-jump (ms)")
+    fig.supxlabel("Time from target jump (D) or matched pseudo-jump (ND) in ms", y=.115)
+    if cluster_bands:
+        fig.legend(handles=[patch for _, patch in cluster_bands], ncol=3, frameon=False,
+                   loc="lower center", bbox_to_anchor=(.5, .055))
     fig.legend(*axes[1, 0].get_legend_handles_labels(), ncol=3, frameon=False,
-               loc="lower center", bbox_to_anchor=(.5, .04))
-    fig.tight_layout(rect=(.025, .09, 1, .95))
+               loc="lower center", bbox_to_anchor=(.5, .015))
+    fig.tight_layout(rect=(.025, .17, 1, .95))
     fig.savefig(out / "matched_hit_clusters.png", dpi=155)
     plt.close(fig)
 

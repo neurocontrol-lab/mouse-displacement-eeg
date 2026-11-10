@@ -24,13 +24,10 @@ def report_spec():
     return {
         "title": "Event-related potentials",
         "summary": (
-            "ERP_01 compares movement- and target-jump-aligned waveforms from the same "
-            "displaced (D) and non-displaced (ND) trials. The clearest non-pilot difference "
-            "was a positivity near 270 ms after the recorded jump. Only the Cz/FCz "
-            "200–280 ms jump window reached the Holm-adjusted threshold. ERP_02 describes "
-            "steering and target distance within displaced reaches. ERP_03 compares "
-            "the manuscript’s corrective and erroneous trajectories. ERP_04 compares "
-            "observed hits and close approaches."
+            "Explore no-FORCe waveforms for displaced (D) and non-displaced (ND) reaches. "
+            "The main view compares matched trials where both reaches hit the target. "
+            "The timing and distance sections show where the waveforms differ and how voltage "
+            "varies with how close the cursor came to the target."
         ),
         "tables": [
             ("Non-pilot group tests", out / "component_tests.csv"),
@@ -62,7 +59,7 @@ def report_spec():
         )] + [trajectories / "jump_corrective_vs_erroneous.png"] + [outcomes / f"{name}.png" for name in outcome_titles],
         "figure_titles": outcome_titles,
         "figure_descriptions": {
-            "outcome_hit": "ERP_04. Jump-aligned displaced trials grouped by entry into the provisional 40 px circle, with pairs matched within recording and jump direction.",
+            "outcome_hit": "ERP_04. Jump-aligned displaced trials grouped by entry into the 40 px target circle, with pairs matched within recording and jump direction.",
             "outcome_hit400": "ERP_04. Entry by 400 ms after the jump. Both groups have observation through 400 ms.",
             "outcome_near75": "ERP_04. Compare displaced reaches that came within 75 px of the final target with other displaced reaches.",
             "outcome_near100": "ERP_04. Repeat the close-approach comparison at 100 px.",
@@ -159,10 +156,10 @@ TEST_SCOPE = (
 )
 
 WAVE_SECTION = """
-<section id="erpSection" aria-labelledby="erp-heading">
-<h2 id="erp-heading">Explore the matched waveforms</h2>
+<section id="savedFigures" aria-labelledby="erpSection">
+<h2 id="erpSection">Matched waveforms</h2>
 <div class="controls">
-<label>Contrast<select id="erpContrast"><option value="all">D vs matched ND · ERP_01</option></select></label>
+<label>Contrast<select id="erpContrast"><option value="all">All D vs matched ND · ERP_01</option></select></label>
 <label>Participant or cohort<select id="erpSubject"></select></label>
 <label>Session<select id="erpSession"><option value="all">Pooled sessions</option></select></label>
 <label id="erpAlignmentField">Alignment<select id="erpAlignment"><option value="jump">Target jump / pseudo-jump</option><option value="movement">Movement onset</option></select></label>
@@ -180,15 +177,18 @@ WAVE_SECTION = """
 Within each recording, pairs are ranked by the time from movement onset (400) to the target jump (500) on the displaced trial.
 The shorter and longer groups contain equal numbers of pairs. An odd middle pair appears only in the full set.
 Reaction time from initial target appearance (300) to movement onset (400) is used to match D and ND before this split.
-The eight panels share a voltage scale within each selection. The shaded interval marks the test electrodes.</p>
-<p id="erpHitWaveScope" class="note" hidden>Both reaches entered the provisional 40 px target circle after the jump or matched pseudo-jump. Cohort views weight participants equally. Timing overlays use the pooled non-pilot ERP_04 results for every selection. Bands mark the electrodes that contributed to each group estimate.</p>
+The eight panels share a voltage scale within each selection.</p>
+<p id="erpHitWaveScope" class="note" hidden>Both reaches entered the 40 px target circle after the jump or matched pseudo-jump. Cohort views weight participants equally. Timing overlays use the pooled non-pilot ERP_04 results for every selection. Bands mark the electrodes that contributed to each group estimate.</p>
 <div id="erpWaves" class="grid"></div>
+<details><summary>Additional waveform comparisons</summary>
+{gallery}
+</details>
 </section>
 """
 
 REPEATABILITY_SECTION = """
 <section aria-labelledby="erp-repeat-heading">
-<h2 id="erp-repeat-heading">Repeatability within participants</h2>
+<h3 id="erp-repeat-heading">Repeatability within participants</h3>
 <p class="note">Each dot on the left is a pooled participant estimate. Its exploratory 95% interval resamples whole runs
 within pre, post and retest, with session weights fixed. The plots use all matched pairs in the selected window.</p>
 <div class="controls">
@@ -216,6 +216,9 @@ STYLE = """
 .erp-legend span{border-bottom:2px solid currentColor}
 .erp-plot{display:block;width:100%;height:auto;color:#53657a;font:11px system-ui,sans-serif}
 .erp-supported{background:#e7f2fa;font-weight:600}
+.erp-literature td{white-space:normal;line-height:1.5}
+.erp-literature th:first-child{width:24%}
+#erp-window-tests,#erp-methods{margin-block:1rem}
 #erpTestForest{max-width:850px}
 #erpDistanceValues{table-layout:fixed}
 #erpDistanceValues :is(th,td){white-space:normal;overflow-wrap:anywhere;padding:7px 6px}
@@ -232,42 +235,57 @@ STYLE = """
 
 FINDINGS_NAV = """
 <nav aria-label="ERP results">
-<a href="#erp-window-tests">Cohort window tests</a>
-<a href="#erp-hit-timing">Matched-hit clusters and N100</a>
+<a href="#erpSection">Matched waveforms</a>
+<a href="#erp-hit-timing">Timing and significance</a>
 <a href="#erp-distance">Distance associations</a>
-<a href="#savedFigures">Waveform gallery</a>
+<a href="#erp-methods">Methods and detailed results</a>
 </nav>
 """
 
 FINDINGS_SECTION = """
-<section id="erp-window-tests" aria-labelledby="erp-tests-heading">
-<h2 id="erp-tests-heading">Cohort window tests</h2>
-<p id="erpTestSummary" aria-live="polite"></p>
-<div class="controls"><label>Contrast<select id="erpTestContrast"></select></label></div>
-<p id="erpTestMethod" class="note"></p>
-<p><a href="#savedFigures" id="erpTestWaveform">Open this contrast in the waveform gallery</a></p>
-<figure><svg id="erpTestForest" class="erp-plot" role="img" aria-label="Mean differences with marginal 95 percent confidence intervals"></svg>
-<figcaption>Each dot is a cohort mean. Bars show marginal 95% intervals. Blue marks indicate Holm-adjusted p &lt; .05. The vertical line marks zero difference. Window names describe the ERP references, and the dots show the measured polarity.</figcaption></figure>
-<div class="tablewrap"><table id="erpTestValues"></table></div>
-</section>
-<section id="erp-hit-timing" aria-labelledby="erp-hit-timing-heading" hidden>
-<h2 id="erp-hit-timing-heading">ERP_04 · Matched-hit clusters and posterior N100</h2>
+<section id="erp-hit-timing" aria-labelledby="erp-hit-timing-heading">
+<h2 id="erp-hit-timing-heading">Timing and significance</h2>
+<div id="erpHitTimingResults" hidden>
+<h3>ERP_04 matched-hit clusters</h3>
 <p id="erpHitTimingScope" class="note"></p>
-<figure><img id="erpHitClusterPlot" alt="Central and posterior matched-hit differences with shaded clusters, pooled and by session">
-<figcaption>Blue shading marks clusters with corrected p &lt; .05 in the pooled data. The shaded intervals describe the observed clusters. The late central cluster reaches the 500 ms search boundary.</figcaption></figure>
+<figure><img id="erpHitClusterPlot" alt="Jump-aligned central and posterior D minus ND hit waveforms with shaded clusters, pooled and by session">
+<figcaption>The legend identifies each shaded cluster with corrected p &lt; .05 in the pooled data. Session panels show the same intervals for comparison. The late central cluster reaches the 500 ms search boundary.</figcaption></figure>
+<h3>How the clusters compare with prior work</h3>
+<p class="note">Our intervals describe clusters in the jump-aligned D − ND waveform. Published peak times use the event alignment shown below. Similar timing, polarity and scalp distribution can guide interpretation.</p>
+<div class="tablewrap"><table class="erp-literature">
+<thead><tr><th scope="col">Observed cluster</th><th scope="col">Literature comparison</th></tr></thead>
+<tbody>
+<tr><td>P3/PO3/PO7 positivity<br>220–360 ms</td><td>The closest match in timing, polarity and scalp distribution is the posterior P300 in a computer-aiming task. It peaked at Pz around 324–328 ms after target perturbation. <a href="https://www.krigolsonlab.com/uploads/4/3/8/4/43848243/krigolson_2007_hep.pdf">Krigolson &amp; Holroyd, 2007</a></td></tr>
+<tr><td>Cz/FCz positivity<br>210–312 ms</td><td>The timing overlaps the early frontocentral positivity around 200 ms after interface feedback. Their waveform then goes negative around 250 ms and positive around 320 ms. Our difference remains positive through the cluster. <a href="https://publications.idiap.ch/attachments/reports/2007/ferrez_2007_tbme.pdf">Ferrez &amp; Millán, 2008</a></td></tr>
+<tr><td>Cz/FCz negative difference<br>366–500 ms</td><td>The two Graz pilots from this study had a negative D − ND peak around 500 ms after movement onset. Using the 72 ms median movement-to-jump delay in our matched hits places the cluster at roughly 438–572 ms after movement onset. Within the cluster, the ND mean was positive (+2.60 µV) and the D mean was near zero (−0.03 µV). <a href="https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf">Graz pilot study</a></td></tr>
+</tbody></table></div>
+<h3>Pooled cluster estimates</h3>
 <div class="tablewrap"><table id="erpHitClusterValues"></table></div>
-<h3>Session check</h3>
-<p class="note">Mean differences in the same pooled cluster intervals, using available participants in each session.</p>
-<div class="tablewrap"><table id="erpHitClusterSessions"></table></div>
 <h3>Posterior N100-like window</h3>
 <p id="erpHitN100"></p>
 <p class="note">This fixed-window check reports a separate two-sided nominal p-value. The cluster correction applies to the time search above.</p>
+<details><summary>Session estimates for the pooled cluster intervals</summary>
+<p class="note">Mean differences use the available participants in each session.</p>
+<div class="tablewrap"><table id="erpHitClusterSessions"></table></div>
+</details>
+</div>
+<details id="erp-window-tests">
+<summary>Fixed-window tests</summary>
+<p id="erpTestSummary" aria-live="polite"></p>
+<div class="controls"><label>Contrast<select id="erpTestContrast"></select></label></div>
+<p id="erpTestMethod" class="note"></p>
+<p><a href="#erpSection" id="erpTestWaveform">Open this contrast in Matched waveforms</a></p>
+<figure><svg id="erpTestForest" class="erp-plot" role="img" aria-label="Mean differences with marginal 95 percent confidence intervals"></svg>
+<figcaption>Each dot is a cohort mean. Bars show marginal 95% intervals. Blue marks indicate Holm-adjusted p &lt; .05. The vertical line marks zero difference. Window names describe the ERP references, and the dots show the measured polarity.</figcaption></figure>
+<div class="tablewrap"><table id="erpTestValues"></table></div>
+</details>
 </section>
 <section id="erp-distance" aria-labelledby="erp-distance-heading" hidden>
-<h2 id="erp-distance-heading">ERP_02 · Distance associations</h2>
+<h2 id="erp-distance-heading">Distance associations</h2>
 <p>A slope is roughly <strong>ΔV / Δdistance</strong>. Here it is the fitted change in mean EEG voltage per 100 px farther from the final target, comparing trials within the same recording and jump direction and adjusting for reaction time and jump delay. Each selection uses the same displaced trials across its three panels.</p>
 <div class="controls"><label>Displaced trials<select id="erpDistanceSelection"><option value="all">All eligible D trials</option></select></label></div>
 <p id="erpDistanceScope" class="note" aria-live="polite"></p>
+<p id="erpDistanceInterpretation" hidden></p>
 <figure><img id="erpDistancePlot" alt="Cohort distance slopes for the three target distance definitions">
 <figcaption>Blue dots are individual non-pilot slopes. Diamonds mark their median. Farther from zero means a larger voltage change per 100 px. A negative slope means higher voltage on closer reaches.</figcaption></figure>
 <div class="tablewrap"><table id="erpDistanceValues"></table></div>
@@ -283,7 +301,6 @@ GALLERY_WINDOW = """
 
 GALLERY_NOTES = """
 <p id="erpGalleryWindowNote" class="note" aria-live="polite" hidden></p>
-<p id="erpGalleryFindingLink" hidden></p>
 <details><summary>ERP windows and event alignment</summary>
 <p>The selector shades candidate time ranges at the listed electrodes. The ERN-like and Pe-like overlays are morphology references at movement onset and the jump. The interaction and target-perturbation windows use the jump. The Graz windows use movement onset. Shading identifies the comparison window.</p>
 <p>Feedback-related negativity and feedback P3 are listed as references. A verified outcome cue is needed to align these windows. <a href="https://pubmed.ncbi.nlm.nih.gov/23964600/">Feedback negativity study</a> · <a href="https://www.frontiersin.org/journals/human-neuroscience/articles/10.3389/fnhum.2012.00029/full">Feedback P3 study</a> · <a href="https://www.krigolsonlab.com/uploads/4/3/8/4/43848243/krigolson_2007_hep.pdf">Target perturbation N100 and P300 study</a></p>

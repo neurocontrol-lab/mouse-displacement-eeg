@@ -6,16 +6,14 @@ function setupERPFigureGallery(waveformView, panel) {
     const holder = byId('erpFilteredFigure');
     const windowSelect = byId('erpGalleryWindow');
     const windowNote = byId('erpGalleryWindowNote');
-    const findingLink = byId('erpGalleryFindingLink');
     D.erpGalleryWindows.forEach((w,i) => windowSelect.add(new Option(
         w.component_window + ' · ' + w.start_ms + '–' + w.end_ms_exclusive + ' ms', i
     )));
-    const pairedNames = ['ND', 'D', 'D − ND'];
     const steeringNames = ['No early steering', 'Early steering', 'Early minus no early steering'];
     const palette = ['#1864a4', '#b05b16', '#27232b'];
     const steeringPalette = ['#53657a', '#137f6a', '#27232b'];
     const mainFigures = new Set([
-        'matched_waveforms', 'movement_differences_by_session',
+        'movement_differences_by_session',
         'jump_differences_by_session', 'short_vs_long_delay',
     ]);
     const steeringFigures = new Set([
@@ -51,12 +49,6 @@ function setupERPFigureGallery(waveformView, panel) {
         const erp = (key, subset = 0, selectedVisit = visit) => waveformView(D.erp, key, who, selectedVisit, subset);
         const steering = (key, subset = 0) => waveformView(D.erpSteering, key, who, visit, subset);
         const alignments = [['Movement onset', 'movement'], ['Target jump / pseudo-jump', 'jump']];
-        if (name === 'matched_waveforms') {
-            return Promise.all(alignments.map(async ([title, key]) => {
-                const view = await erp(key);
-                return {title, alignment:key, series: pairedNames.map((label, curve) => ({view, label, curve}))};
-            }));
-        }
         if (name === 'short_vs_long_delay') {
             return Promise.all(alignments.map(async ([title, key]) => {
                 const [short, long] = await Promise.all([erp(key, 1), erp(key, 2)]);
@@ -75,7 +67,7 @@ function setupERPFigureGallery(waveformView, panel) {
         if (D.erpOutcomes?.waveforms[name]) {
             const view = await waveformView(D.erpOutcomes, name, who, visit);
             const labels = [...D.erpOutcomes.labels[name], 'Difference'];
-            return [{title: name === 'outcome_d_nd_hit' ? 'Target jump / pseudo-jump' : 'Target jump', alignment:'jump',
+            return [{title: 'Target jump', alignment:'jump',
                 palette: steeringPalette, series: labels.map((label, curve) => ({view, label, curve}))}];
         }
         if (name === trajectoryFigure) {
@@ -154,34 +146,21 @@ function setupERPFigureGallery(waveformView, panel) {
         }
     }
 
-    const relevantFindings = {
-        outcome_d_nd_hit: ['#erp-window-tests','See the matched-hit estimates and Holm-adjusted p-values'],
-        distance_associations: ['#erp-distance','See the cohort distance definitions and strongest slopes'],
-        matched_hit_clusters: ['#erp-hit-timing','See the cluster p-values, session estimates and N100 result'],
-    };
+    const mainReportFigures = new Set([
+        'matched_waveforms', 'outcome_d_nd_hit', 'matched_hit_clusters', 'distance_associations',
+    ]);
+    const additionalFigures = D.figures.filter(f => !mainReportFigures.has(f.name));
     let revision = 0;
     async function showSelection() {
         const current = ++revision;
         holder.replaceChildren();
-        const selected = D.figures.find(f => f.name === figure.value);
-        const windowSpec = windowSelect.value === '' ? null : D.erpGalleryWindows[Number(windowSelect.value)];
-        const link = relevantFindings[selected.name];
-        findingLink.replaceChildren();
-        findingLink.hidden = !link;
-        if (link) {
-            const anchor = document.createElement('a');
-            [anchor.href, anchor.textContent] = link;
-            if (selected.name === 'outcome_d_nd_hit') {
-                anchor.onclick = () => {
-                    const tests = byId('erpTestContrast');
-                    if ([...tests.options].some(option => option.value === 'd_nd_hit')) {
-                        tests.value = 'd_nd_hit';
-                        tests.dispatchEvent(new Event('change'));
-                    }
-                };
-            }
-            findingLink.append(anchor);
+        const selected = additionalFigures.find(f => f.name === figure.value);
+        if (!selected) {
+            holder.hidden = windowNote.hidden = true;
+            showFigure();
+            return;
         }
+        const windowSpec = windowSelect.value === '' ? null : D.erpGalleryWindows[Number(windowSelect.value)];
         windowNote.hidden = !windowSpec;
         windowNote.textContent = '';
         const feedback = windowSpec?.alignments.includes('feedback');
@@ -228,7 +207,7 @@ function setupERPFigureGallery(waveformView, panel) {
 
     function updateSelection() {
         const previous = figure.value;
-        const available = subject.value || session.value ? D.figures.filter(canFilter) : D.figures;
+        const available = subject.value || session.value ? additionalFigures.filter(canFilter) : additionalFigures;
         figure.replaceChildren(...available.map(f => new Option(f.title, f.name)));
         if (available.some(f => f.name === previous)) figure.value = previous;
         showSelection();
