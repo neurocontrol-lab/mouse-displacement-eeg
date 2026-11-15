@@ -103,26 +103,57 @@
         updateTests();
     }
 
-    const hitClusterPlot = D.figures.find(f => f.name === 'matched_hit_clusters');
-    const clusters = getRows('ERP_04 matched-hit clusters').filter(r => Number(r.p_cluster) < .05);
-    const clusterSessions = getRows('ERP_04 matched-hit cluster session estimates');
-    const [n100] = getRows('ERP_04 posterior N100 check');
-    if (hitClusterPlot && n100) {
-        byId('erpHitTimingResults').hidden = false;
-        byId('erpHitClusterPlot').src = hitClusterPlot.src;
-        byId('erpHitTimingScope').textContent = 'A hit required observed entry into a circle with a 40 px radius around the final target center. '
-            + 'Time zero is the recorded target jump on D trials. On each matched ND trial, the pseudo-jump is placed at the paired D trial’s jump delay after movement onset. '
+    const timingSelection = byId('erpTimingSelection');
+    const timingChoices = [
+        {
+            id: 'hits', label: 'D hits vs matched ND hits (40 px radius)', figure: 'matched_hit_clusters',
+            tables: 'ERP_04 matched-hit', n100: 'ERP_04 posterior N100 check',
+            scope: 'A hit required observed entry into a circle with a 40 px radius around the final target center.',
+        },
+        {
+            id: 'all', label: 'All D vs matched ND', figure: 'all_matched_clusters',
+            tables: 'ERP_04 all-matched', n100: 'ERP_04 all-matched posterior N100 check',
+            scope: 'Uses all eligible ERP_01 matched pairs, including hits and trials with no detected hit.',
+        },
+    ].filter(choice => D.figures.some(f => f.name === choice.figure) && getRows(choice.n100).length);
+    timingChoices.forEach(choice => timingSelection.add(new Option(choice.label, choice.id)));
+
+    function updateTiming() {
+        const choice = timingChoices.find(item => item.id === timingSelection.value);
+        const plot = D.figures.find(f => f.name === choice.figure);
+        const clusters = getRows(choice.tables + ' clusters').filter(r => Number(r.p_cluster) < .05);
+        const clusterSessions = getRows(choice.tables + ' cluster session estimates');
+        const [n100] = getRows(choice.n100);
+        byId('erpHitClusterPlot').src = plot.src;
+        byId('erpHitClusterPlot').alt = choice.label + ' · jump-aligned D minus ND, pooled and by session';
+        byId('erpHitTimingScope').textContent = choice.scope
+            + ' Time zero is the recorded target jump on D trials. On each matched ND trial, the pseudo-jump is placed at the paired D trial’s jump delay after movement onset. '
             + n100.participants + ' non-pilot participants and ' + Number(n100.matched_pairs).toLocaleString()
-            + ' pairs. The two-sided permutation test jointly corrects across 0–500 ms, both electrode groups and both polarities.';
+            + ' pairs. The two-sided permutation test corrects jointly across 0–500 ms, both electrode groups and both polarities within this selection.';
+        const searchEdges = [];
+        if (clusters.some(row => Number(row.start_ms) === 0)) searchEdges.push('0 ms');
+        if (clusters.some(row => Number(row.end_ms_exclusive) === 500)) searchEdges.push('500 ms');
+        byId('erpTimingCaption').textContent = 'Shading marks pooled clusters with corrected p < .05. Session panels show the same intervals.'
+            + (searchEdges.length ? ' Shading reaches the search boundary at ' + searchEdges.join(' and ') + '.' : '');
+        byId('erpHitLiterature').hidden = choice.id !== 'hits';
+        byId('erpNoTimingClusters').hidden = clusters.length > 0;
+        byId('erpHitClusterValues').hidden = !clusters.length;
+        byId('erpTimingSessions').hidden = !clusterSessions.length;
         fillTable('erpHitClusterValues', ['Electrodes','Polarity','Observed interval','Mean D − ND (µV)','Corrected cluster p'],
             clusters.map(r => [r.electrodes,r.polarity,interval(r.start_ms,r.end_ms_exclusive),
-                signed(r.mean_difference_uv),Number(r.p_cluster).toFixed(4)]));
+                signed(r.mean_difference_uv),r.p_cluster]));
         fillTable('erpHitClusterSessions', ['Electrodes','Pooled interval','Session','Participants','Pairs','Mean D − ND (µV)'],
             clusterSessions.map(r => [r.electrodes,interval(r.start_ms,r.end_ms_exclusive),r.session,
                 r.participants,Number(r.matched_pairs).toLocaleString(),signed(r.mean_difference_uv)]));
         byId('erpHitN100').textContent = n100.electrodes + ', ' + interval(n100.start_ms,n100.end_ms_exclusive)
             + ' after the jump. Mean D − ND ' + signed(n100.mean_difference_uv) + ' µV (marginal 95% CI '
             + signed(n100.ci95_low_uV) + ' to ' + signed(n100.ci95_high_uV) + ' µV, p = ' + Number(n100.p).toFixed(4) + ').';
+    }
+
+    if (timingChoices.length) {
+        byId('erpHitTimingResults').hidden = false;
+        timingSelection.addEventListener('change', updateTiming);
+        updateTiming();
     }
 
     const distancePlot = D.figures.find(f => f.name === 'distance_associations');

@@ -35,3 +35,17 @@ The late central cluster reached the end of the search interval. Its duration be
 The separate **posterior N100-like window** at P3/PO3/PO7 from 80 to 150 ms was **−1.60 µV** (marginal 95% CI −2.73 to −0.47, nominal p = .0078). This fixed-window result complements the later P3-like positivity.
 
 [Cluster and N100 report](../report/index.html#erp-hit-timing) · [All observed clusters](matched_hit_clusters.csv) · [Session means](matched_hit_cluster_sessions.csv) · [N100 estimate](matched_hit_n100.csv)
+
+## All D versus matched ND
+
+The same jump-aligned cluster test used every eligible ERP_01 matched pair, with hits and trials with no hit detected. It included 23 non-pilot participants and 9,269 pairs.
+
+| Electrode group | Observed cluster (ms) | Mean D − ND (µV) | Corrected cluster p |
+|---|---|---:|---:|
+| P3/PO3/PO7 | [0, 180) | −1.20 | .00725 |
+| Cz/FCz | [212, 320) | +2.18 | .01560 |
+| P3/PO3/PO7 | [230, 364) | +1.82 | .00395 |
+
+The two positive clusters overlapped those in the matched-hit analysis. The early posterior negative cluster reached the 0 ms search boundary, so its onset is undetermined. The later Cz/FCz negative interval [374, 450) had corrected p = .163. The separate exploratory posterior [80, 150) ms estimate was −1.51 µV (marginal 95% CI −2.49 to −0.54, nominal p = .0038). Each selection uses its own matched pairs and permutation null.
+
+[Interactive timing comparison](../report/index.html#erp-hit-timing) · [All observed clusters](all_matched_clusters.csv) · [Session means](all_matched_cluster_sessions.csv) · [N100 estimate](all_matched_n100.csv)

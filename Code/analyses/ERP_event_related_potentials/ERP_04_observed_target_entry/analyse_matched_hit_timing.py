@@ -1,4 +1,4 @@
-"""Test pooled 40 px D-hit minus matched ND-hit waveforms from ERP_04."""
+"""Test jump-aligned D minus matched ND waveforms with and without a hit requirement."""
 
 from pathlib import Path
 import sys
@@ -21,6 +21,7 @@ CLUSTER_COLORS = {
     ("Cz/FCz", "positive"): "#b5ddf4",
     ("Cz/FCz", "negative"): "#e1c6ef",
     ("P3/PO3/PO7", "positive"): "#bde2c4",
+    ("P3/PO3/PO7", "negative"): "#f5d899",
 }
 N_RANDOM = 19999
 SEED = 2026
@@ -78,22 +79,18 @@ def group_summary(sums, counts):
     return sums[..., use] / counts[use], int(counts[use].sum())
 
 
-def main():
-    out = result_path("ERP_04")
-    data = loadmat(out / "tmp/waveform_sums.mat", simplify_cells=True)
-    contrast = list(data["contrasts"]).index("d_nd_hit")
+def analyse(out, data, sums, counts, cohorts, prefix, title):
     time = data["jumpMs"]
     keep = (time >= SEARCH_MS[0]) & (time < SEARCH_MS[1])
     time = time[keep]
     assert np.array_equal(time, np.arange(*SEARCH_MS, 2))
     channels = list(data["channels"])
-    cohorts = {r["subject"]: r["cohort"] for r in read_rows(out / "matched_pairs.csv")}
     nonpilot = np.array([cohorts[s] == "validation" for s in data["subjects"]])
-    sums = data["waveformSums"][keep, :, :, contrast]
+    sums = sums[keep]
     difference = sums[:, :, 1] - sums[:, :, 0]
     roi_sums = np.stack([difference[:, [channels.index(ch) for ch in group]].mean(axis=1)
                          for group in REGIONS.values()])
-    counts = data["pairCounts"][contrast, nonpilot, :]
+    counts = counts[nonpilot]
     roi_sums = roi_sums[:, :, nonpilot]
     pooled, n_pairs = group_summary(roi_sums.sum(axis=-1), counts.sum(axis=-1))
     participant_data = pooled.transpose(2, 0, 1)
@@ -102,9 +99,9 @@ def main():
 
     results = cluster_test(participant_data, time, n_pairs)
     if results:
-        write_rows(out / "matched_hit_clusters.csv", results)
+        write_rows(out / f"{prefix}_clusters.csv", results)
     else:
-        (out / "matched_hit_clusters.csv").write_text(
+        (out / f"{prefix}_clusters.csv").write_text(
             "electrodes,polarity,start_ms,end_ms_exclusive,participants,matched_pairs,mean_difference_uv,cluster_mass,p_cluster\n",
             encoding="utf-8",
         )
@@ -118,7 +115,7 @@ def main():
     n100_row = dict(electrodes=list(REGIONS)[posterior], start_ms=N100_MS[0], end_ms_exclusive=N100_MS[1],
                     participants=len(n100), matched_pairs=n_pairs, mean_difference_uv=n100.mean(),
                     ci95_low_uV=ci.low, ci95_high_uV=ci.high, p=test.pvalue)
-    write_rows(out / "matched_hit_n100.csv", [n100_row])
+    write_rows(out / f"{prefix}_n100.csv", [n100_row])
 
     sessions = {session: group_summary(roi_sums[..., i], counts[:, i])
                 for i, session in enumerate(data["sessions"])}
@@ -133,9 +130,9 @@ def main():
                                      participants=len(mean), matched_pairs=pairs,
                                      mean_difference_uv=mean.mean(), positive_participants=int((mean > 0).sum())))
     if session_rows:
-        write_rows(out / "matched_hit_cluster_sessions.csv", session_rows)
+        write_rows(out / f"{prefix}_cluster_sessions.csv", session_rows)
     else:
-        (out / "matched_hit_cluster_sessions.csv").write_text(
+        (out / f"{prefix}_cluster_sessions.csv").write_text(
             "electrodes,start_ms,end_ms_exclusive,session,participants,matched_pairs,mean_difference_uv,positive_participants\n",
             encoding="utf-8",
         )
@@ -162,7 +159,7 @@ def main():
         top.plot(time, pooled[i].mean(axis=1), color="#20334b", lw=1.6)
         for (session, (values, _)), color in zip(sessions.items(), ("#1864a4", "#a35125", "#087f67")):
             bottom.plot(time, values[i].mean(axis=1), color=color, lw=1.4, label=session.capitalize())
-    fig.suptitle("Matched D hits minus ND hits · 40 px target radius")
+    fig.suptitle(title)
     fig.supylabel("Mean difference (µV)")
     fig.supxlabel("Time from target jump (D) or matched pseudo-jump (ND) in ms", y=.115)
     if cluster_bands:
@@ -171,14 +168,31 @@ def main():
     fig.legend(*axes[1, 0].get_legend_handles_labels(), ncol=3, frameon=False,
                loc="lower center", bbox_to_anchor=(.5, .015))
     fig.tight_layout(rect=(.025, .17, 1, .95))
-    fig.savefig(out / "matched_hit_clusters.png", dpi=155)
+    fig.savefig(out / f"{prefix}_clusters.png", dpi=155)
     plt.close(fig)
 
+    print(title)
     for row in supported:
         print(row)
     print("N100", n100_row)
     for row in session_rows:
         print(row)
+
+
+def main():
+    out = result_path("ERP_04")
+    hits = loadmat(out / "tmp/waveform_sums.mat", simplify_cells=True)
+    hit_index = list(hits["contrasts"]).index("d_nd_hit")
+    hit_cohorts = {r["subject"]: r["cohort"] for r in read_rows(out / "matched_pairs.csv")}
+    analyse(out, hits, hits["waveformSums"][:, :, :, hit_index], hits["pairCounts"][hit_index],
+            hit_cohorts, "matched_hit", "Matched D hits minus ND hits · 40 px target radius")
+
+    reference = result_path("ERP_01")
+    all_pairs = loadmat(reference / "tmp/waveform_sums.mat", simplify_cells=True)
+    cohorts = {r["subject"]: r["cohort"] for r in read_rows(reference / "matched_trials.csv")}
+    # ERP_01 stores the complete matched set before the short/long delay subsets.
+    analyse(out, all_pairs, all_pairs["jumpSum"][:, :, :, 0], all_pairs["counts"][0],
+            cohorts, "all_matched", "All D minus matched ND")
 
 
 if __name__ == "__main__":

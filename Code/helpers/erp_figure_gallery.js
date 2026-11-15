@@ -147,7 +147,7 @@ function setupERPFigureGallery(waveformView, panel) {
     }
 
     const mainReportFigures = new Set([
-        'matched_waveforms', 'outcome_d_nd_hit', 'matched_hit_clusters', 'distance_associations',
+        'matched_waveforms', 'outcome_d_nd_hit', 'matched_hit_clusters', 'all_matched_clusters', 'distance_associations',
     ]);
     const additionalFigures = D.figures.filter(f => !mainReportFigures.has(f.name));
     let revision = 0;

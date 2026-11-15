@@ -20,6 +20,7 @@ def report_spec():
         "outcome_near100": "Close approach at 100 px",
         "outcome_d_nd_hit": "Displaced vs non-displaced hits",
         "matched_hit_clusters": "Matched-hit clusters and session waveforms",
+        "all_matched_clusters": "All-matched-trial clusters and session waveforms",
     }
     return {
         "title": "Event-related potentials",
@@ -47,6 +48,9 @@ def report_spec():
             ("ERP_04 matched-hit clusters", outcomes / "matched_hit_clusters.csv"),
             ("ERP_04 matched-hit cluster session estimates", outcomes / "matched_hit_cluster_sessions.csv"),
             ("ERP_04 posterior N100 check", outcomes / "matched_hit_n100.csv"),
+            ("ERP_04 all-matched clusters", outcomes / "all_matched_clusters.csv"),
+            ("ERP_04 all-matched cluster session estimates", outcomes / "all_matched_cluster_sessions.csv"),
+            ("ERP_04 all-matched posterior N100 check", outcomes / "all_matched_n100.csv"),
             ("ERP_04 outcome contrast summary", outcomes / "group_summary.csv"),
             ("ERP_04 outcome contrasts by participant", outcomes / "participant_amplitudes.csv"),
             ("ERP_04 trial coverage", outcomes / "coverage.csv"),
@@ -163,7 +167,6 @@ WAVE_SECTION = """
 <label>Participant or cohort<select id="erpSubject"></select></label>
 <label>Session<select id="erpSession"><option value="all">Pooled sessions</option></select></label>
 <label id="erpAlignmentField">Alignment<select id="erpAlignment"><option value="jump">Target jump / pseudo-jump</option><option value="movement">Movement onset</option></select></label>
-<label id="erpDelayField">Jump delay group<select id="erpDelay"><option value="0">All matched pairs</option><option value="1">Shorter delays</option><option value="2">Longer delays</option></select></label>
 <label>Timing overlay<select id="erpWindow"></select></label>
 </div>
 <div class="erp-legend" aria-label="Visible waveforms">
@@ -174,10 +177,8 @@ WAVE_SECTION = """
 <p id="erpCounts" class="note" aria-live="polite"></p>
 <p id="erpOverlayLegend" class="erp-overlay-legend note" hidden></p>
 <p id="erpAllWaveScope" class="note">Pooled sessions weight pairs equally within each participant. Cohort views weight participants equally.
-Within each recording, pairs are ranked by the time from movement onset (400) to the target jump (500) on the displaced trial.
-The shorter and longer groups contain equal numbers of pairs. An odd middle pair appears only in the full set.
-Reaction time from initial target appearance (300) to movement onset (400) is used to match D and ND before this split.
-The eight panels share a voltage scale within each selection.</p>
+D and ND are matched within each recording on reaction time from initial target appearance (300) to movement onset (400).
+The eight panels share a voltage scale within each selection. ERP_04 timing bands use the pooled non-pilot results for the selected contrast.</p>
 <p id="erpHitWaveScope" class="note" hidden>Both reaches entered the 40 px target circle after the jump or matched pseudo-jump. Cohort views weight participants equally. Timing overlays use the pooled non-pilot ERP_04 results for every selection. Bands mark the electrodes that contributed to each group estimate.</p>
 <div id="erpWaves" class="grid"></div>
 <details><summary>Additional waveform comparisons</summary>
@@ -246,11 +247,13 @@ FINDINGS_SECTION = """
 <section id="erp-hit-timing" aria-labelledby="erp-hit-timing-heading">
 <h2 id="erp-hit-timing-heading">Timing and significance</h2>
 <div id="erpHitTimingResults" hidden>
-<h3>ERP_04 matched-hit clusters</h3>
+<h3>ERP_04 temporal clusters</h3>
+<div class="controls"><label>Trial selection<select id="erpTimingSelection"></select></label></div>
 <p id="erpHitTimingScope" class="note"></p>
-<figure><img id="erpHitClusterPlot" alt="Jump-aligned central and posterior D minus ND hit waveforms with shaded clusters, pooled and by session">
-<figcaption>The legend identifies each shaded cluster with corrected p &lt; .05 in the pooled data. Session panels show the same intervals for comparison. The late central cluster reaches the 500 ms search boundary.</figcaption></figure>
-<h3>How the clusters compare with prior work</h3>
+<figure><img id="erpHitClusterPlot" alt="Jump-aligned central and posterior D minus ND waveforms, pooled and by session">
+<figcaption id="erpTimingCaption"></figcaption></figure>
+<div id="erpHitLiterature">
+<h3>How the matched-hit clusters compare with prior work</h3>
 <p class="note">Our intervals describe clusters in the jump-aligned D − ND waveform. Published peak times use the event alignment shown below. Similar timing, polarity and scalp distribution can guide interpretation.</p>
 <div class="tablewrap"><table class="erp-literature">
 <thead><tr><th scope="col">Observed cluster</th><th scope="col">Literature comparison</th></tr></thead>
@@ -259,12 +262,14 @@ FINDINGS_SECTION = """
 <tr><td>Cz/FCz positivity<br>210–312 ms</td><td>The timing overlaps the early frontocentral positivity around 200 ms after interface feedback. Their waveform then goes negative around 250 ms and positive around 320 ms. Our difference remains positive through the cluster. <a href="https://publications.idiap.ch/attachments/reports/2007/ferrez_2007_tbme.pdf">Ferrez &amp; Millán, 2008</a></td></tr>
 <tr><td>Cz/FCz negative difference<br>366–500 ms</td><td>The two Graz pilots from this study had a negative D − ND peak around 500 ms after movement onset. Using the 72 ms median movement-to-jump delay in our matched hits places the cluster at roughly 438–572 ms after movement onset. Within the cluster, the ND mean was positive (+2.60 µV) and the D mean was near zero (−0.03 µV). <a href="https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf">Graz pilot study</a></td></tr>
 </tbody></table></div>
+</div>
 <h3>Pooled cluster estimates</h3>
+<p id="erpNoTimingClusters" hidden>No cluster reached corrected p &lt; .05.</p>
 <div class="tablewrap"><table id="erpHitClusterValues"></table></div>
 <h3>Posterior N100-like window</h3>
 <p id="erpHitN100"></p>
 <p class="note">This fixed-window check reports a separate two-sided nominal p-value. The cluster correction applies to the time search above.</p>
-<details><summary>Session estimates for the pooled cluster intervals</summary>
+<details id="erpTimingSessions"><summary>Session estimates for the pooled cluster intervals</summary>
 <p class="note">Mean differences use the available participants in each session.</p>
 <div class="tablewrap"><table id="erpHitClusterSessions"></table></div>
 </details>

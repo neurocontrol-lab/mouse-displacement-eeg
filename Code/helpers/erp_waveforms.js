@@ -9,7 +9,6 @@
     const scope = byId('erpSubject');
     const session = byId('erpSession');
     const alignment = byId('erpAlignment');
-    const delay = byId('erpDelay');
     const highlight = byId('erpWindow');
     const grid = byId('erpWaves');
     const countsNote = byId('erpCounts');
@@ -32,36 +31,51 @@
     const tests = D.tables.find(table => table.title === 'Non-pilot group tests').rows;
     const timingRows = title => D.tables.find(table => table.title === title)?.rows ?? [];
     const clusterColors = {'Cz/FCz positive': '#b5ddf4', 'Cz/FCz negative': '#e1c6ef',
-        'P3/PO3/PO7 positive': '#bde2c4'};
-    const hitWindows = timingRows('ERP_04 matched-hit clusters')
-        .filter(row => Number(row.p_cluster) < .05)
-        .map(row => ({...row, color: clusterColors[row.electrodes+' '+row.polarity] ?? '#d8eaf7',
-            label: row.electrodes+' '+row.polarity+' cluster'}));
-    const [n100] = timingRows('ERP_04 posterior N100 check');
-    if (n100) hitWindows.push({...n100, color:'#f5d899', label:'Posterior N100 window (exploratory)'});
+        'P3/PO3/PO7 positive': '#bde2c4', 'P3/PO3/PO7 negative': '#f5d899'};
+
+    function clusterWindows(clusterTable, n100Table, n100Color) {
+        const windows = timingRows(clusterTable)
+            .filter(row => Number(row.p_cluster) < .05)
+            .map(row => ({...row, color: clusterColors[row.electrodes+' '+row.polarity] ?? '#d8eaf7',
+                label: row.electrodes+' '+row.polarity+' cluster'}));
+        const [n100] = timingRows(n100Table);
+        if (n100) windows.push({...n100, color:n100Color, label:'Posterior N100 window (exploratory)'});
+        return windows;
+    }
+
+    const hitWindows = clusterWindows('ERP_04 matched-hit clusters', 'ERP_04 posterior N100 check', '#f5d899');
+    const allWindows = clusterWindows('ERP_04 all-matched clusters', 'ERP_04 all-matched posterior N100 check', '#f3b8cc');
+    const timingWindows = () => matchedHits() ? hitWindows : allWindows;
     const timingLabel = w => w.label+' · '+w.start_ms+'–'+w.end_ms_exclusive+' ms';
 
     function windowOptions() {
         const hits = matchedHits();
+        const event = hits ? 'jump' : alignment.value;
         const previous = highlight.value;
+        const windows = timingWindows();
+        const hasTiming = event === 'jump' && windows.length > 0;
         highlight.replaceChildren(new Option('None', ''));
-        const results = document.createElement('optgroup');
-        results.label = hits ? 'ERP_04 timing results' : 'ERP_01 fixed-window tests';
-        if (hits && hitWindows.length) {
+        if (hasTiming) {
+            const results = document.createElement('optgroup');
+            results.label = 'ERP_04 timing results';
             results.append(new Option('All ERP_04 timing overlays', 'all'));
-            hitWindows.forEach((w, i) => results.append(new Option(timingLabel(w), 'test:'+i)));
-        } else if (!hits) {
+            windows.forEach((w, i) => results.append(new Option(timingLabel(w), 'timing:'+i)));
+            highlight.append(results);
+        }
+
+        if (!hits) {
+            const fixed = document.createElement('optgroup');
+            fixed.label = 'ERP_01 fixed-window tests';
             tests.forEach((test, i) => {
-                if (test.alignment === alignment.value) {
-                    results.append(new Option(timingLabel({...test, label: test.component_window}), 'test:'+i));
+                if (test.alignment === event) {
+                    fixed.append(new Option(timingLabel({...test, label: test.component_window}), 'test:'+i));
                 }
             });
+            if (fixed.children.length) highlight.append(fixed);
         }
-        if (results.children.length) highlight.append(results);
 
         const references = document.createElement('optgroup');
         references.label = 'ERP morphology references';
-        const event = hits ? 'jump' : alignment.value;
         D.erpGalleryWindows.forEach((w, i) => {
             if (w.alignments.includes(event) || w.alignments.includes('feedback')) {
                 references.append(new Option(timingLabel({...w, label: w.component_window}), 'reference:'+i));
@@ -69,11 +83,12 @@
         });
         if (references.children.length) highlight.append(references);
 
-        const sameContrast = highlight.dataset.contrast === contrast.value;
-        highlight.value = (sameContrast || previous.startsWith('reference:'))
+        const sameView = highlight.dataset.contrast === contrast.value && highlight.dataset.alignment === event;
+        highlight.value = (sameView || (previous !== '' && !previous.startsWith('timing:')))
             && [...highlight.options].some(option => option.value === previous)
-            ? previous : hits && hitWindows.length ? 'all' : '';
+            ? previous : hasTiming ? 'all' : '';
         highlight.dataset.contrast = contrast.value;
+        highlight.dataset.alignment = event;
     }
 
     const decoded = new Map();
@@ -226,14 +241,14 @@
         const hits = matchedHits();
         const data = hits ? D.erpOutcomes : report;
         const key = hits ? hitKey : alignment.value;
-        const subset = hits ? 0 : Number(delay.value);
         const names = hits ? [...data.labels[key], 'D − ND'] : ['ND', 'D', 'D − ND'];
         const eventLabel = hits ? 'Target jump / pseudo-jump' : alignment.selectedOptions[0].textContent;
         const [kind, index] = highlight.value.split(':');
         const reference = kind === 'reference' ? D.erpGalleryWindows[Number(index)] : null;
         const feedback = reference?.alignments.includes('feedback');
-        const windows = kind === 'all' ? hitWindows
-            : kind === 'test' ? [(hits ? hitWindows : tests)[Number(index)]]
+        const windows = kind === 'all' ? timingWindows()
+            : kind === 'timing' ? [timingWindows()[Number(index)]]
+            : kind === 'test' ? [tests[Number(index)]]
             : reference && !feedback ? [reference] : [];
         const overlayLegend = byId('erpOverlayLegend');
         overlayLegend.hidden = !windows.length && !feedback;
@@ -263,7 +278,7 @@
         countsNote.textContent = 'Loading waveforms…';
         try {
             const {desc, channels, traces, pairs, participants} = await waveformView(
-                data, key, scope.value, session.value, subset
+                data, key, scope.value, session.value
             );
             if (current !== revision) return;
             if (!pairs) {
@@ -287,12 +302,11 @@
         }
     }
 
-    for (const control of [scope, session, delay, highlight, ...toggles]) control.addEventListener('change', render);
+    for (const control of [scope, session, highlight, ...toggles]) control.addEventListener('change', render);
     alignment.addEventListener('change', () => { windowOptions(); render(); });
     contrast.addEventListener('change', () => {
         const hits = matchedHits();
         byId('erpAlignmentField').hidden = hits;
-        byId('erpDelayField').hidden = hits;
         byId('erpAllWaveScope').hidden = hits;
         byId('erpHitWaveScope').hidden = !hits;
         toggles[0].nextElementSibling.textContent = hits ? 'Non-displaced hit' : 'Non-displaced';
