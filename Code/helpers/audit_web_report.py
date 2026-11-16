@@ -1,10 +1,12 @@
 """Build the portable Data audit report from the saved audit outputs."""
 
-from collections import Counter
+from collections import Counter, defaultdict
 import csv
 import gzip
 import json
+from math import isfinite
 from pathlib import Path
+from statistics import median, quantiles
 
 from research_paths import ROOT, result_path
 
@@ -18,6 +20,13 @@ STYLE = """
 .audit-table td:first-child,.audit-table th:first-child{text-align:left}
 .audit-table td,.audit-table th{text-align:right}
 .audit-table th:first-child{min-width:10em}
+.audit-best-candidate{background:#e7f2fa;font-weight:600}
+.audit-cohort-card:not([hidden]){display:grid;gap:5px;align-content:start}
+.audit-cohort-card{margin:0;padding:14px;text-align:left;background:#f1f6fb;border-color:#b7cde0;color:#20334b;cursor:pointer}
+.audit-cohort-card:hover,.audit-cohort-card:focus-visible{border-color:#075da8;background:#e7f2fa}
+.audit-cohort-card strong{font-size:1.35rem;color:#075da8}
+.audit-cohort-card .note{margin:0}
+.audit-card-link{color:#075da8;text-decoration:underline;text-underline-offset:.16em}
 .audit-legend{display:flex;gap:10px 18px;flex-wrap:wrap;margin:.5rem 0;font-size:.85rem;color:#53657a}
 .audit-legend b{color:#20334b}
 #reachTrialField,#reachTrial{max-width:100%;min-width:0}
@@ -29,16 +38,38 @@ BODY = """
 <section id="timing">
 <div class="audit-heading"><h2>AUD_01 · Event timing and target jump</h2><a href="../AUD_01_event_timing_audit/RESULTS.md">Results note</a></div>
 <p class="note">Marker 300 is initial target appearance, 400 is movement onset, and 500 is the recorded target jump. Compare observed mouse and EEG intervals, then see how often the candidate thresholds match the mouse marker.</p>
+<p id="mouseLogSampling" class="note" hidden></p>
+<div id="timingCohort" aria-labelledby="timingCohortHeading" hidden>
+<h3 id="timingCohortHeading">Cohort results</h3>
+<div class="grid">
+<button type="button" class="audit-cohort-card card" data-marker="400" data-scope="fixed" data-candidate="2d_3_px" aria-controls="timingCandidates" hidden>
+<span>400 · Movement onset</span>
+<strong class="audit-card-score"></strong>
+<span>First cursor step of at least 3 px in 2D</span>
+<span class="note">A 70 mm/s forward-speed threshold matched 97.6% exactly.</span>
+<span class="audit-card-link">View movement candidates</span>
+</button>
+<button type="button" class="audit-cohort-card card" data-marker="500" data-scope="per_run" data-candidate="forward_step_px" aria-controls="timingCandidates" hidden>
+<span>500 · Target jump</span>
+<strong class="audit-card-score"></strong>
+<span>First forward step to reach the fitted per-run cutoff</span>
+<span class="note" id="timingJumpCutoff"></span>
+<span class="audit-card-link">View target-jump candidates</span>
+</button>
+</div>
+</div>
 <div class="controls">
 <label>Participant<select id="timingSubject"></select></label>
 <label>Marker<select id="timingMarker"><option value="500">500 · Target jump</option><option value="400">400 · Movement onset</option></select></label>
 </div>
 <div class="tablewrap"><table id="timingObserved" class="audit-table"></table></div>
-<details>
+<details id="timingCandidates">
 <summary>Candidate first crossings</summary>
+<p id="timingBest" aria-live="polite" hidden></p>
 <div class="controls"><label>Cutoff<select id="timingScope"><option value="per_run">Fitted per run</option><option value="shared">Shared fit</option><option value="fixed">Fixed benchmark</option></select></label></div>
-<p class="note">Fitted cutoffs are evaluated on held-out trials within each recording. The ±6 ms and one-sample columns use different tolerances because log intervals vary slightly.</p>
+<p class="note">Fitted cutoffs are evaluated on held-out trials within each recording. Match tolerances count logged mouse samples in either direction from the recorded marker.</p>
 <p id="timingSharedNote" class="note" hidden>Each fold uses one cutoff across all participants, sessions, and runs. If the fitted values differ, both are shown in fold order. Values are rounded to three decimal places. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
+<p id="timingPerRunNote" class="note" hidden>Each run contributes the median of its fitted fold cutoffs. The table shows the median and 5th–95th percentiles across runs for the current participant selection. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
 <p id="timingFixedNote" class="note" hidden></p>
 <div class="tablewrap"><table id="timingComparison" class="audit-table"></table></div>
 </details>
@@ -105,6 +136,29 @@ def hit_counts(trials):
     ]
 
 
+def summarize_run_cutoffs(fits, subject_by_run):
+    folds = defaultdict(list)
+    for row in fits:
+        if row["fit_scope"] != "per_run" or not row["cutoff"]:
+            continue
+        cutoff = float(row["cutoff"])
+        if isfinite(cutoff):
+            folds[row["run"], row["marker"], row["candidate"]].append(cutoff)
+
+    run_values = defaultdict(list)
+    for (run, marker, candidate), values in folds.items():
+        estimate = median(values)
+        for subject in ("all", subject_by_run[run]):
+            run_values[subject, marker, candidate].append(estimate)
+
+    summaries = {}
+    for (subject, marker, candidate), values in run_values.items():
+        percentiles = quantiles(values, n=20, method="inclusive") if len(values) > 1 else None
+        low, high = (percentiles[0], percentiles[-1]) if percentiles else (values[0], values[0])
+        summaries.setdefault(subject, {}).setdefault(marker, {})[candidate] = [median(values), low, high]
+    return summaries
+
+
 def audit_data():
     timing = result_path("AUD_01")
     trajectories = result_path("AUD_02")
@@ -143,11 +197,16 @@ def audit_data():
                      "outward_steering_ms_from_jump", "outward_end_ms_from_movement"):
             example[name] = number(r, name)
         example["outward_end_reason"] = r["outward_end_reason"]
+    fits = rows(timing / "fitted_cutoffs.csv.gz")
+    settings = json.loads((timing / "settings.json").read_text(encoding="utf-8"))
     return {
         "subjects": sorted({r["subject"] for r in audit}),
         "timing": rows(timing / "marker_timing.csv"),
-        "fixedCutoffs": json.loads((timing / "settings.json").read_text(encoding="utf-8"))["fixed"],
-        "sharedCutoffs": [r for r in rows(timing / "fitted_cutoffs.csv.gz") if r["fit_scope"] == "shared"],
+        "fixedCutoffs": settings["fixed"],
+        "cursorPxPerMouseMm": settings["nominal_cursor_pixels_per_mouse_mm"],
+        "mouseLogMedianIntervalMs": settings.get("mouse_log_median_interval_ms"),
+        "sharedCutoffs": [r for r in fits if r["fit_scope"] == "shared"],
+        "runCutoffs": summarize_run_cutoffs(fits, {r["run"]: r["subject"] for r in audit}),
         "comparison": rows(timing / "threshold_comparison.csv") + rows(timing / "threshold_comparison_by_participant.csv"),
         "reaches": [filters(row) for row in audit],
         "examples": examples,

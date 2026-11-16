@@ -6,7 +6,11 @@
   "nominal_cursor_pixels_per_mouse_mm": 6,
   "eeg_ms_per_sample": 2,
   "search_ms_from_initial_target": 1250,
-  "timing_margin_ms": 6,
+  "timing_margins_logged_samples": [
+    1,
+    2
+  ],
+  "mouse_log_median_interval_ms": 5.983829,
   "minimum_trials_per_run_and_marker": 4,
   "folds": "Alternate ordered trial IDs within each recording and marker. Fold 0 starts with the first trial.",
   "search_start": "After marker 300 for movement, at marker 400 for jump.",

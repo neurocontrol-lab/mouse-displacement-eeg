@@ -16,11 +16,13 @@ Validate event timing and behavioural labels before they are used to group EEG e
 | Step | Script | Operation |
 |---|---|---|
 | 1 | [audit_event_timing.py](AUD_01_event_timing_audit/audit_event_timing.py) | Join mouse and EEG markers, fit candidate cutoffs, and export trial predictions and timing summaries. |
+| 2 | [check_laptop_protocol.py](AUD_01_event_timing_audit/check_laptop_protocol.py) | Replay the shared laptop thresholds using logged cursor steps and timestamps. |
 
 Run from the repository root after PRE_01 parsing, with the original mouse logs available.
 
 ~~~text
 python Code/analyses/AUD_data_audit/AUD_01_event_timing_audit/audit_event_timing.py
+python Code/analyses/AUD_data_audit/AUD_01_event_timing_audit/check_laptop_protocol.py
 ~~~
 
 Movement onset uses both displaced and non-displaced trials. Jump onset uses displaced trials. The search starts after initial target appearance (300) for movement and at logged movement onset for the jump. Both searches end at 1.25 s after the initial target or the last available sample in the trial. Fixed benchmarks use the same search start as the fitted rules for each marker. [Graz protocol](https://repository.essex.ac.uk/38379/1/tDCS_ErrP_9th_Graz_BCI_Conference_2024.pdf)
@@ -34,12 +36,13 @@ Movement onset uses both displaced and non-displaced trials. Jump onset uses dis
 | Forward, straight-line or cumulative path distance | Distance from initial target appearance. For the jump, also test each measure from logged movement onset. |
 | Elapsed time | Time from initial target appearance, or from logged movement onset for the jump. |
 
-For each marker and recording with at least four usable trials, alternate ordered trial IDs into two folds. Fit on one fold and score the other, then swap. Fit a single shared cutoff across the training halves of all eligible recordings and separate cutoffs from each recording's own training half. Choose the cutoff that maximizes exact first crossings in training, breaking ties toward the lower cutoff. The draft describes 50 mm/s for longitudinal movement onset and offset using smoothed positions and 150 mm/s for lateral correction. For marker 400, the audit compares 3 px per sample and 50 mm/s using consecutive log samples in forward and 2D motion. For marker 500, the fixed references are exploratory. They use 18 px per sample from the shared forward step fit, 560 mm/s from the rounded median fitted forward speed, and 84 ms from the observed median delay. All three values were chosen from these recordings. Report exact matches, matches within ±6 ms and matches within one logged sample separately. All rates include trials with no predicted crossing. Signed error is predicted minus observed mouse time.
+For each marker and recording with at least four usable trials, alternate ordered trial IDs into two folds. Fit on one fold and score the other, then swap. Fit a single shared cutoff across the training halves of all eligible recordings and separate cutoffs from each recording's own training half. Choose the cutoff that maximizes exact first crossings in training, breaking ties toward the lower cutoff. The draft describes 50 mm/s for longitudinal movement onset and offset using smoothed positions and 150 mm/s for lateral correction. For marker 400, the audit compares 3 px per sample and 50 mm/s using consecutive log samples in forward and 2D motion. For marker 500, the fixed references are exploratory. They use 18 px per sample from the shared forward step fit, 560 mm/s from the rounded median fitted forward speed, and 84 ms from the observed median delay. All three values were chosen from these recordings. Report exact matches and the cumulative rates within one and two logged samples on either side of the marker. All rates include trials with no predicted crossing. Signed error is predicted minus observed mouse time.
 
 | Saved output | Contents |
 |---|---|
 | [Observed onsets](../../../output/AUD_data_audit/AUD_01_event_timing_audit/observed_onsets.csv.gz) | Per-trial EEG sample indices and mouse timestamps for markers 300, 400 and 500, with cursor steps and nominal speeds at 400 and 500. |
 | [Marker timing](../../../output/AUD_data_audit/AUD_01_event_timing_audit/marker_timing.csv) | Cohort and participant timing distributions, including mouse-minus-EEG interval differences. |
+| [Laptop protocol replay](../../../output/AUD_data_audit/AUD_01_event_timing_audit/laptop_protocol_replay.csv) | Fixed strict speed thresholds scored by cohort, participant and run using logged and rounded timestamps. The jump search starts on the first logged sample after movement onset. |
 | [Fitted cutoffs](../../../output/AUD_data_audit/AUD_01_event_timing_audit/fitted_cutoffs.csv.gz) | Cutoff for each marker, candidate and training fold, pooled or by recording. |
 | [Predicted onsets](../../../output/AUD_data_audit/AUD_01_event_timing_audit/predicted_onsets.csv.gz) | Held-out predicted crossing, applied cutoff and signed error in ms and logged samples. |
 | [Cohort comparison](../../../output/AUD_data_audit/AUD_01_event_timing_audit/threshold_comparison.csv) and [participant comparison](../../../output/AUD_data_audit/AUD_01_event_timing_audit/threshold_comparison_by_participant.csv) | Match rates, prediction counts and errors conditional on a crossing. |

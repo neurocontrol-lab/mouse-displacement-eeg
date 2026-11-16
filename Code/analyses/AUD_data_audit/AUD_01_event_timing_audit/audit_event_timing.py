@@ -23,7 +23,6 @@ MARKERS = {400: "movement", 500: "jump"}
 EEG_MS_PER_SAMPLE = 2
 CURSOR_PX_PER_MOUSE_MM = 6  # Nominal protocol scale: 1,200 px per 200 mm.
 SEARCH_MS = 1250
-MARGIN_MS = 6
 MIN_RUN_TRIALS = 4
 FORWARD_STEP = "forward_step_px"
 STEP_2D = "step_2d_px"
@@ -208,13 +207,20 @@ def choose_cutoffs(bounds):
     return cutoffs
 
 
+SCORE_FIELDS = [
+    "trials", "predicted", "exact", "within_one_sample", "within_two_samples",
+    "exact_pct", "within_one_sample_pct", "within_two_samples_pct",
+    "mean_signed_error_ms", "mean_absolute_error_ms",
+]
+
+
 @dataclass
 class Scores:
     trials: int = 0
     predicted: int = 0
     exact: int = 0
-    within_6ms: int = 0
     within_one_sample: int = 0
+    within_two_samples: int = 0
     signed_ms: float = 0.0
     absolute_ms: float = 0.0
 
@@ -224,15 +230,15 @@ class Scores:
             return
         self.predicted += 1
         self.exact += samples == 0
-        self.within_6ms += abs(ms) <= MARGIN_MS
         self.within_one_sample += abs(samples) <= 1
+        self.within_two_samples += abs(samples) <= 2
         self.signed_ms += ms
         self.absolute_ms += abs(ms)
 
     def row(self):
         return [
-            self.trials, self.predicted, self.exact, self.within_6ms, self.within_one_sample,
-            *[round(100*n/self.trials, 4) for n in (self.exact, self.within_6ms, self.within_one_sample)],
+            self.trials, self.predicted, self.exact, self.within_one_sample, self.within_two_samples,
+            *[round(100*n/self.trials, 4) for n in (self.exact, self.within_one_sample, self.within_two_samples)],
             round(self.signed_ms/self.predicted, 4) if self.predicted else "",
             round(self.absolute_ms/self.predicted, 4) if self.predicted else "",
         ]
@@ -375,20 +381,22 @@ def audit():
              csv_output(work / "fitted_cutoffs.csv.gz", fit_fields) as cutoffs:
             for marker in MARKERS:
                 score_marker(marker, recordings, predictions, cutoffs, cohort, participants)
-        score_fields = ["trials", "predicted", "exact", "within_6ms", "within_one_sample",
-                        "exact_pct", "within_6ms_pct", "within_one_sample_pct",
-                        "mean_signed_error_ms", "mean_absolute_error_ms"]
         ids = ["marker", "fit_scope", "candidate"]
-        with csv_output(work / "threshold_comparison.csv", ids + score_fields) as writer:
+        with csv_output(work / "threshold_comparison.csv", ids + SCORE_FIELDS) as writer:
             writer.writerows([*key, *scores.row()] for key, scores in sorted(cohort.items()))
         with csv_output(work / "threshold_comparison_by_participant.csv", ["subject", *ids, *score_fields]) as writer:
             writer.writerows([*key, *scores.row()] for key, scores in sorted(participants.items()))
+        intervals_s = np.concatenate([
+            np.diff(trial.samples[:, 0]) for trials in recordings.values() for trial in trials
+        ])
+        median_interval_ms = 1000 * np.median(intervals_s[intervals_s > 0])
         settings = {
             "markers": MARKERS,
             "nominal_cursor_pixels_per_mouse_mm": CURSOR_PX_PER_MOUSE_MM,
             "eeg_ms_per_sample": EEG_MS_PER_SAMPLE,
             "search_ms_from_initial_target": SEARCH_MS,
-            "timing_margin_ms": MARGIN_MS,
+            "timing_margins_logged_samples": [1, 2],
+            "mouse_log_median_interval_ms": round(float(median_interval_ms), 6),
             "minimum_trials_per_run_and_marker": MIN_RUN_TRIALS,
             "folds": "Alternate ordered trial IDs within each recording and marker. Fold 0 starts with the first trial.",
             "search_start": "After marker 300 for movement, at marker 400 for jump.",
