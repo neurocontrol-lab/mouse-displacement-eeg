@@ -21,6 +21,7 @@ STYLE = """
 .audit-table td,.audit-table th{text-align:right}
 .audit-table th:first-child{min-width:10em}
 .audit-best-candidate{background:#e7f2fa;font-weight:600}
+.audit-cutoff-secondary{display:block;color:#53657a;font-size:.9em;margin-top:2px}
 .audit-cohort-card:not([hidden]){display:grid;gap:5px;align-content:start}
 .audit-cohort-card{margin:0;padding:14px;text-align:left;background:#f1f6fb;border-color:#b7cde0;color:#20334b;cursor:pointer}
 .audit-cohort-card:hover,.audit-cohort-card:focus-visible{border-color:#075da8;background:#e7f2fa}
@@ -71,6 +72,7 @@ BODY = """
 <p id="timingSharedNote" class="note" hidden>Each fold uses one cutoff across all participants, sessions, and runs. If the fitted values differ, both are shown in fold order. Values are rounded to three decimal places. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
 <p id="timingPerRunNote" class="note" hidden>Each run contributes the median of its fitted fold cutoffs. The table shows the median and 5th–95th percentiles across runs for the current participant selection. <a href="../AUD_01_event_timing_audit/fitted_cutoffs.csv.gz">Full-precision cutoffs</a></p>
 <p id="timingFixedNote" class="note" hidden></p>
+<p id="timingLaptopNote" class="note" hidden>The laptop code used 2D cursor speed. The replay uses either the intervals between saved timestamps or intervals between timestamps rounded to integer milliseconds. The fitted speed row shows agreement on held-out trials. Negative timing errors mean the prediction came before the recorded marker. <a href="../AUD_01_event_timing_audit/laptop_protocol_replay.csv">Replay results by participant and run</a></p>
 <div class="tablewrap"><table id="timingComparison" class="audit-table"></table></div>
 </details>
 </section>
@@ -198,6 +200,7 @@ def audit_data():
             example[name] = number(r, name)
         example["outward_end_reason"] = r["outward_end_reason"]
     fits = rows(timing / "fitted_cutoffs.csv.gz")
+    replay = timing / "laptop_protocol_replay.csv"
     settings = json.loads((timing / "settings.json").read_text(encoding="utf-8"))
     return {
         "subjects": sorted({r["subject"] for r in audit}),
@@ -208,6 +211,7 @@ def audit_data():
         "sharedCutoffs": [r for r in fits if r["fit_scope"] == "shared"],
         "runCutoffs": summarize_run_cutoffs(fits, {r["run"]: r["subject"] for r in audit}),
         "comparison": rows(timing / "threshold_comparison.csv") + rows(timing / "threshold_comparison_by_participant.csv"),
+        "laptopReplay": [r for r in rows(replay) if r["scope"] != "run"] if replay.is_file() else [],
         "reaches": [filters(row) for row in audit],
         "examples": examples,
         "targetHits": hit_counts(hit_labels.values()),

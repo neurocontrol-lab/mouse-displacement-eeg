@@ -51,9 +51,42 @@ function table(id, headings, rows, highlightFirst = false) {
     for (const [index, values] of rows.entries()) {
         const row = body.insertRow();
         if (highlightFirst && index === 0) row.className = 'audit-best-candidate';
-        for (const value of values) row.insertCell().textContent = value;
+        for (const value of values) row.insertCell().append(value ?? '');
     }
     target.replaceChildren(head, body);
+}
+
+const isSpeed = measure => measure === 'forward_speed_mm_s' || measure === 'speed_2d_mm_s';
+const measureFor = row => D.fixedCutoffs[row.marker][row.candidate]?.[0] ?? row.candidate;
+const cutoffFormat = new Intl.NumberFormat(undefined, {maximumFractionDigits: 3});
+const timingScopeOrder = ['fixed', 'shared', 'per_run'];
+
+function rankTiming(subject, marker) {
+    return D.comparison.filter(r => (r.subject || 'all') === subject && r.marker === marker)
+        .sort((a,b) => Number(b.exact_pct)-Number(a.exact_pct)
+            || timingScopeOrder.indexOf(a.fit_scope)-timingScopeOrder.indexOf(b.fit_scope));
+}
+
+function bestFittedSpeed(ranked) {
+    return ranked.find(r => r.fit_scope !== 'fixed' && isSpeed(measureFor(r)));
+}
+
+function cutoffText(row, subject, cursorUnits) {
+    const format = value => cutoffFormat.format(cursorUnits ? value * D.cursorPxPerMouseMm / 1000 : value);
+    const {marker, candidate} = row;
+    if (row.fit_scope === 'fixed') {
+        return format(D.fixedCutoffs[marker][candidate][1]);
+    }
+    if (row.fit_scope === 'shared') {
+        const values = D.sharedCutoffs.filter(r => r.marker === marker && r.candidate === candidate)
+            .sort((a,b) => Number(a.test_fold) - Number(b.test_fold))
+            .map(r => r.cutoff === '' ? NaN : Number(r.cutoff)).filter(Number.isFinite);
+        return [...new Set(values.map(format))].join(' / ') || '—';
+    }
+    const values = D.runCutoffs[subject]?.[marker]?.[candidate];
+    if (!values) return '—';
+    const [middle, low, high] = values.map(format);
+    return middle + ' [' + low + '–' + high + ']';
 }
 
 function updateTiming() {
@@ -64,49 +97,57 @@ function updateTiming() {
     const rows = D.timing.filter(r => r.subject === subject && r.metric.startsWith(family));
     table('timingObserved', ['Observed interval', 'Trials', 'Median (ms)', '5th percentile (ms)', '95th percentile (ms)'],
         rows.map(r => [metricNames[r.metric], count(r.n), number(r.median_ms,2), number(r.p05_ms,2), number(r.p95_ms,2)]));
+    const shared = scope === 'shared';
+    const fixed = scope === 'fixed';
+    const laptop = scope === 'laptop';
+    byId('timingSharedNote').hidden = !shared;
+    byId('timingPerRunNote').hidden = scope !== 'per_run';
+    byId('timingLaptopNote').hidden = !laptop;
+    const fixedNote = byId('timingFixedNote');
+    fixedNote.hidden = !fixed;
+    const bestMatch = byId('timingBest');
+    bestMatch.replaceChildren();
+    bestMatch.hidden = true;
+
+    const matchHeadings = ['Trials', 'Exact', 'Within 1 sample', 'Within 2 samples'];
+    const matchCells = row => [count(row.trials), number(row.exact_pct)+'%',
+        number(row.within_one_sample_pct, 2)+'%',
+        row.within_two_samples_pct == null ? '—' : number(row.within_two_samples_pct, 2)+'%'];
+
     const scopeNames = {fixed: 'fixed benchmark', shared: 'shared fit', per_run: 'fitted per run'};
-    const scopeOrder = ['fixed', 'shared', 'per_run'];
-    const cutoffFormat = new Intl.NumberFormat(undefined, {maximumFractionDigits: 3});
-    const isSpeed = measure => measure === 'forward_speed_mm_s' || measure === 'speed_2d_mm_s';
     const useCursorSpeed = measure => marker === '500' && isSpeed(measure);
-    const format = (value, measure) => cutoffFormat.format(
-        useCursorSpeed(measure) ? value * D.cursorPxPerMouseMm / 1000 : value
-    );
-    const measureFor = row => D.fixedCutoffs[marker][row.candidate]?.[0] ?? row.candidate;
     const candidateName = measure => {
         const name = candidateNames[measure] || title(measure);
         return useCursorSpeed(measure) ? name.replace('mm/s', 'px/ms') : name;
     };
-    function cutoffText(row, measure) {
-        if (row.fit_scope === 'fixed') {
-            return format(D.fixedCutoffs[marker][row.candidate][1], measure);
+
+    const ranked = rankTiming(subject, marker);
+    if (laptop) {
+        const clocks = {logged_intervals: 'Logged timestamps', rounded_ms_intervals: 'Timestamps rounded to milliseconds'};
+        const replayRows = D.laptopReplay.filter(row => (row.subject || 'all') === subject && row.marker === marker);
+        const comparisonRows = replayRows.map(row => [clocks[row.clock], row.threshold_px_per_ms, ...matchCells(row),
+            number(row.median_signed_error_ms === '' ? null : row.median_signed_error_ms, 2)]);
+        const fittedSpeed = bestFittedSpeed(ranked);
+        if (fittedSpeed) {
+            const measure = candidateName(measureFor(fittedSpeed)).split(' (')[0].toLowerCase();
+            const detail = fittedSpeed.fit_scope === 'shared'
+                ? 'one shared cutoff per fold' : 'per-run median [5th–95th percentile]';
+            comparisonRows.push(['Best fitted ' + measure + ' (' + detail + ')',
+                cutoffText(fittedSpeed, subject, true), ...matchCells(fittedSpeed), '—']);
         }
-        if (row.fit_scope === 'shared') {
-            const values = D.sharedCutoffs.filter(r => r.marker === marker && r.candidate === row.candidate)
-                .sort((a,b) => Number(a.test_fold) - Number(b.test_fold))
-                .map(r => r.cutoff === '' ? NaN : Number(r.cutoff)).filter(Number.isFinite);
-            return [...new Set(values.map(value => format(value, measure)))].join(' / ') || '—';
-        }
-        const values = D.runCutoffs[subject]?.[marker]?.[row.candidate];
-        if (!values) return '—';
-        const [middle, low, high] = values.map(value => format(value, measure));
-        return middle + ' [' + low + '–' + high + ']';
+        table('timingComparison', ['Comparison', 'Cutoff (px/ms)', ...matchHeadings, 'Median error (ms)'], comparisonRows);
+        return;
     }
 
-    const ranked = D.comparison.filter(r => (r.subject || 'all') === subject && r.marker === marker);
-    ranked.sort((a,b) => Number(b.exact_pct)-Number(a.exact_pct)
-        || scopeOrder.indexOf(a.fit_scope) - scopeOrder.indexOf(b.fit_scope));
     const [best] = ranked;
     const speed = ranked.find(r => isSpeed(measureFor(r)));
-    const bestMatch = byId('timingBest');
-    bestMatch.replaceChildren();
     bestMatch.hidden = subject === 'all' || !best;
     if (!bestMatch.hidden) {
         const name = document.createElement('strong');
         name.textContent = 'Best exact match for ' + subject;
         const describe = row => {
             const measure = measureFor(row);
-            return candidateName(measure) + ' · ' + cutoffText(row, measure) + ' · '
+            return candidateName(measure) + ' · ' + cutoffText(row, subject, useCursorSpeed(measure)) + ' · '
                 + number(row.exact_pct) + '% exact (' + scopeNames[row.fit_scope] + ')';
         };
         bestMatch.append(name, ' · ' + describe(best));
@@ -115,24 +156,25 @@ function updateTiming() {
         }
     }
 
-    const shared = scope === 'shared';
-    const fixed = scope === 'fixed';
-    byId('timingSharedNote').hidden = !shared;
-    byId('timingPerRunNote').hidden = scope !== 'per_run';
-    const fixedNote = byId('timingFixedNote');
-    fixedNote.hidden = !fixed;
     fixedNote.textContent = marker === '400'
         ? 'The draft specifies 50 mm/s for longitudinal movement onset and offset using smoothed trajectories. These benchmarks use the logged cursor samples.'
         : 'These jump cutoffs are exploratory references drawn from these recordings. The draft describes the jump as timed to movement onset without specifying a separate numerical cutoff.';
     const cutoffHeading = shared ? 'Shared cutoff' : fixed ? 'Fixed cutoff' : 'Median [5th–95th percentile]';
     const comparisonRows = ranked.filter(r => r.fit_scope === scope).map(r => {
         const measure = measureFor(r);
-        return [candidateName(measure), cutoffText(r, measure), count(r.trials), number(r.exact_pct)+'%',
-            number(r.within_one_sample_pct, 2)+'%',
-            r.within_two_samples_pct == null ? '—' : number(r.within_two_samples_pct, 2)+'%'];
+        const name = candidateName(measure);
+        const cutoff = cutoffText(r, subject, useCursorSpeed(measure));
+        if (marker === '400' && isSpeed(measure) && cutoff !== '—') {
+            const secondary = document.createElement('span');
+            secondary.className = 'audit-cutoff-secondary';
+            secondary.textContent = cutoff + ' mm/s';
+            const speeds = document.createDocumentFragment();
+            speeds.append(cutoffText(r, subject, true) + ' px/ms', secondary);
+            return [name.replace(' (mm/s)', ''), speeds, ...matchCells(r)];
+        }
+        return [name, cutoff, ...matchCells(r)];
     });
-    table('timingComparison', ['Candidate', cutoffHeading, 'Trials', 'Exact', 'Within 1 sample', 'Within 2 samples'],
-        comparisonRows, true);
+    table('timingComparison', ['Candidate', cutoffHeading, ...matchHeadings], comparisonRows, true);
 }
 
 function mark(svg, tag, attrs, text) {
@@ -395,6 +437,9 @@ if (jumpCutoff) {
     const [middle, low, high] = jumpCutoff.map(value => Number(value.toFixed(3)));
     byId('timingJumpCutoff').textContent = 'Median ' + middle + ' px/sample. The middle 90% of runs spanned '
         + low + '–' + high + ' px/sample.';
+}
+if (D.laptopReplay.length) {
+    byId('timingScope').add(new Option('Laptop protocol replay', 'laptop'));
 }
 ['timingSubject','timingMarker','timingScope'].forEach(id => byId(id).addEventListener('change',updateTiming));
 [...reachControls,'reachAccepted'].forEach(id => byId(id).addEventListener('change',updateReaches));
